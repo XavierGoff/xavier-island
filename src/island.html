@@ -1,0 +1,927 @@
+<title>Xavier's Island</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Lilita+One&display=swap">
+<style>
+/* Layout: full-bleed isometric island scene; a game-style HUD floats over it (top bar, bottom quick-add, building sheet). */
+:root{
+  --ink:#1c2233; --ink-2:#566075; --ink-3:#8790a3;
+  --panel:#ffffff; --panel-2:#f1f4f9; --line:#e0e5ee; --hud:rgba(255,255,255,.9);
+  --go:#3aa845; --go-deep:#277a30; --go-ink:#ffffff;
+  --alert:#d93d32; --focus:#1f6fe0;
+  --c-academic:#3767dc; --c-fitness:#dc4a36; --c-daily:#c98d06; --c-misc:#8656cf; --c-idea:#d99f00;
+  --b-todo:#d9473b; --b-cal:#6b4fc9; --b-mail:#2f6fd0; --b-ideas:#d99f00;
+  --bg:#2aa1cc; --plate:#3a3150; --plate-edge:#1e1828;
+  --f-display:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r-lg:20px; --r-md:14px;
+  --shadow:0 12px 32px rgba(20,24,44,.2),0 2px 6px rgba(20,24,44,.12);
+  --qh:118px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ink:#e9edf5; --ink-2:#a5afc2; --ink-3:#78829a;
+  --panel:#171c28; --panel-2:#212839; --line:#2e3649; --hud:rgba(23,28,40,.9);
+  --c-academic:#7097ff; --c-fitness:#ff7b63; --c-daily:#f4bd3c; --c-misc:#b48eff; --c-idea:#ffd24d;
+  --b-todo:#ff6f60; --b-cal:#a58cff; --b-mail:#6f9dff; --b-ideas:#ffd24d;
+  --alert:#ff6b5f; --focus:#80aaff;
+  --shadow:0 12px 32px rgba(0,0,0,.5),0 2px 6px rgba(0,0,0,.35); color-scheme:dark }}
+:root[data-theme="dark"]{
+  --ink:#e9edf5; --ink-2:#a5afc2; --ink-3:#78829a;
+  --panel:#171c28; --panel-2:#212839; --line:#2e3649; --hud:rgba(23,28,40,.9);
+  --c-academic:#7097ff; --c-fitness:#ff7b63; --c-daily:#f4bd3c; --c-misc:#b48eff; --c-idea:#ffd24d;
+  --b-todo:#ff6f60; --b-cal:#a58cff; --b-mail:#6f9dff; --b-ideas:#ffd24d;
+  --alert:#ff6b5f; --focus:#80aaff;
+  --shadow:0 12px 32px rgba(0,0,0,.5),0 2px 6px rgba(0,0,0,.35); color-scheme:dark }
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;overflow:hidden;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+
+/* ---------- scene ---------- */
+#world{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
+#stage{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 62px);bottom:calc(var(--qh) + 2px);transition:right .35s ease,filter .35s ease}
+#scene{display:block;width:100%;height:100%;overflow:visible}
+.ol{stroke:#2a2238;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.ol-n{vector-effect:non-scaling-stroke}
+.bldg,.plot{cursor:pointer;outline:none}
+.lift,.pl-in{transition:transform .22s cubic-bezier(.3,1.5,.5,1)}
+.up>.lift,.plate.up .pl-in{transform:translateY(-7px)}
+.plate.up .pl-bg{stroke:#fff}
+.lit{opacity:var(--lights,0);transition:opacity 1.2s}
+.plate text{font-family:var(--f-display);fill:#fff;letter-spacing:.03em}
+.pop{animation:pop .55s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:translateY(0)}35%{transform:translateY(-14px)}100%{transform:translateY(0)}}
+.bob{animation:bob 6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.flag{transform-box:fill-box;transform-origin:0 50%;animation:wave 2.6s ease-in-out infinite}
+@keyframes wave{0%,100%{transform:skewY(0)}50%{transform:skewY(-9deg)}}
+.ripple{transform-box:fill-box;transform-origin:center;animation:ripple 7s ease-out infinite;opacity:0}
+@keyframes ripple{0%{transform:scale(.97);opacity:0}25%{opacity:.45}100%{transform:scale(1.1);opacity:0}}
+.drift{animation:drift linear infinite}
+@keyframes drift{from{transform:translateX(-500px)}to{transform:translateX(1500px)}}
+.twinkle{animation:tw 3.5s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* ---------- HUD top ---------- */
+.hud-top{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding-top:calc(env(safe-area-inset-top,0px) + 12px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));pointer-events:none}
+.pill{pointer-events:auto;background:var(--hud);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:999px;box-shadow:var(--shadow)}
+.brand{display:flex;align-items:baseline;gap:10px;padding:8px 16px 8px 14px;min-width:0}
+.brand b{font-family:var(--f-display);font-weight:400;font-size:20px;letter-spacing:.02em;white-space:nowrap}
+.brand span{font-size:13px;color:var(--ink-2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.seg{display:flex;padding:4px;gap:2px}
+.seg button{border:0;background:transparent;padding:7px 14px;border-radius:999px;font-weight:700;font-size:13px;color:var(--ink-2);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+@media (max-width:420px){.brand span{display:none}}
+
+/* ---------- quick add ---------- */
+#quick{position:fixed;left:0;right:0;bottom:0;z-index:30;pointer-events:none;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.qcard{pointer-events:auto;max-width:720px;margin:0 auto;background:var(--panel);border:2px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:10px;display:grid;grid-template-columns:minmax(0,1fr);gap:9px}
+.qrow{display:flex;gap:8px}
+#qInput{flex:1;min-width:0;font:500 16px var(--f-body);padding:12px 14px;border-radius:var(--r-md);border:2px solid var(--line);background:var(--panel-2);color:var(--ink)}
+#qInput::placeholder{color:var(--ink-3)}
+#qInput:focus{outline:none;border-color:var(--focus)}
+.btn-go{font-family:var(--f-display);font-size:18px;letter-spacing:.03em;color:var(--go-ink);background:var(--go);border:0;border-radius:var(--r-md);padding:0 20px;box-shadow:inset 0 -4px 0 var(--go-deep);text-shadow:0 1px 0 rgba(0,0,0,.25);cursor:pointer}
+.btn-go:active{transform:translateY(2px);box-shadow:inset 0 -2px 0 var(--go-deep)}
+.qmeta{display:flex;align-items:center;gap:10px;min-width:0}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;font:600 13px var(--f-body);padding:5px 11px;border-radius:999px;border:2px solid var(--line);background:transparent;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--c,var(--ink-3))}
+.chip[aria-checked="true"]{border-color:var(--c,var(--ink));color:var(--ink);background:color-mix(in srgb,var(--c,var(--ink)) 13%,transparent)}
+.chip .n{font-variant-numeric:tabular-nums;color:var(--ink-3);font-weight:700}
+#qHint{font-size:12.5px;color:var(--ink-2);white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}
+#qHint b{color:var(--ink);font-weight:700}
+@media (max-width:600px){.qmeta{flex-direction:column;align-items:stretch;gap:6px}#qHint{white-space:normal;min-height:1.2em}}
+
+/* ---------- sheet ---------- */
+#sheet{position:fixed;z-index:25;top:calc(env(safe-area-inset-top,0px) + 68px);right:max(16px,env(safe-area-inset-right,0px));bottom:calc(var(--qh) + 6px);
+  width:min(440px,calc(100vw - 32px));background:var(--panel);border:2px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;animation:sheetIn .24s cubic-bezier(.2,1.2,.4,1)}
+#sheet.wide{right:auto;left:50%;transform:translateX(-50%);width:min(760px,calc(100vw - 32px))}
+@keyframes sheetIn{from{translate:0 14px;opacity:0}to{translate:0 0;opacity:1}}
+@media (min-width:721px){#app.sheet-open:not(.wide-open) #stage{right:calc(min(440px,100vw - 32px) + 20px)}}
+#app.wide-open #stage{filter:saturate(.75) brightness(.8)}
+@media (max-width:720px){
+  #sheet,#sheet.wide{top:calc(env(safe-area-inset-top,0px) + 30vh);left:max(8px,env(safe-area-inset-left,0px));right:max(8px,env(safe-area-inset-right,0px));width:auto;transform:none}
+  #sheet.wide{top:calc(env(safe-area-inset-top,0px) + 64px)}
+}
+.sh-head{display:flex;align-items:center;gap:12px;padding:14px 12px 12px 16px;border-bottom:2px solid var(--line)}
+.sh-icon{flex:none;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 15%,transparent)}
+.sh-title{font-family:var(--f-display);font-size:24px;line-height:1.05;letter-spacing:.02em}
+.sh-sub{font-size:13px;color:var(--ink-2);margin-top:2px}
+.icon-btn{margin-left:auto;flex:none;width:38px;height:38px;border-radius:12px;border:0;background:var(--panel-2);display:grid;place-items:center;cursor:pointer;color:var(--ink-2)}
+.icon-btn:hover{color:var(--ink)}
+.sh-body{flex:1;min-height:0;overflow:auto;padding:12px 14px 22px;overscroll-behavior:contain}
+
+/* lists */
+ul{list-style:none;margin:0;padding:0}
+.filters{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px}
+.grp{margin-top:12px}
+.grp-h{display:flex;align-items:baseline;gap:8px;font:700 11.5px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);padding:0 6px 4px}
+.grp-h.over{color:var(--alert)}
+.grp-h .n{font-variant-numeric:tabular-nums}
+.item{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:start;gap:10px;padding:9px 8px;border-radius:12px}
+.item:hover{background:var(--panel-2)}
+.ck{margin-top:1px;width:24px;height:24px;border-radius:50%;border:2.5px solid var(--c);background:transparent;display:grid;place-items:center;cursor:pointer;padding:0;color:var(--c)}
+.ck svg{opacity:0;transition:opacity .15s}
+.ck:hover svg{opacity:.4}
+.item.done .ck{background:var(--c);color:var(--panel)}
+.item.done .ck svg{opacity:1}
+.ttl{display:block;width:100%;background:none;border:0;text-align:left;font:500 15px/1.35 var(--f-body);color:var(--ink);cursor:pointer;padding:0;overflow-wrap:anywhere}
+.item.done .ttl{text-decoration:line-through;color:var(--ink-3)}
+.meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:5px;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;background:var(--panel-2);font-weight:600;white-space:nowrap}
+.item:hover .tag{background:var(--panel)}
+.tag.over{color:var(--alert)}
+.tag.ex{border:1.5px dashed var(--ink-3);background:transparent}
+.cat-dot{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.ai{color:var(--c-idea);display:inline-flex}
+.edit{background:var(--panel-2);border-radius:14px;padding:12px;margin:2px 0 8px;display:grid;gap:10px}
+.edit label{font:700 11px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);display:grid;gap:5px}
+.edit input{font:500 15px var(--f-body);padding:9px 11px;border-radius:10px;border:2px solid var(--line);background:var(--panel);color:var(--ink);min-width:0;width:100%}
+.edit .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.edit .acts{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 13px;font-weight:700;font-size:13.5px;cursor:pointer}
+.btn.primary{background:var(--go);border-color:var(--go);color:var(--go-ink);box-shadow:inset 0 -3px 0 var(--go-deep)}
+.btn.danger{color:var(--alert)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--ink-2)}
+.btn:disabled{opacity:.55;cursor:default}
+.empty{padding:26px 10px;text-align:center;color:var(--ink-2);line-height:1.5}
+.empty b{display:block;font-family:var(--f-display);font-weight:400;font-size:19px;color:var(--ink);margin-bottom:4px;letter-spacing:.02em}
+.done-toggle{margin-top:14px;width:100%;text-align:left;border:0;background:transparent;padding:8px 6px;font:700 11.5px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);cursor:pointer}
+.banner{font-size:13px;line-height:1.45;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--c-daily) 14%,transparent);margin-bottom:8px}
+.sec-h{font:700 11.5px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin:18px 6px 8px;display:flex;gap:8px;align-items:center}
+.sec-h:first-child{margin-top:4px}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.day{border-radius:12px;background:var(--panel-2);padding:8px 2px;text-align:center;display:grid;gap:3px;justify-items:center}
+.day.today{background:color-mix(in srgb,var(--b-cal) 16%,transparent)}
+.day small{font-size:11px;font-weight:700;color:var(--ink-3);text-transform:uppercase}
+.day strong{font-family:var(--f-display);font-weight:400;font-size:18px;font-variant-numeric:tabular-nums}
+.dots{display:flex;gap:2px;min-height:6px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--c)}
+.trow{display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px;padding:9px 6px;border-radius:12px;align-items:baseline}
+.trow time{font-weight:700;font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.trow .t{overflow-wrap:anywhere}
+.soon{border:2px dashed var(--line);border-radius:16px;padding:14px;margin-top:18px}
+.soon h4{margin:0 0 4px;font-family:var(--f-display);font-weight:400;font-size:18px;letter-spacing:.02em}
+.soon p{margin:0 0 10px;color:var(--ink-2);line-height:1.5;font-size:14px}
+.ghost{opacity:.6}
+.mail{border-radius:14px;background:var(--panel-2);padding:11px 12px;margin-bottom:8px}
+.mail .from{font-weight:700;font-size:13.5px}
+.mail .sub{font-size:14px;margin-top:2px}
+.mail .why{font-size:12.5px;color:var(--ink-2);margin-top:4px}
+.idea{border-radius:16px;background:var(--panel-2);padding:12px 12px 10px;margin-bottom:10px}
+.idea h4{margin:0;font:600 15.5px/1.35 var(--f-body);overflow-wrap:anywhere}
+.idea .when{font-size:12px;color:var(--ink-3);margin-top:3px}
+.idea ol{margin:8px 0 2px;padding-left:20px;font-size:14px;line-height:1.45;color:var(--ink-2)}
+.idea .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.idea .btn{padding:6px 11px;font-size:13px}
+.loading{padding:30px 10px;text-align:center;color:var(--ink-2)}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:calc(var(--qh) + 14px);translate:-50% 0;z-index:40;background:var(--ink);color:var(--panel);border-radius:14px;padding:10px 10px 10px 16px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);font-weight:600;font-size:14px;max-width:calc(100vw - 32px);animation:sheetIn .2s ease}
+#toast button{border:0;background:color-mix(in srgb,var(--panel) 18%,transparent);color:var(--panel);font-weight:700;border-radius:9px;padding:6px 11px;cursor:pointer}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<div id="app">
+  <div id="world">
+    <div id="stage">
+      <svg id="scene" viewBox="0 0 1000 720" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Your island. Each building opens a part of your organiser."></svg>
+    </div>
+  </div>
+
+  <header class="hud-top">
+    <div class="pill brand"><b>Xavier's Island</b><span id="today"></span></div>
+    <div class="pill seg" role="group" aria-label="View">
+      <button id="vIsland" aria-pressed="true">Island</button>
+      <button id="vList" aria-pressed="false">List</button>
+    </div>
+  </header>
+
+  <aside id="sheet" hidden aria-labelledby="shTitle"></aside>
+
+  <form id="quick" autocomplete="off">
+    <div class="qcard">
+      <div class="qrow">
+        <label class="sr" for="qInput">Add a to-do or idea</label>
+        <input id="qInput" placeholder="Add anything… e.g. “problem sheet due fri” or “idea: solar lamp”" enterkeyhint="done">
+        <button class="btn-go" type="submit">Add</button>
+      </div>
+      <div class="qmeta">
+        <div class="chips" id="qChips" role="radiogroup" aria-label="Where it goes"></div>
+        <div id="qHint" aria-live="polite"></div>
+      </div>
+    </div>
+  </form>
+  <div id="toast" hidden role="status"></div>
+</div>
+
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const svg = $("#scene");
+const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+/* ================= ISOMETRIC ART ================= */
+const S = 48, CX = 500, CY = 390, CO = 0.8660254, SI = 0.5;
+const P = (x, y, z = 0) => [CX + (x - y) * CO * S, CY + (x + y) * SI * S - z * S];
+const r1 = n => Math.round(n * 10) / 10;
+const pts = a => a.map(p => r1(p[0]) + "," + r1(p[1])).join(" ");
+function shade(hex, amt) {
+  const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const t = amt < 0 ? 0 : 255, k = Math.abs(amt);
+  r = Math.round(r + (t - r) * k); g = Math.round(g + (t - g) * k); b = Math.round(b + (t - b) * k);
+  return "#" + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
+}
+const poly = (p, a, fill, cls = "ol") => el("polygon", { points: pts(a), fill, class: cls }, p);
+function box(p, x, y, z, w, d, h, col) {
+  poly(p, [P(x, y + d, z), P(x + w, y + d, z), P(x + w, y + d, z + h), P(x, y + d, z + h)], col);
+  poly(p, [P(x + w, y + d, z), P(x + w, y, z), P(x + w, y, z + h), P(x + w, y + d, z + h)], shade(col, -.2));
+  poly(p, [P(x, y, z + h), P(x + w, y, z + h), P(x + w, y + d, z + h), P(x, y + d, z + h)], shade(col, .22));
+}
+function pyramid(p, x, y, z, w, d, h, col) {
+  const A = P(x + w / 2, y + d / 2, z + h), a = P(x, y, z), b = P(x + w, y, z), c = P(x + w, y + d, z), e = P(x, y + d, z);
+  poly(p, [a, e, A], shade(col, .12)); poly(p, [a, b, A], shade(col, -.1));
+  poly(p, [e, c, A], col); poly(p, [c, b, A], shade(col, -.24));
+}
+// a group whose local units = world units on a building face; u runs left→right, v runs top→bottom
+function faceG(p, side, x, y, z, w, d, h) {
+  const o = side === "L" ? P(x, y + d, z + h) : P(x + w, y + d, z + h);
+  const m = side === "L" ? [CO * S, SI * S, 0, S] : [CO * S, -SI * S, 0, S];
+  return el("g", { transform: `matrix(${m.map(r1).join(",")},${r1(o[0])},${r1(o[1])})` }, p);
+}
+const faces = (geo, lit, ...a) => [faceG(geo, ...a), faceG(lit, ...a)];
+function win(g, lg, u, v, w, h) {
+  el("rect", { x: u, y: v, width: w, height: h, rx: .05, fill: "#79c0e8", class: "ol ol-n" }, g);
+  el("rect", { x: u + .05, y: v + .05, width: w * .3, height: h - .1, fill: "#d4f0ff", opacity: .85 }, g);
+  el("line", { x1: u + w / 2, y1: v, x2: u + w / 2, y2: v + h, stroke: "#2a2238", "stroke-width": 1.6, "vector-effect": "non-scaling-stroke" }, g);
+  el("rect", { x: u, y: v, width: w, height: h, rx: .05, fill: "#ffd76e", filter: "url(#glow)" }, lg);
+}
+function smoothPath(a) {
+  let d = ""; const n = a.length;
+  for (let i = 0; i < n; i++) {
+    const p0 = a[(i - 1 + n) % n], p1 = a[i], p2 = a[(i + 1) % n], p3 = a[(i + 2) % n];
+    if (i === 0) d += `M${r1(p1[0])},${r1(p1[1])}`;
+    d += `C${r1(p1[0] + (p2[0] - p0[0]) / 6)},${r1(p1[1] + (p2[1] - p0[1]) / 6)} ${r1(p2[0] - (p3[0] - p1[0]) / 6)},${r1(p2[1] - (p3[1] - p1[1]) / 6)} ${r1(p2[0])},${r1(p2[1])}`;
+  }
+  return d + "Z";
+}
+const R0 = 6.15;
+const rad = t => R0 * (1 + .055 * Math.sin(3 * t + .6) + .035 * Math.sin(5 * t + 2.1) + .02 * Math.sin(7 * t + .3));
+const outline = (k, z) => Array.from({ length: 56 }, (_, i) => { const t = i / 56 * Math.PI * 2, r = rad(t) * k; return P(r * Math.cos(t), r * Math.sin(t), z); });
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+const geoGroups = [];
+const clockHands = [];
+const hoverables = {};
+
+function drawScene() {
+  svg.innerHTML = "";
+  const defs = el("defs", {}, svg);
+  defs.innerHTML = `
+    <linearGradient id="skyG" gradientUnits="userSpaceOnUse" x1="0" y1="-260" x2="0" y2="160"><stop id="sk0" offset="0" stop-color="#56b0ec"/><stop id="sk1" offset="1" stop-color="#c4e9fb"/></linearGradient>
+    <linearGradient id="seaG" gradientUnits="userSpaceOnUse" x1="0" y1="150" x2="0" y2="760"><stop id="se0" offset="0" stop-color="#5fcbe6"/><stop id="se1" offset="1" stop-color="#2aa1cc"/></linearGradient>
+    <radialGradient id="bulbG" cx=".38" cy=".34" r=".75"><stop offset="0" stop-color="#fffbe0"/><stop offset=".45" stop-color="#ffe066"/><stop offset="1" stop-color="#f0a915"/></radialGradient>
+    <radialGradient id="haloG"><stop offset="0" stop-color="#ffe680" stop-opacity=".85"/><stop offset="1" stop-color="#ffe680" stop-opacity="0"/></radialGradient>
+    <radialGradient id="sunG"><stop offset=".55" stop-color="#fff6c4"/><stop offset="1" stop-color="#fff6c4" stop-opacity="0"/></radialGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation=".06" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="dim" color-interpolation-filters="sRGB"><feComponentTransfer><feFuncR id="dR" type="linear" slope="1"/><feFuncG id="dG" type="linear" slope="1"/><feFuncB id="dB" type="linear" slope="1"/></feComponentTransfer></filter>`;
+
+  // sky, sun, moon, stars, clouds
+  el("rect", { x: -4000, y: -4000, width: 9000, height: 4150, fill: "url(#skyG)" }, svg);
+  const stars = el("g", { id: "stars", opacity: 0 }, svg);
+  for (let i = 0; i < 46; i++) el("circle", { cx: r1(-400 + rnd() * 1800), cy: r1(-200 + rnd() * 330), r: r1(.8 + rnd() * 1.6), fill: "#fff", class: i % 3 ? "" : "twinkle", style: `animation-delay:${r1(rnd() * 3)}s` }, stars);
+  const sun = el("g", { id: "sun" }, svg);
+  el("circle", { cx: 862, cy: 70, r: 70, fill: "url(#sunG)" }, sun);
+  el("circle", { cx: 862, cy: 70, r: 34, fill: "#ffe680", class: "ol" }, sun);
+  const moon = el("g", { id: "moon", opacity: 0 }, svg);
+  el("circle", { cx: 860, cy: 72, r: 30, fill: "#f3efd6", class: "ol" }, moon);
+  el("circle", { cx: 850, cy: 64, r: 6, fill: "#ddd7b6" }, moon); el("circle", { cx: 870, cy: 84, r: 4, fill: "#ddd7b6" }, moon);
+  const clouds = el("g", { id: "clouds" }, svg);
+  [[90, 60, 1, 0], [-200, 120, .8, -60], [400, 40, .7, -120]].forEach(([x, y, s, delay]) => {
+    const pos = el("g", { transform: `translate(${x} ${y}) scale(${s})` }, clouds);
+    const c = el("g", { class: "drift", style: `animation-duration:${240 / s}s;animation-delay:${delay}s` }, pos);
+    [[0, 0, 26], [28, -12, 32], [60, 0, 24], [30, 6, 26]].forEach(([cx, cy, r]) => el("circle", { cx, cy, r, fill: "#fff", opacity: .92 }, c));
+  });
+
+  // sea
+  el("rect", { x: -4000, y: 150, width: 9000, height: 5000, fill: "url(#seaG)" }, svg);
+  const rip = el("g", {}, svg);
+  [0, 2.3, 4.6].forEach(dl => el("path", { d: smoothPath(outline(1.16, -1.5)), fill: "none", stroke: "#fff", "stroke-width": 2.5, class: "ripple", style: `animation-delay:${dl}s` }, rip));
+
+  // ground
+  const ground = el("g", { class: "geo" }, svg); geoGroups.push(ground);
+  el("path", { d: smoothPath(outline(1.1, -1.5)), fill: "#8fe3ef", opacity: .55 }, ground);
+  el("path", { d: smoothPath(outline(1, -1.5)), fill: "#6f4a2a", class: "ol" }, ground);
+  el("path", { d: smoothPath(outline(1, -.78)), fill: "#a8703c" }, ground);
+  el("path", { d: smoothPath(outline(1, 0)), fill: "#f0d390", class: "ol" }, ground);
+  el("path", { d: smoothPath(outline(.92, 0)), fill: "#7cc24a", stroke: "#5c9f33", "stroke-width": 3 }, ground);
+  [[-2.2, 2.4, 1.4], [3.2, -0.4, 1.1], [-0.6, -3.6, 1.2], [1.8, 3.2, .9]].forEach(([x, y, r]) => {
+    const c = P(x, y); el("ellipse", { cx: r1(c[0]), cy: r1(c[1]), rx: r * CO * S * 1.41, ry: r * SI * S * 1.41, fill: "#92d45c", opacity: .7 }, ground);
+  });
+  // paths
+  const paths = [
+    [[0.3, 2.4], [0.3, 3.1], [-0.6, 3.9], [-1, 4.15]], [[0.3, 3.1], [1.0, 3.5]],
+    [[2.4, 0.3], [3.3, 0.9]], [[2.4, 0.3], [2.6, -0.5], [2.65, -1.25]],
+    [[-1.7, 0.6], [-2.6, 0.6], [-3.1, 0.2], [-3.1, -0.1]], [[2.4, 0.3], [3.4, 2.0], [3.95, 2.85]]
+  ];
+  paths.forEach(pt => el("polyline", { points: pts(pt.map(p => P(...p))), fill: "none", stroke: "#bfa36a", "stroke-width": 26, "stroke-linecap": "round", "stroke-linejoin": "round" }, ground));
+  paths.forEach(pt => el("polyline", { points: pts(pt.map(p => P(...p))), fill: "none", stroke: "#ead9a8", "stroke-width": 19, "stroke-linecap": "round", "stroke-linejoin": "round" }, ground));
+  // rocks + flowers
+  [[5.3, -1.6], [-5.2, 2.0], [-2.6, -5.1], [1.4, 5.5], [5.6, 0.7]].forEach(([x, y]) => {
+    const c = P(x, y); el("path", { d: `M${r1(c[0] - 12)},${r1(c[1] + 4)} l5,-12 l12,-3 l8,9 l-2,8 z`, fill: "#8d8a99", class: "ol" }, ground);
+  });
+  const fl = ["#ff7a8a", "#ffffff", "#ffd84a", "#b48eff"];
+  for (let i = 0; i < 26; i++) {
+    const t = rnd() * Math.PI * 2, rr = 2.6 + rnd() * 2.6, x = rr * Math.cos(t), y = rr * Math.sin(t);
+    if (rr * 1 > rad(t) * .88) continue;
+    if (x > -1.8 && x < 2.4 && y > -1.8 && y < 2.4) continue;
+    const c = P(x, y); el("circle", { cx: r1(c[0]), cy: r1(c[1]), r: 2.6, fill: fl[i % 4], stroke: "#2a2238", "stroke-width": 1 }, ground);
+  }
+
+  // objects, painter-sorted
+  const objs = [];
+  const tree = (x, y, s, type) => objs.push({ d: x + y, draw: root => {
+    const g = el("g", { class: "geo" }, root); geoGroups.push(g);
+    const b = P(x, y); const [bx, by] = b;
+    el("ellipse", { cx: r1(bx + 4), cy: r1(by + 2), rx: 18 * s, ry: 8 * s, fill: "#000", opacity: .14 }, g);
+    el("rect", { x: r1(bx - 4 * s), y: r1(by - 18 * s), width: r1(8 * s), height: r1(20 * s), rx: 2, fill: "#8a5a32", class: "ol" }, g);
+    if (type === "pine") {
+      [[0, 46, 26], [16, 38, 20], [30, 30, 14]].forEach(([dy, h, w]) => el("path", { d: `M${r1(bx - w * s)},${r1(by - (14 + dy) * s)} L${r1(bx)},${r1(by - (14 + dy + h) * s)} L${r1(bx + w * s)},${r1(by - (14 + dy) * s)} Z`, fill: dy === 30 ? "#4caf50" : dy ? "#3f9d48" : "#358a3e", class: "ol" }, g));
+    } else {
+      [[-12, -30, 16, "#4fa63c"], [12, -30, 16, "#4fa63c"], [0, -44, 20, "#5cb848"]].forEach(([dx, dy, r, c]) => el("circle", { cx: r1(bx + dx * s), cy: r1(by + dy * s), r: r1(r * s), fill: c, class: "ol" }, g));
+      el("circle", { cx: r1(bx - 6 * s), cy: r1(by - 50 * s), r: r1(6 * s), fill: "#86d36b" }, g);
+    }
+  }});
+  [[-4.6, 1.2, 1, "round"], [-4.1, 2.7, .85, "pine"], [-3.1, 3.7, 1, "round"], [4.6, -0.7, .9, "pine"], [2.0, -4.6, 1, "round"],
+   [-1.6, -4.4, .95, "pine"], [0.5, -4.4, .85, "round"], [-4.8, -0.6, .9, "pine"], [3.0, 4.0, .9, "round"], [5.0, 1.0, .8, "pine"], [3.6, -3.9, .8, "pine"]]
+    .forEach(t => tree(...t));
+
+  const building = (id, label, d, fn) => objs.push({ d, draw: root => {
+    const g = el("g", { class: "bldg", "data-b": id, tabindex: 0, role: "button", "aria-label": label }, root);
+    const lift = el("g", { class: "lift" }, g);
+    const pw = el("g", { class: "popw" }, lift);
+    const geo = el("g", { class: "geo" }, pw); geoGroups.push(geo);
+    const lit = el("g", { class: "lit" }, pw);
+    fn(geo, lit, pw);
+    hoverables[id] = (hoverables[id] || []).concat(g);
+  }});
+
+  // ---- Town Hall: to-dos
+  building("todo", "To-dos, Town Hall", 0.6, (geo, lit) => {
+    const c = P(0.3, 0.3); el("ellipse", { cx: c[0] + 10, cy: c[1] + 8, rx: 175, ry: 95, fill: "#000", opacity: .13 }, geo);
+    box(geo, -1.5, -1.5, 0, 3.6, 3.6, .35, "#cbc3b2");
+    box(geo, -1.1, -1.1, .35, 2.8, 2.8, 1.5, "#f2e1bb");
+    const [fl, ll] = faces(geo, lit, "L", -1.1, -1.1, .35, 2.8, 2.8, 1.5);
+    el("rect", { x: 0, y: 0, width: 2.8, height: .17, fill: "#d9c296" }, fl);
+    el("path", { d: "M1.05 1.5 V0.92 A0.35 0.35 0 0 1 1.75 0.92 V1.5 Z", fill: "#8a4f2a", class: "ol ol-n" }, fl);
+    el("path", { d: "M1.4 0.6 V1.5", stroke: "#2a2238", "stroke-width": 1.6, "vector-effect": "non-scaling-stroke" }, fl);
+    el("path", { d: "M1.05 1.5 V0.92 A0.35 0.35 0 0 1 1.75 0.92 V1.5 Z", fill: "#ffcf6a", filter: "url(#glow)" }, ll);
+    win(fl, ll, .3, .45, .45, .55); win(fl, ll, 2.05, .45, .45, .55);
+    const [fr, lr] = faces(geo, lit, "R", -1.1, -1.1, .35, 2.8, 2.8, 1.5);
+    el("rect", { x: 0, y: 0, width: 2.8, height: .17, fill: "#c4ad83" }, fr);
+    win(fr, lr, .3, .45, .45, .55); win(fr, lr, 1.18, .45, .45, .55); win(fr, lr, 2.05, .45, .45, .55);
+    box(geo, -0.05, 2.1, 0, .7, .42, .17, "#bdb4a2");
+    box(geo, -0.05, 2.1, .17, .7, .2, .18, "#cbc3b2");
+    pyramid(geo, -1.38, -1.38, 1.85, 3.36, 3.36, 1.55, "#d9473b");
+    // bunting in the four to-do colours
+    const bunt = ["#3767dc", "#dc4a36", "#e3a314", "#8656cf"];
+    for (let i = 0; i < 4; i++) {
+      const a = P(-1.38 + i * .84 + .1, 1.98, 1.85), b = P(-1.38 + i * .84 + .74, 1.98, 1.85);
+      el("path", { d: `M${r1(a[0])},${r1(a[1])} L${r1(b[0])},${r1(b[1])} L${r1((a[0] + b[0]) / 2)},${r1((a[1] + b[1]) / 2 + 16)} Z`, fill: bunt[i], class: "ol" }, geo);
+    }
+    const A = P(0.3, 0.3, 3.4);
+    el("line", { x1: A[0], y1: A[1], x2: A[0], y2: A[1] - 48, stroke: "#4a3f55", "stroke-width": 3.5, "stroke-linecap": "round" }, geo);
+    el("path", { d: `M${r1(A[0] + 1.5)} ${r1(A[1] - 47)} l32 8 l-32 10 z`, fill: "#ffcf3a", class: "ol flag" }, geo);
+    el("circle", { cx: A[0], cy: A[1] - 49, r: 4.5, fill: "#ffcf3a", class: "ol" }, geo);
+  });
+
+  // ---- Clock Tower: calendar
+  building("cal", "Calendar, Clock Tower", -4.6, (geo, lit) => {
+    const c = P(-3.1, -0.9); el("ellipse", { cx: c[0] + 8, cy: c[1] + 6, rx: 70, ry: 38, fill: "#000", opacity: .13 }, geo);
+    box(geo, -3.85, -1.65, 0, 1.5, 1.5, .3, "#cbc3b2");
+    box(geo, -3.75, -1.55, .3, 1.3, 1.3, 2.9, "#e3b074");
+    ["L", "R"].forEach(side => {
+      const [f, l] = faces(geo, lit, side, -3.75, -1.55, .3, 1.3, 1.3, 2.9);
+      el("rect", { x: 0, y: 1.15, width: 1.3, height: .08, fill: "#c99358" }, f);
+      el("circle", { cx: .65, cy: .6, r: .45, fill: "#fbf6e6", class: "ol ol-n" }, f);
+      for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; el("line", { x1: (.65 + Math.sin(a) * .35).toFixed(3), y1: (.6 - Math.cos(a) * .35).toFixed(3), x2: (.65 + Math.sin(a) * .41).toFixed(3), y2: (.6 - Math.cos(a) * .41).toFixed(3), stroke: "#2a2238", "stroke-width": i % 3 ? 1 : 2, "vector-effect": "non-scaling-stroke" }, f); }
+      const hh = el("line", { x1: .65, y1: .6, x2: .65, y2: .37, stroke: "#2a2238", "stroke-width": 3, "stroke-linecap": "round", "vector-effect": "non-scaling-stroke" }, f);
+      const mh = el("line", { x1: .65, y1: .6, x2: .65, y2: .27, stroke: "#2a2238", "stroke-width": 2, "stroke-linecap": "round", "vector-effect": "non-scaling-stroke" }, f);
+      clockHands.push([hh, mh]);
+      win(f, l, .48, 1.45, .34, .55);
+      if (side === "L") el("path", { d: "M.42 2.9 V2.48 A.23 .23 0 0 1 .88 2.48 V2.9 Z", fill: "#8a4f2a", class: "ol ol-n" }, f);
+    });
+    box(geo, -3.85, -1.65, 3.2, 1.5, 1.5, .18, "#d6cfbf");
+    pyramid(geo, -3.85, -1.65, 3.38, 1.5, 1.5, 1.6, "#6b4fc9");
+    const A = P(-3.1, -0.9, 4.98); el("circle", { cx: A[0], cy: A[1] - 4, r: 5, fill: "#ffcf3a", class: "ol" }, geo);
+  });
+
+  // ---- Post Office: mail
+  building("mail", "Mail, Post Office", 0.1, (geo, lit) => {
+    const c = P(2.7, -2.3); el("ellipse", { cx: c[0] + 8, cy: c[1] + 8, rx: 110, ry: 58, fill: "#000", opacity: .13 }, geo);
+    box(geo, 1.55, -3.25, 0, 2.3, 1.9, .22, "#cbc3b2");
+    box(geo, 1.65, -3.15, .22, 2.1, 1.7, 1.2, "#cf5a40");
+    const [fl, ll] = faces(geo, lit, "L", 1.65, -3.15, .22, 2.1, 1.7, 1.2);
+    el("path", { d: "M.25 1.2 V.62 A.25 .25 0 0 1 .75 .62 V1.2 Z", fill: "#5a3420", class: "ol ol-n" }, fl);
+    win(fl, ll, 1.1, .32, .65, .48);
+    el("rect", { x: 0, y: 0, width: 2.1, height: .12, fill: "#a8422d" }, fl);
+    const [fr, lr] = faces(geo, lit, "R", 1.65, -3.15, .22, 2.1, 1.7, 1.2);
+    el("rect", { x: 0, y: 0, width: 1.7, height: .12, fill: "#9a3b28" }, fr);
+    el("rect", { x: .35, y: .32, width: 1.0, height: .62, rx: .05, fill: "#fff7e6", class: "ol ol-n" }, fr);
+    el("path", { d: "M.35 .32 L.85 .7 L1.35 .32", fill: "none", stroke: "#2a2238", "stroke-width": 2, "vector-effect": "non-scaling-stroke" }, fr);
+    el("rect", { x: .35, y: .32, width: 1.0, height: .62, fill: "#fff2c4", filter: "url(#glow)" }, lr);
+    // gable roof, ridge along x
+    const z0 = 1.42, zr = 2.3, yb = -3.38, yf = -1.22, ym = -2.3, x0 = 1.5, x1 = 3.9;
+    poly(geo, [P(x0, yb, z0), P(x1, yb, z0), P(x1, ym, zr), P(x0, ym, zr)], "#2b5fb8");
+    poly(geo, [P(3.75, -3.15, z0), P(3.75, -1.45, z0), P(3.75, ym, zr - .05)], "#b74c35");
+    poly(geo, [P(x0, yf, z0), P(x1, yf, z0), P(x1, ym, zr), P(x0, ym, zr)], "#3c78d8");
+    poly(geo, [P(x1, yf, z0), P(x1, yf, z0 - .1), P(x1, ym, zr - .1), P(x1, ym, zr)], "#244f99");
+    box(geo, 2.0, -1.95, 1.75, .28, .28, .6, "#9a8f86");
+    // mailbox
+    box(geo, 4.0, -1.2, 0, .34, .34, .55, "#d9473b");
+    pyramid(geo, 3.98, -1.22, .55, .38, .38, .16, "#b83a30");
+  });
+
+  // ---- Plots for future buildings
+  const plot = (x, y, d) => objs.push({ d, draw: root => {
+    const g = el("g", { class: "plot", tabindex: 0, role: "button", "aria-label": "Empty plot for a future building" }, root);
+    const geo = el("g", { class: "geo" }, g); geoGroups.push(geo);
+    box(geo, x, y, 0, 1.4, 1.4, .08, "#b98a55");
+    for (let i = 0; i < 5; i++) { const p = P(x + .15 + i * .27, y + .2, .08); el("ellipse", { cx: r1(p[0]), cy: r1(p[1] + 4), rx: 7, ry: 3, fill: "#9b6f40" }, geo); }
+    [[x, y + 1.4], [x + 1.4, y + 1.4], [x + 1.4, y]].forEach(([fx, fy]) => box(geo, fx - .06, fy - .06, 0, .12, .12, .42, "#a8743f"));
+    const s = P(x + .7, y + .7, 0);
+    el("line", { x1: s[0], y1: s[1], x2: s[0], y2: s[1] - 44, stroke: "#6e4a2a", "stroke-width": 5, "stroke-linecap": "round" }, geo);
+    el("rect", { x: s[0] - 20, y: s[1] - 62, width: 40, height: 26, rx: 5, fill: "#e9c88f", class: "ol" }, geo);
+    el("path", { d: `M${s[0]} ${s[1] - 56} v14 M${s[0] - 7} ${s[1] - 49} h14`, stroke: "#6e4a2a", "stroke-width": 3.5, "stroke-linecap": "round" }, geo);
+    el("title", {}, g).textContent = "Empty plot";
+  }});
+  plot(3.0, 0.4, 4.4); plot(0.4, 3.0, 4.4);
+
+  // ---- Pier
+  objs.push({ d: 7.2, draw: root => {
+    const g = el("g", { class: "geo" }, root); geoGroups.push(g);
+    [[4.9, 2.55], [5.9, 2.55], [6.8, 2.55], [6.8, 3.2]].forEach(([x, y]) => box(g, x, y, -1.5, .14, .14, 1.42, "#7a5230"));
+    box(g, 3.8, 2.5, -.2, 3.15, .85, .14, "#c08a52");
+    for (let i = 1; i < 9; i++) { const a = P(3.8 + i * .35, 2.5, -.06), b = P(3.8 + i * .35, 3.35, -.06); el("line", { x1: r1(a[0]), y1: r1(a[1]), x2: r1(b[0]), y2: r1(b[1]), stroke: "#8e6236", "stroke-width": 1.5 }, g); }
+  }});
+
+  objs.sort((a, b) => a.d - b.d);
+  const objLayer = el("g", {}, svg);
+  objs.forEach(o => o.draw(objLayer));
+
+  // ---- Lightbulb balloon: ideas (floats above everything)
+  const bx = 284, by = 238, post = P(-1.05, 4.15, .62);
+  const bal = el("g", { class: "bldg", "data-b": "ideas", tabindex: 0, role: "button", "aria-label": "Ideas, Lightbulb Balloon" }, svg);
+  hoverables.ideas = [bal];
+  const lift = el("g", { class: "lift" }, bal), pw = el("g", { class: "popw" }, lift);
+  const pg = el("g", { class: "geo" }, svg.insertBefore(el("g", {}), bal)); geoGroups.push(pg);
+  box(pg, -1.15, 4.05, 0, .2, .2, .62, "#8a5a32");
+  const bob = el("g", { class: "bob" }, pw);
+  el("line", { x1: bx, y1: by + 158, x2: r1(post[0]), y2: r1(post[1]) + 40, stroke: "#5b4636", "stroke-width": 2, "stroke-dasharray": "5 4", id: "tether" }, bob);
+  el("circle", { id: "halo", cx: bx, cy: by, r: 110, fill: "url(#haloG)", opacity: .3 }, bob);
+  const bgeo = el("g", { class: "geo" }, bob); geoGroups.push(bgeo);
+  [[-17, -22], [17, 22], [-6, -8], [6, 8]].forEach(([a, b]) => el("line", { x1: bx + a, y1: by + 100, x2: bx + b, y2: by + 132, stroke: "#5b4636", "stroke-width": 2 }, bgeo));
+  el("path", { d: `M${bx - 24},${by + 130} h48 l-6,28 h-36 z`, fill: "#b07a3e", class: "ol" }, bgeo);
+  [138, 146].forEach(y => el("line", { x1: bx - 21, y1: by + y, x2: bx + 21, y2: by + y, stroke: "#7d5228", "stroke-width": 2 }, bgeo));
+  el("rect", { x: bx - 26, y: by + 126, width: 52, height: 7, rx: 3, fill: "#c99256", class: "ol" }, bgeo);
+  [[72, 40], [80, 38], [88, 34]].forEach(([y, w], i) => el("rect", { x: bx - w / 2, y: by + y, width: w, height: 8, rx: 4, fill: i % 2 ? "#a7adbb" : "#c9ceda", class: "ol" }, bgeo));
+  el("path", { d: `M${bx - 9},${by + 96} h18 l-4,6 h-10 z`, fill: "#5d6270", class: "ol" }, bgeo);
+  el("path", { d: `M${bx - 34},${by + 40} C${bx - 30},${by + 56} ${bx - 22},${by + 64} ${bx - 21},${by + 73} H${bx + 21} C${bx + 22},${by + 64} ${bx + 30},${by + 56} ${bx + 34},${by + 40} Z`, fill: "#f6c33a", class: "ol" }, bob);
+  el("circle", { cx: bx, cy: by, r: 58, fill: "url(#bulbG)", class: "ol" }, bob);
+  el("path", { d: `M${bx - 12},${by + 44} V${by + 14} l6,-10 l6,10 l6,-10 l6,10 V${by + 44}`, fill: "none", stroke: "#c4790c", "stroke-width": 3, "stroke-linejoin": "round", "stroke-linecap": "round" }, bob);
+  el("ellipse", { cx: bx - 24, cy: by - 24, rx: 12, ry: 18, fill: "#fff", opacity: .7, transform: `rotate(35 ${bx - 24} ${by - 24})` }, bob);
+
+  // ---- name plates
+  const plates = el("g", { id: "plates" }, svg);
+  const plate = (b, x, y, text) => {
+    const w = text.length * 10.5 + 30;
+    const pos = el("g", { transform: `translate(${x} ${y})` }, plates);
+    const g = el("g", { class: "plate", "data-b": b }, pos), inn = el("g", { class: "pl-in" }, g);
+    el("rect", { x: -w / 2, y: -13, width: w, height: 30, rx: 11, fill: "#1e1828" }, inn);
+    el("rect", { x: -w / 2, y: -16, width: w, height: 30, rx: 11, fill: "#3a3150", class: "pl-bg", stroke: "#1e1828", "stroke-width": 2.5 }, inn);
+    const t = el("text", { x: 0, y: 5.5, "text-anchor": "middle", "font-size": 17 }, inn); t.textContent = text;
+    const bub = el("g", { class: "bub", transform: `translate(${w / 2 - 2} -16)`, visibility: "hidden" }, inn);
+    el("circle", { r: 12.5, fill: "#e5483b", stroke: "#1e1828", "stroke-width": 2.5 }, bub);
+    el("text", { y: 5, "text-anchor": "middle", "font-size": 14, id: "bub-" + b }, bub);
+    hoverables[b] = (hoverables[b] || []).concat(g);
+  };
+  plate("todo", 500, 520, "To-dos");
+  plate("cal", 408, 30, "Calendar");
+  plate("mail", 724, 478, "Mail");
+  plate("ideas", 284, 500, "Ideas");
+}
+
+/* ================= TIME OF DAY ================= */
+const PH = {
+  dawn: { sky: ["#8193dc", "#ffcfa8"], sea: ["#6cb8d8", "#2f8fbf"], dim: [.95, .86, .9], lights: .35, stars: 0, sun: 1, moon: 0, clouds: .8 },
+  day: { sky: ["#56b0ec", "#c4e9fb"], sea: ["#5fcbe6", "#2aa1cc"], dim: null, lights: 0, stars: 0, sun: 1, moon: 0, clouds: 1 },
+  dusk: { sky: ["#4b4d9b", "#ff9e78"], sea: ["#5a88b8", "#2c5f93"], dim: [.86, .7, .8], lights: .8, stars: .35, sun: 0, moon: 0, clouds: .6 },
+  night: { sky: ["#0b1433", "#26396b"], sea: ["#21497a", "#11284a"], dim: [.42, .5, .72], lights: 1, stars: 1, sun: 0, moon: 1, clouds: .25 }
+};
+let curPhase = null;
+function applyPhase() {
+  const d = new Date(), h = d.getHours() + d.getMinutes() / 60;
+  const ph = h < 5.5 ? "night" : h < 7.5 ? "dawn" : h < 17.5 ? "day" : h < 19.5 ? "dusk" : "night";
+  if (ph === curPhase) return; curPhase = ph; const p = PH[ph];
+  $("#sk0").setAttribute("stop-color", p.sky[0]); $("#sk1").setAttribute("stop-color", p.sky[1]);
+  $("#se0").setAttribute("stop-color", p.sea[0]); $("#se1").setAttribute("stop-color", p.sea[1]);
+  document.documentElement.style.setProperty("--bg", p.sea[1]);
+  svg.style.setProperty("--lights", p.lights);
+  $("#stars").setAttribute("opacity", p.stars); $("#sun").setAttribute("opacity", p.sun); $("#moon").setAttribute("opacity", p.moon); $("#clouds").setAttribute("opacity", p.clouds);
+  if (p.dim) { $("#dR").setAttribute("slope", p.dim[0]); $("#dG").setAttribute("slope", p.dim[1]); $("#dB").setAttribute("slope", p.dim[2]); }
+  geoGroups.forEach(g => p.dim ? g.setAttribute("filter", "url(#dim)") : g.removeAttribute("filter"));
+}
+function tickClock() {
+  const d = new Date(), m = d.getMinutes(), h = d.getHours() % 12 + m / 60;
+  clockHands.forEach(([hh, mh]) => { hh.setAttribute("transform", `rotate(${r1(h * 30)} .65 .6)`); mh.setAttribute("transform", `rotate(${m * 6} .65 .6)`); });
+  $("#today").textContent = d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" }) + " · " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  applyPhase();
+}
+function fitView() {
+  const r = innerWidth / Math.max(1, innerHeight);
+  svg.setAttribute("viewBox", r < .75 ? "160 40 680 660" : "0 0 1000 720");
+}
+
+/* ================= DATES + PARSING ================= */
+const pad = n => String(n).padStart(2, "0");
+const isoD = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const fromISO = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const midnight = () => { const t = new Date(); t.setHours(0, 0, 0, 0); return t; };
+const dayDiff = s => Math.round((fromISO(s) - midnight()) / 864e5);
+function fmtDue(due, time) {
+  if (!due) return time || "";
+  const n = dayDiff(due), d = fromISO(due);
+  let s = n === 0 ? "Today" : n === 1 ? "Tomorrow" : n === -1 ? "Yesterday" : n > 1 && n < 7 ? d.toLocaleDateString("en-GB", { weekday: "short" }) : d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  return time ? s + " · " + time : s;
+}
+const CATS = { academic: "Academic", fitness: "Fitness", daily: "Daily", misc: "Misc" };
+const CAT_RX = [
+  ["fitness", /\b(gym|run|running|jog|jogging|legs?|leg day|push day|pull day|chest|back day|arms|shoulders|workout|work out|swim|swimming|stretch|stretching|yoga|football|rugby|tennis|squash|climb|climbing|bouldering|cardio|lift|lifting|training|cycle|cycling|hike|hiking|steps|protein|physio|pilates|5k|10k)\b/i],
+  ["academic", /\b(lecture|lec|tutorial|tut|lab|labs|coursework|cw|essay|exam|exams|revise|revision|module|assignment|homework|reading|problem ?sheets?|sheet|maths?|physics|mechanics|thermo\w*|electronics|materials|cad|solidworks|fusion ?360|report|deadline|project|uni|imperial|seminar|quiz|study|notes|lecture notes|prototype|sketch|portfolio|design brief|stagon)\b/i],
+  ["daily", /\b(buy|laundry|groceries|grocery|shop|shopping|clean|tidy|hoover|vacuum|cook|meal ?prep|wash|bins|pay|rent|bill|bank|call|ring|text|reply|book|appointment|dentist|doctor|gp|haircut|post|parcel|return|pick up|collect|charge|renew|dishes|iron|pack)\b/i]
+];
+const DOWS = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
+const MONS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+const END = "(?=[\\s,.!?;]|$)";
+function parseQuick(raw) {
+  let s = " " + raw + " ", kind = "todo", due = null, time = null, m;
+  const today = midnight();
+  const cut = rx => { const mm = s.match(rx); if (mm) s = s.slice(0, mm.index) + " " + s.slice(mm.index + mm[0].length); return mm; };
+  if (/^\s*idea\b\s*[:\-–]?/i.test(raw)) { kind = "idea"; s = " " + raw.replace(/^\s*idea\b\s*[:\-–]?\s*/i, "") + " "; }
+  if ((m = cut(new RegExp("\\s(?:at\\s+|@\\s*)?(\\d{1,2})(?:[:.](\\d{2}))?\\s*(am|pm)" + END, "i")))) { let h = +m[1] % 12; if (m[3].toLowerCase() === "pm") h += 12; time = pad(h) + ":" + (m[2] || "00"); }
+  else if ((m = cut(new RegExp("\\s(?:at\\s+|@\\s*)?([01]?\\d|2[0-3])[:.]([0-5]\\d)" + END)))) time = pad(+m[1]) + ":" + m[2];
+  const pre = "\\s(?:due\\s+|by\\s+|on\\s+|for\\s+)?";
+  if ((m = cut(new RegExp(pre + "(today|tonight|tdy)" + END, "i")))) { due = isoD(today); if (/tonight/i.test(m[1]) && !time) time = "19:00"; }
+  else if ((m = cut(new RegExp(pre + "(tomorrow|tmrw|tmr|tomoz|tmw)" + END, "i")))) due = isoD(addDays(today, 1));
+  else if ((m = cut(new RegExp(pre + "next\\s+week" + END, "i")))) due = isoD(addDays(today, (8 - today.getDay()) % 7 || 7));
+  else if ((m = cut(new RegExp(pre + "in\\s+(\\d{1,2})\\s+days?" + END, "i")))) due = isoD(addDays(today, +m[1]));
+  else if ((m = cut(new RegExp(pre + "(next\\s+|this\\s+)?(monday|mon|tuesday|tues|tue|wednesday|weds|wed|thursday|thurs|thur|thu|friday|fri|saturday|sat|sunday|sun)" + END, "i")))) {
+    const idx = DOWS[m[2].slice(0, 3).toLowerCase()]; let diff = (idx - today.getDay() + 7) % 7;
+    if (m[1] && /next/i.test(m[1]) && diff === 0) diff = 7;
+    due = isoD(addDays(today, diff));
+  }
+  else if ((m = cut(new RegExp(pre + "(\\d{1,2})(?:st|nd|rd|th)?\\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*" + END, "i")))) {
+    let d = new Date(today.getFullYear(), MONS.indexOf(m[2].slice(0, 3).toLowerCase()), +m[1]); if (d < today) d.setFullYear(d.getFullYear() + 1); due = isoD(d);
+  }
+  else if ((m = cut(new RegExp(pre + "(\\d{1,2})/(\\d{1,2})(?:/(\\d{2,4}))?" + END)))) {
+    let y = m[3] ? +m[3] : today.getFullYear(); if (y < 100) y += 2000;
+    let d = new Date(y, +m[2] - 1, +m[1]); if (!m[3] && d < today) d.setFullYear(y + 1); if (!isNaN(d)) due = isoD(d);
+  }
+  let title = s.replace(/\s+/g, " ").trim().replace(/^(due|by|on|at|for)\s+/i, "").replace(/\s+(due|by|on|at|for)$/i, "").replace(/[,;:\-–]+$/, "").trim();
+  if (title) title = title[0].toUpperCase() + title.slice(1);
+  let category = "misc";
+  for (const [c, rx] of CAT_RX) if (rx.test(raw)) { category = c; break; }
+  return { kind, title, category, due, time };
+}
+
+/* ================= STATE + STORE ================= */
+const st = { items: new Map(), mode: "loading", panel: null, wide: false, filter: "all", edit: null, showDone: false, chip: "auto", aiOff: false, busy: new Set() };
+let col = null, sample = null;
+const queues = {};
+function onDbErr(e) {
+  const c = e && e.code;
+  if (c === "quota_exceeded") toast("Your island is full. Delete some old items to add more.");
+  else if (c === "invalid_argument") toast("That change couldn't be saved.");
+  else if (c === "revoked") toast("Your island went read-only. Reload to reconnect.");
+  else toast("Couldn't reach your island just now. Try again in a moment.");
+}
+function enqueue(id, fn) { queues[id] = (queues[id] || Promise.resolve()).then(fn).catch(onDbErr); return queues[id]; }
+const store = {
+  newId: () => col ? col.doc().id : "d" + Math.random().toString(36).slice(2, 11),
+  set(id, obj) { st.items.set(id, obj); render(); if (col) enqueue(id, () => col.doc(id).set(obj)); },
+  update(id, patch) { const cur = st.items.get(id); if (!cur) return; st.items.set(id, { ...cur, ...patch }); render(); if (col) enqueue(id, () => col.doc(id).update(patch)); },
+  remove(id) { st.items.delete(id); render(); if (col) enqueue(id, () => col.doc(id).delete()); }
+};
+function demoData() {
+  const t = midnight(), mk = (o, i) => ["ex" + i, { done: false, doneAt: null, createdAt: Date.now() - i * 1e5, raw: o.title, manual: false, ai: false, example: true, due: null, time: null, ...o }];
+  st.items = new Map([
+    { kind: "todo", title: "Mechanics problem sheet", category: "academic", due: isoD(addDays(t, 2)) },
+    { kind: "todo", title: "Legs at the gym", category: "fitness", due: isoD(t), time: "18:00" },
+    { kind: "todo", title: "Laundry", category: "daily", due: isoD(t) },
+    { kind: "todo", title: "Reply to project group", category: "misc", due: isoD(addDays(t, -1)) },
+    { kind: "idea", title: "Island upgrades that grow over months" }
+  ].map(mk));
+}
+async function initData() {
+  const C = window.claude;
+  if (!C || typeof C.use !== "function") { st.mode = "demo"; demoData(); render(); return; }
+  const [db, user, smp] = await Promise.all(["db", "user", "sample"].map(n => C.use(n).catch(() => null)));
+  sample = smp;
+  const uid = user ? await user.id() : null;
+  if (!db || !uid) { st.mode = "demo"; demoData(); render(); return; }
+  col = db.doc(`data/users/${uid}/island`).collection("items");
+  col.onSnapshot(snap => {
+    st.items = new Map(snap.docs.map(d => [d.id, d.data()]));
+    st.mode = "live"; render();
+  }, () => toast("Lost the connection to your island. Reload to reconnect."));
+}
+
+/* ================= CLAUDE ================= */
+const OFF_CODES = ["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"];
+function aiFail(e) {
+  const c = e && e.code;
+  if (OFF_CODES.includes(c)) { if (!st.aiOff) toast("Claude sorting is off, so items are sorted by keywords."); st.aiOff = true; }
+  else if (c === "rate_limited") toast("Claude is busy. Your item is saved as typed.");
+}
+async function refine(id, obj) {
+  if (!sample || st.aiOff) return;
+  const now = new Date();
+  const prompt = `You file quick notes into a university student's personal organiser. Today is ${now.toLocaleDateString("en-GB", { weekday: "long" })} ${isoD(now)} (UK).
+Note: """${obj.raw.slice(0, 500)}"""
+Reply with only JSON: {"kind":"todo"|"idea","title":string,"category":"academic"|"fitness"|"daily"|"misc","due":"YYYY-MM-DD"|null,"time":"HH:MM"|null}
+Rules:
+- title: the note as a short clear task in the student's own words, without date or time words, first letter capitalised, max 70 characters.
+- kind "idea" only for a thought or something to explore later, not an action with a clear next step.
+- academic = lectures, coursework, revision, uni projects; fitness = gym, sport, training; daily = chores, errands, life admin; misc = anything else.
+- Resolve relative dates against today ("fri" = the coming Friday, today if today is Friday; "next week" = next Monday). due is null when no date is mentioned. time uses 24h.`;
+  try {
+    const r = await sample.json(prompt, { modelTier: "quick" });
+    const cur = st.items.get(id);
+    if (!cur || cur.edited || !r || typeof r !== "object") return;
+    const patch = { ai: true };
+    if (typeof r.title === "string" && r.title.trim()) patch.title = r.title.trim().slice(0, 140);
+    if (!obj.manual) { if (r.kind === "idea" || r.kind === "todo") patch.kind = r.kind; if (CATS[r.category]) patch.category = r.category; }
+    if (r.due === null || /^\d{4}-\d{2}-\d{2}$/.test(r.due)) patch.due = r.due;
+    if (r.time === null || /^\d{2}:\d{2}$/.test(r.time)) patch.time = r.time;
+    store.update(id, patch);
+  } catch (e) { aiFail(e); }
+}
+async function ideaSteps(id) {
+  const it = st.items.get(id); if (!it || !sample || st.busy.has(id)) return;
+  st.busy.add(id); render();
+  try {
+    const r = await sample.json(`A student jotted down this idea: """${it.title.slice(0, 400)}"""
+Suggest 3 concrete, small next steps to explore it this week. Reply with only a JSON array of 3 strings, each under 14 words.`, { modelTier: "quick" });
+    if (Array.isArray(r)) store.update(id, { steps: r.slice(0, 4).map(x => String(x).slice(0, 120)) });
+  } catch (e) { aiFail(e); if (!OFF_CODES.includes(e && e.code) && e?.code !== "rate_limited") toast("Couldn't get next steps. Try again."); }
+  st.busy.delete(id); render();
+}
+
+/* ================= UI: icons ================= */
+const ICON = {
+  todo: '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.5 9.5 12 3.5l9.5 6v1.5h-19z"/><rect x="4.5" y="12.5" width="2.6" height="6.5" rx=".6"/><rect x="10.7" y="12.5" width="2.6" height="6.5" rx=".6"/><rect x="16.9" y="12.5" width="2.6" height="6.5" rx=".6"/><rect x="2.5" y="19.5" width="19" height="2" rx="1"/></svg>',
+  cal: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+  mail: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m3.5 7 8.5 6.5L20.5 7"/></svg>',
+  ideas: '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5a7 7 0 0 0-4.2 12.6c.7.5 1.2 1.3 1.2 2.2V18h6v-.7c0-.9.5-1.7 1.2-2.2A7 7 0 0 0 12 2.5z"/><rect x="9" y="19" width="6" height="2.6" rx="1.3"/></svg>',
+  x: '<svg width="18" height="18" viewBox="0 0 18 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m4 4 10 10M14 4 4 14"/></svg>'
+};
+const TICK = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7.4l2.7 2.7L11.2 4.4" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const SPARK = '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0l1.4 4.6L12 6l-4.6 1.4L6 12l-1.4-4.6L0 6l4.6-1.4z" fill="currentColor"/></svg>';
+const BINFO = {
+  todo: { t: "To-dos", s: "Town Hall", c: "var(--b-todo)" },
+  cal: { t: "Calendar", s: "Clock Tower", c: "var(--b-cal)" },
+  mail: { t: "Mail", s: "Post Office", c: "var(--b-mail)" },
+  ideas: { t: "Ideas", s: "Lightbulb Balloon", c: "var(--b-ideas)" }
+};
+
+/* ================= UI: derived data ================= */
+const todos = () => [...st.items].filter(([, it]) => it.kind !== "idea");
+const ideas = () => [...st.items].filter(([, it]) => it.kind === "idea").sort((a, b) => b[1].createdAt - a[1].createdAt);
+const sortT = (a, b) => (a[1].due || "9999").localeCompare(b[1].due || "9999") || (a[1].time || "99").localeCompare(b[1].time || "99") || a[1].createdAt - b[1].createdAt;
+function dueNowCount() { return todos().filter(([, it]) => !it.done && it.due && dayDiff(it.due) <= 0).length; }
+
+/* ================= UI: panels ================= */
+const sheet = $("#sheet");
+function itemHTML(id, it) {
+  const n = it.due ? dayDiff(it.due) : null, over = !it.done && n !== null && n < 0;
+  const meta = [
+    it.due || it.time ? `<span class="tag${over ? " over" : ""}">${esc(fmtDue(it.due, it.time))}</span>` : "",
+    `<span class="tag"><i class="cat-dot"></i>${CATS[it.category] || "Misc"}</span>`,
+    it.example ? `<span class="tag ex">Example</span>` : "",
+    it.ai ? `<span class="ai" title="Tidied up by Claude">${SPARK}<span class="sr">Tidied up by Claude</span></span>` : ""
+  ].join("");
+  let h = `<li class="item${it.done ? " done" : ""}" data-id="${id}" style="--c:var(--c-${CATS[it.category] ? it.category : "misc"})">
+    <button class="ck" data-act="toggle" aria-label="${it.done ? "Mark not done" : "Mark done"}: ${esc(it.title)}">${TICK}</button>
+    <div><button class="ttl" data-act="edit" aria-expanded="${st.edit === id}">${esc(it.title)}</button><div class="meta">${meta}</div></div></li>`;
+  if (st.edit === id) h += `<li class="edit" data-id="${id}">
+    <label>Task<input id="ed-title" value="${esc(it.title)}" maxlength="140"></label>
+    <div class="chips" role="radiogroup" aria-label="Category">${Object.entries(CATS).map(([k, v]) => `<button class="chip" role="radio" data-act="setcat" data-cat="${k}" aria-checked="${it.category === k}" style="--c:var(--c-${k})"><i class="dot"></i>${v}</button>`).join("")}</div>
+    <div class="row"><label>Date<input id="ed-due" type="date" value="${it.due || ""}"></label><label>Time<input id="ed-time" type="time" value="${it.time || ""}"></label></div>
+    <div class="acts"><button class="btn primary" data-act="save">Save</button><button class="btn" data-act="toidea">Move to Ideas</button><button class="btn danger" data-act="del">Delete</button><button class="btn ghost" data-act="cancel">Cancel</button></div></li>`;
+  return h;
+}
+function todoBody() {
+  const all = todos();
+  const open = all.filter(([, it]) => !it.done);
+  const counts = { all: open.length }; Object.keys(CATS).forEach(k => counts[k] = open.filter(([, it]) => it.category === k).length);
+  const f = st.filter;
+  let h = st.mode === "demo" ? `<div class="banner">Preview mode. Open this from your Claude account to save your own to-dos. The items below are examples.</div>` : "";
+  h += `<div class="filters" role="radiogroup" aria-label="Filter">` +
+    [["all", "All"], ...Object.entries(CATS)].map(([k, v]) => `<button class="chip" role="radio" data-act="filter" data-f="${k}" aria-checked="${f === k}" ${k !== "all" ? `style="--c:var(--c-${k})"` : ""}>${k !== "all" ? '<i class="dot"></i>' : ""}${v} <span class="n">${counts[k]}</span></button>`).join("") + `</div>`;
+  const vis = open.filter(([, it]) => f === "all" || it.category === f).sort(sortT);
+  const G = [["over", "Overdue", n => n < 0], ["today", "Today", n => n === 0], ["tom", "Tomorrow", n => n === 1], ["week", "This week", n => n > 1 && n <= 7], ["later", "Later", n => n > 7], ["none", "Anytime", null]];
+  if (!vis.length) {
+    h += `<div class="empty"><b>${all.length ? "All clear" : "Nothing here yet"}</b>${all.length ? "Nothing open" + (f !== "all" ? " in " + CATS[f] : "") + ". Enjoy it." : "Type in the bar below and press Enter. Try “problem sheet due fri” or “gym legs tomorrow 7am”."}</div>`;
+  }
+  for (const [k, label, test] of G) {
+    const rows = vis.filter(([, it]) => test ? it.due && test(dayDiff(it.due)) : !it.due);
+    if (!rows.length) continue;
+    h += `<section class="grp"><div class="grp-h${k === "over" ? " over" : ""}">${label} <span class="n">${rows.length}</span></div><ul>${rows.map(([id, it]) => itemHTML(id, it)).join("")}</ul></section>`;
+  }
+  const done = all.filter(([, it]) => it.done && (f === "all" || it.category === f) && Date.now() - (it.doneAt || 0) < 7 * 864e5).sort((a, b) => (b[1].doneAt || 0) - (a[1].doneAt || 0));
+  if (done.length) {
+    h += `<button class="done-toggle" data-act="showdone" aria-expanded="${st.showDone}">${st.showDone ? "▾" : "▸"} Done this week · ${done.length}</button>`;
+    if (st.showDone) h += `<ul>${done.map(([id, it]) => itemHTML(id, it)).join("")}</ul>`;
+  }
+  return h;
+}
+function calBody() {
+  const t = midnight(); const all = todos().filter(([, it]) => !it.done && it.due);
+  let h = `<h3 class="sec-h">Next 7 days</h3><div class="week">`;
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(t, i), k = isoD(d), its = all.filter(([, it]) => it.due === k);
+    h += `<div class="day${i === 0 ? " today" : ""}"><small>${d.toLocaleDateString("en-GB", { weekday: "short" })}</small><strong>${d.getDate()}</strong><span class="dots">${its.slice(0, 4).map(([, it]) => `<i style="--c:var(--c-${it.category})"></i>`).join("")}</span></div>`;
+  }
+  h += `</div><h3 class="sec-h">Today from your to-dos</h3>`;
+  const today = all.filter(([, it]) => it.due === isoD(t)).sort(sortT);
+  h += today.length ? today.map(([, it]) => `<div class="trow"><time>${it.time || "Any time"}</time><span class="t">${esc(it.title)}</span></div>`).join("") : `<div class="empty" style="padding:12px">Nothing due today.</div>`;
+  h += `<div class="soon"><h4>Outlook comes next</h4><p>The next build connects your Imperial and personal Outlook calendars, plus your Outlook reminders, so your whole day shows here.</p>
+    <div class="ghost"><div class="trow"><time>09:00</time><span class="t">Lecture <span class="tag ex">Example</span></span></div><div class="trow"><time>14:00</time><span class="t">Design studio <span class="tag ex">Example</span></span></div><div class="trow"><time>18:30</time><span class="t">Reminder: pack gym bag <span class="tag ex">Example</span></span></div></div></div>`;
+  return h;
+}
+function mailBody() {
+  return `<div class="soon" style="margin-top:4px"><h4>Opening soon</h4><p>The Post Office will read Gmail and Outlook each morning, pull out what needs you, and sum up everything else in a few lines. Below is how it will look.</p></div>
+  <h3 class="sec-h">Needs you <span class="tag ex">Example</span></h3>
+  <div class="mail ghost"><div class="from">Module leader</div><div class="sub">Coursework brief updated</div><div class="why">Deadline moved a week later. Worth checking the new marking scheme.</div></div>
+  <div class="mail ghost"><div class="from">Project group</div><div class="sub">Can we meet Thursday?</div><div class="why">Asks for your availability. Needs a reply.</div></div>
+  <h3 class="sec-h">Everything else <span class="tag ex">Example</span></h3>
+  <p class="ghost" style="margin:0 6px;line-height:1.55;color:var(--ink-2)">6 newsletters, 2 delivery updates and a society event invite. Nothing urgent.</p>`;
+}
+function ideasBody() {
+  const list = ideas();
+  let h = st.mode === "demo" ? `<div class="banner">Preview mode. The idea below is an example.</div>` : "";
+  if (!list.length) return h + `<div class="empty"><b>No ideas floating yet</b>Start a note with “idea:” or pick the Idea chip below, then press Enter.</div>`;
+  return h + list.map(([id, it]) => `<article class="idea" data-id="${id}"><h4>${esc(it.title)}</h4><div class="when">${new Date(it.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}${it.example ? ' · <span class="tag ex">Example</span>' : ""}</div>
+    ${Array.isArray(it.steps) && it.steps.length ? `<ol>${it.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
+    <div class="acts">${sample && !st.aiOff ? `<button class="btn" data-act="steps" ${st.busy.has(id) ? "disabled" : ""}>${st.busy.has(id) ? "Thinking…" : it.steps ? "New next steps" : "Next steps"}</button>` : ""}<button class="btn" data-act="totodo">Make it a to-do</button><button class="btn danger" data-act="del">Delete</button></div></article>`).join("");
+}
+function sheetSub(b) {
+  if (b === "todo") { const n = dueNowCount(), o = todos().filter(([, it]) => !it.done).length; return `${BINFO.todo.s} · ${o} open${n ? ` · ${n} due now` : ""}`; }
+  if (b === "ideas") { const n = ideas().length; return `${BINFO.ideas.s} · ${n} idea${n === 1 ? "" : "s"}`; }
+  return BINFO[b].s;
+}
+function openPanel(b, wide = false) {
+  st.panel = b; st.wide = wide; st.edit = null;
+  sheet.hidden = false; sheet.classList.toggle("wide", wide);
+  sheet.style.setProperty("--c", BINFO[b].c);
+  sheet.innerHTML = `<div class="sh-head"><div class="sh-icon">${ICON[b]}</div><div><div class="sh-title" id="shTitle">${BINFO[b].t}</div><div class="sh-sub" id="shSub"></div></div><button class="icon-btn" data-act="close" aria-label="Close">${ICON.x}</button></div><div class="sh-body" id="shBody"></div>`;
+  $("#app").classList.toggle("sheet-open", true); $("#app").classList.toggle("wide-open", wide);
+  $("#vIsland").setAttribute("aria-pressed", String(!wide)); $("#vList").setAttribute("aria-pressed", String(wide));
+  setChip(b === "ideas" ? "idea" : "auto");
+  Object.keys(hoverables).forEach(k => setUp(k, k === b));
+  renderPanel();
+  try { localStorage.setItem("island.view", wide ? "list" : "island"); } catch (e) {}
+}
+function closePanel() {
+  st.panel = null; st.edit = null; sheet.hidden = true; sheet.innerHTML = "";
+  $("#app").classList.remove("sheet-open", "wide-open");
+  $("#vIsland").setAttribute("aria-pressed", "true"); $("#vList").setAttribute("aria-pressed", "false");
+  setChip("auto"); Object.keys(hoverables).forEach(k => setUp(k, false));
+  try { localStorage.setItem("island.view", "island"); } catch (e) {}
+}
+function renderPanel() {
+  if (!st.panel) return;
+  const body = $("#shBody"); if (!body) return;
+  const a = document.activeElement;
+  if (a && body.contains(a) && a.tagName === "INPUT") return; // don't yank an open editor
+  $("#shSub").textContent = st.mode === "loading" ? BINFO[st.panel].s : sheetSub(st.panel);
+  if (st.mode === "loading" && (st.panel === "todo" || st.panel === "ideas")) { body.innerHTML = `<div class="loading">Opening your island…</div>`; return; }
+  const top = body.scrollTop;
+  body.innerHTML = st.panel === "todo" ? todoBody() : st.panel === "cal" ? calBody() : st.panel === "mail" ? mailBody() : ideasBody();
+  body.scrollTop = top;
+}
+
+/* ================= UI: scene state ================= */
+function setUp(b, on) { (hoverables[b] || []).forEach(g => g.classList.toggle("up", on)); }
+function pulse(b) { (hoverables[b] || []).forEach(g => { const p = g.querySelector(".popw"); if (p) { p.classList.remove("pop"); void p.getBBox(); p.classList.add("pop"); } }); }
+function setBubble(b, n) {
+  const t = document.getElementById("bub-" + b); if (!t) return;
+  t.textContent = n > 99 ? "99+" : String(n); t.parentNode.setAttribute("visibility", n > 0 ? "visible" : "hidden");
+}
+function render() {
+  setBubble("todo", st.mode === "loading" ? 0 : dueNowCount());
+  const ni = ideas().length;
+  setBubble("ideas", st.mode === "loading" ? 0 : ni);
+  const halo = $("#halo"); if (halo) halo.setAttribute("opacity", r1(Math.min(1, .25 + ni * .15)));
+  const tb = document.querySelector('.bldg[data-b="todo"]'); if (tb) tb.setAttribute("aria-label", `To-dos, Town Hall. ${dueNowCount()} due now.`);
+  renderPanel();
+}
+
+/* ================= UI: quick add ================= */
+const qInput = $("#qInput"), qHint = $("#qHint");
+const CHIPS = [["auto", "Auto", null], ["academic", "Academic", "var(--c-academic)"], ["fitness", "Fitness", "var(--c-fitness)"], ["daily", "Daily", "var(--c-daily)"], ["misc", "Misc", "var(--c-misc)"], ["idea", "Idea", "var(--c-idea)"]];
+$("#qChips").innerHTML = CHIPS.map(([k, v, c]) => `<button type="button" class="chip" role="radio" data-chip="${k}" aria-checked="${k === "auto"}" ${c ? `style="--c:${c}"` : ""}>${c ? '<i class="dot"></i>' : SPARK}${v}</button>`).join("");
+function setChip(k) { st.chip = k; document.querySelectorAll("#qChips .chip").forEach(b => b.setAttribute("aria-checked", String(b.dataset.chip === k))); updateHint(); }
+function resolve(raw) {
+  const p = parseQuick(raw); let kind = p.kind, category = p.category;
+  if (st.chip === "idea") kind = "idea"; else if (st.chip !== "auto") { kind = "todo"; category = st.chip; }
+  return { ...p, kind, category };
+}
+function updateHint() {
+  const raw = qInput.value.trim();
+  if (!raw) { qHint.innerHTML = st.chip === "auto" ? `Claude sorts it for you` : `Goes to <b>${st.chip === "idea" ? "Ideas" : CATS[st.chip]}</b>`; return; }
+  const r = resolve(raw);
+  qHint.innerHTML = `→ <b>${r.kind === "idea" ? "Ideas" : CATS[r.category]}</b>${r.kind !== "idea" && (r.due || r.time) ? " · " + esc(fmtDue(r.due, r.time)) : ""}`;
+}
+$("#qChips").addEventListener("click", e => { const b = e.target.closest("[data-chip]"); if (b) { setChip(b.dataset.chip); qInput.focus(); } });
+qInput.addEventListener("input", updateHint);
+$("#quick").addEventListener("submit", e => {
+  e.preventDefault();
+  const raw = qInput.value.trim(); if (!raw) { qInput.focus(); return; }
+  if (st.mode === "loading") { toast("Still opening your island. Try again in a second."); return; }
+  const r = resolve(raw);
+  const obj = { kind: r.kind, title: r.title || raw, category: r.category, due: r.kind === "idea" ? null : r.due, time: r.kind === "idea" ? null : r.time, done: false, doneAt: null, createdAt: Date.now(), raw, manual: st.chip !== "auto", ai: false };
+  const id = store.newId(); store.set(id, obj);
+  qInput.value = ""; updateHint();
+  toast(`Added to ${obj.kind === "idea" ? "Ideas" : CATS[obj.category]}${obj.due ? " · " + fmtDue(obj.due, obj.time) : ""}`, "Undo", () => store.remove(id));
+  pulse(obj.kind === "idea" ? "ideas" : "todo");
+  refine(id, obj);
+});
+
+/* ================= UI: events ================= */
+let toastT;
+function toast(msg, label, fn) {
+  const t = $("#toast"); clearTimeout(toastT);
+  t.innerHTML = `<span></span>${label ? `<button type="button">${esc(label)}</button>` : ""}`;
+  t.firstChild.textContent = msg; t.hidden = false;
+  if (label) t.querySelector("button").onclick = () => { t.hidden = true; fn(); };
+  toastT = setTimeout(() => t.hidden = true, label ? 5000 : 3600);
+}
+svg.addEventListener("click", e => {
+  const b = e.target.closest(".bldg"); if (b) { const k = b.dataset.b; st.panel === k && !st.wide ? closePanel() : openPanel(k); return; }
+  if (e.target.closest(".plot")) toast("An empty plot. Future buildings go here, like a Library for module deadlines or an Arena for training.");
+});
+svg.addEventListener("keydown", e => { if (e.key !== "Enter" && e.key !== " ") return; const b = e.target.closest(".bldg"); if (b) { e.preventDefault(); openPanel(b.dataset.b); } else if (e.target.closest(".plot")) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent("click", { bubbles: true })); } });
+["pointerover", "focusin"].forEach(ev => svg.addEventListener(ev, e => { const b = e.target.closest(".bldg"); if (b) setUp(b.dataset.b, true); }));
+["pointerout", "focusout"].forEach(ev => svg.addEventListener(ev, e => { const b = e.target.closest(".bldg"); if (b && b.dataset.b !== st.panel && !(e.relatedTarget && b.contains(e.relatedTarget))) setUp(b.dataset.b, false); }));
+$("#vIsland").onclick = () => closePanel();
+$("#vList").onclick = () => openPanel("todo", true);
+
+sheet.addEventListener("click", e => {
+  const a = e.target.closest("[data-act]"); if (!a) return;
+  const act = a.dataset.act, row = a.closest("[data-id]"), id = row && row.dataset.id, it = id && st.items.get(id);
+  if (act === "close") return closePanel();
+  if (act === "filter") { st.filter = a.dataset.f; return renderPanel(); }
+  if (act === "showdone") { st.showDone = !st.showDone; return renderPanel(); }
+  if (!it) return;
+  if (act === "toggle") { const done = !it.done; store.update(id, { done, doneAt: done ? Date.now() : null }); if (done) { pulse("todo"); toast("Done: " + it.title, "Undo", () => store.update(id, { done: false, doneAt: null })); } }
+  else if (act === "edit") { st.edit = st.edit === id ? null : id; renderPanel(); const t = $("#ed-title"); if (t) t.focus(); }
+  else if (act === "setcat") { row.querySelectorAll("[data-act=setcat]").forEach(c => c.setAttribute("aria-checked", String(c === a))); row.dataset.cat = a.dataset.cat; }
+  else if (act === "save") {
+    const title = $("#ed-title").value.trim() || it.title;
+    const patch = { title, due: $("#ed-due").value || null, time: $("#ed-time").value || null, category: row.dataset.cat || it.category, edited: true };
+    st.edit = null; a.blur(); store.update(id, patch);
+  }
+  else if (act === "cancel") { st.edit = null; a.blur(); renderPanel(); }
+  else if (act === "del") { st.edit = null; a.blur(); const copy = { ...it }; store.remove(id); toast("Deleted", "Undo", () => store.set(id, copy)); }
+  else if (act === "toidea") { st.edit = null; a.blur(); store.update(id, { kind: "idea", due: null, time: null, edited: true }); toast("Moved to Ideas"); pulse("ideas"); }
+  else if (act === "totodo") { store.update(id, { kind: "todo", category: it.category || "misc", edited: true }); toast("Now a to-do in the Town Hall"); pulse("todo"); }
+  else if (act === "steps") ideaSteps(id);
+});
+sheet.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.closest(".edit input")) { e.preventDefault(); const s = sheet.querySelector("[data-act=save]"); s && s.click(); } });
+document.addEventListener("keydown", e => {
+  const typing = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || "");
+  if (e.key === "Escape") { if (typing) document.activeElement.blur(); else if (st.panel) closePanel(); return; }
+  if (!typing && (e.key === "n" || e.key === "/") && !e.metaKey && !e.ctrlKey) { e.preventDefault(); qInput.focus(); }
+});
+new ResizeObserver(() => document.documentElement.style.setProperty("--qh", $("#quick").offsetHeight + "px")).observe($("#quick"));
+addEventListener("resize", fitView);
+
+/* ================= boot ================= */
+drawScene(); fitView(); tickClock(); updateHint(); render();
+setInterval(tickClock, 30000);
+let startView = "island"; try { startView = localStorage.getItem("island.view") || "island"; } catch (e) {}
+if (startView === "list") openPanel("todo", true);
+initData();
+})();
+</script>
