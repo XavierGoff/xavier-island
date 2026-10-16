@@ -1,5 +1,35 @@
 # Devlog
 
+## #002 · 16 Oct 2026 · Steam by day, neon by night
+
+**Feedback on v0.1:** it looked too childish, everything was crammed together, and it needed far more detail.
+
+**Direction:** steampunk architecture that switches to neon after dark. It's driven by the real clock, so the island changes through the day: dawn, day, dusk, night.
+
+**What changed**
+- **Floating sky island.** The island is now a chunk of rock floating above a sea of clouds. The underside is layered strata with glowing crystals and hanging chains, and four brass levitation engines with spinning rotors hold it up.
+- **Much bigger and more spread out.** The island is about 3× the area, with cobbled lanes and plazas between the buildings.
+- **Pan and zoom.** Drag, scroll or pinch to move around. Tapping a building flies the camera to it, and a button recentres the view. The brass plaques are HTML, so they stay sharp at any zoom.
+- **Every building redrawn with much more detail:**
+  - **Guildhall (To-dos):** brick hall with stone columns, two rotating gear rose-windows, a verdigris mansard roof with porthole dormers, a brass drum and dome, steaming chimneys and pressure gauges. At night: a cyan "TO-DOS" neon sign with magenta trim.
+  - **Clock Tower (Calendar):** an exposed gear train of four meshing gears, a 60-tick clock face showing the real time, and a spire with pinnacles. At night: neon rings around the clock faces.
+  - **Pneumatic Post (Mail):** a riveted iron hall with a glass skylight and a copper sorting drum. Glass tubes run on posts to the Guildhall and the Clock Tower, with capsules moving through them. At night: a neon envelope sign.
+  - **Lightbulb Airship (Ideas):** a glass bulb inside a brass cage, with a wooden gondola, propellers and fins, moored to a lattice mast. The filament glows at night, and the halo gets brighter as you add ideas.
+- **New scenery:** a steam generator with copper boilers, a smokestack and a big ground gear; a water tower; a building site with a crane and scaffolding; gas lamps along the lanes; cypress trees; an iron railing around the edge; distant floating islets.
+- **Night mode:** a colour-matrix filter darkens the island, and a separate glow layer adds lit windows, neon tubes, gas lamps, crystals and the capsules in the tubes.
+- **UI restyle:** industrial signage type (Big Shoulders), engineering body and mono (IBM Plex), brass plaques and buttons, with cyan as the interactive accent in dark mode.
+
+**Engineering notes**
+- New primitives: `frustum` (mansard roofs), `cyl` and `dome` (shaded with metal gradients), `gearD` (procedural gear teeth with lightening holes), and `faceG(..., "T")` for drawing flat on the ground. That last one is how the big generator gear lies flat and spins.
+- The camera stores `{cx, cy, w}` and derives the `viewBox` from the stage's aspect ratio, so resizing (for example when the side panel opens) keeps the view centred.
+
+**Next**
+- [ ] Use it for a week and note any friction
+- [ ] Test Outlook access (Imperial + personal)
+- [ ] Maybe: sound design (opt-in), more ambient life (birds, a small airship patrol)
+
+**Media:** `media/v0.2-island-day.png`, `media/v0.2-island-night.png`, `media/v0.2-guildhall-night.png`
+
 ## #001 · 16 Oct 2026 · From a reel to a working Town Hall
 
 **Where it started:** I saw a reel of someone who turned their daily organisation into an island, with a building for each part of their life. I use Notes and Calendar right now, and I wanted something more fun that still makes my day easier rather than distracting me from it.
