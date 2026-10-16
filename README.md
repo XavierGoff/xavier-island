@@ -1,4 +1,4 @@
-# Xavier's Island
+# Island Organisation
 
 A personal organiser you can explore as a little isometric island. Each building looks after one part of your life, and Claude runs in the background to sort what you add.
 
