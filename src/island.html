@@ -2,264 +2,373 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Tilt+Neon&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Tilt+Neon&family=VT323&display=swap">
 <style>
-/* Layout: a pannable floating sky-island (brass by day, neon by night) with an engineer's HUD: plaque bar, quick-add console, building sheet. */
+/* Layout: a floating neon sky-island you pan around. The HUD is in-world signage: a neon-tube title with an LED ticker,
+   a neon switch, a holo console for quick-add, and neon-framed building panels. One committed night look. */
 :root{
-  --ink:#1f1b16; --ink-2:#5a5247; --ink-3:#8a8173;
-  --panel:#eef1ef; --panel-2:#e1e6e3; --line:#cbd2ce; --hud:rgba(238,241,239,.9);
-  --brass:#9c6c1c; --brass-hi:#d8ab52; --brass-lo:#5e3f12; --iron:#2a2e33;
-  --accent:#0a8597; --accent-ink:#ffffff; --alert:#c4312f; --focus:#0a8597;
-  --c-academic:#1f6fbf; --c-fitness:#c2325f; --c-daily:#a8740a; --c-misc:#1f7f6c; --c-idea:#a87c06;
-  --b-todo:#9c6c1c; --b-cal:#b02f6b; --b-mail:#0a8597; --b-ideas:#a87c06;
-  --bg:#c9d9dc;
-  --plaque-a:#efcf86; --plaque-b:#b98a35; --plaque-c:#7d561c; --plaque-ink:#2a1b07; --plaque-edge:#3a2810;
-  --f-display:"Big Shoulders Display","Oswald","Arial Narrow",Impact,sans-serif;
+  color-scheme:dark;
+  --ink:#f1ecff; --ink-2:#b4aad8; --ink-3:#7d74a6;
+  --panel:#0e0b1f; --panel-2:#1a1534; --line:#2f2752; --wire:#3b3166;
+  --pink:#ff4fa8; --cyan:#35e6ff; --violet:#b46cff; --amber:#ffc83d; --lime:#7dff6a;
+  --accent:#ff4fa8; --accent-ink:#1d0414; --alert:#ff6a86; --focus:#35e6ff;
+  --c-academic:#5aa8ff; --c-fitness:#ff4f9a; --c-daily:#ffc83d; --c-misc:#3fffc8; --c-idea:#ffe14d;
+  --b-todo:#35e6ff; --b-cal:#ff4fa8; --b-mail:#b46cff; --b-ideas:#ffe14d;
+  --g-todo:#35e6ff; --g-cal:#ff4fa8; --g-mail:#b46cff; --g-ideas:#ffe14d;
+  --bg:#0a0820;
+  --f-neon:"Tilt Neon","Chakra Petch",system-ui,sans-serif;
+  --f-display:"Chakra Petch","Eurostile","Arial Narrow",system-ui,sans-serif;
   --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
-  --r-lg:16px; --r-md:11px;
-  --shadow:0 14px 34px rgba(18,14,8,.24),0 2px 6px rgba(18,14,8,.14);
-  --qh:118px;
+  --f-led:"VT323","IBM Plex Mono",ui-monospace,monospace;
+  --qh:122px;
+  --cut:14px;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --ink:#efe6d3; --ink-2:#b4a790; --ink-3:#847965;
-  --panel:#16130f; --panel-2:#221d17; --line:#3a3128; --hud:rgba(22,19,15,.88);
-  --brass:#d6a64e; --brass-hi:#f0cd84; --brass-lo:#7a5520;
-  --accent:#3fe0f0; --accent-ink:#071417; --alert:#ff5f5f; --focus:#3fe0f0;
-  --c-academic:#5ec4ff; --c-fitness:#ff5f9e; --c-daily:#ffc24d; --c-misc:#4fe3bf; --c-idea:#ffd45a;
-  --b-todo:#e0b35e; --b-cal:#ff5fae; --b-mail:#3fe0f0; --b-ideas:#ffd45a;
-  --shadow:0 14px 34px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.4); color-scheme:dark }}
-:root[data-theme="dark"]{
-  --ink:#efe6d3; --ink-2:#b4a790; --ink-3:#847965;
-  --panel:#16130f; --panel-2:#221d17; --line:#3a3128; --hud:rgba(22,19,15,.88);
-  --brass:#d6a64e; --brass-hi:#f0cd84; --brass-lo:#7a5520;
-  --accent:#3fe0f0; --accent-ink:#071417; --alert:#ff5f5f; --focus:#3fe0f0;
-  --c-academic:#5ec4ff; --c-fitness:#ff5f9e; --c-daily:#ffc24d; --c-misc:#4fe3bf; --c-idea:#ffd45a;
-  --b-todo:#e0b35e; --b-cal:#ff5fae; --b-mail:#3fe0f0; --b-ideas:#ffd45a;
-  --shadow:0 14px 34px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.4); color-scheme:dark }
-
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;overflow:hidden;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit}
-:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.cham{clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))}
 
 /* ---------- scene ---------- */
 #world{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
 #stage{position:absolute;inset:0;touch-action:none;cursor:grab;transition:right .35s ease,filter .35s ease}
 #stage.dragging{cursor:grabbing}
 #scene{display:block;width:100%;height:100%;overflow:visible}
-.o{stroke:#1a120c;stroke-width:1.1;stroke-linejoin:round}
-.on{stroke:#1a120c;stroke-width:1;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.cl{fill:var(--cloud,#fff)}
-.spin{transform-box:fill-box;transform-origin:center;animation:spin 18s linear infinite}
-.ccw{animation-direction:reverse}
-@keyframes spin{to{transform:rotate(360deg)}}
-.prop{transform-box:fill-box;transform-origin:center;animation:prop .32s linear infinite}
-@keyframes prop{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.12)}}
-.steam{transform-box:fill-box;transform-origin:center;animation:steam 4.2s ease-out infinite;opacity:0;fill:var(--steam,#f3f0ea)}
-@keyframes steam{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:.8}100%{transform:translate(16px,-80px) scale(2.6);opacity:0}}
-.bob{animation:bob 7s ease-in-out infinite}
+.o{stroke:#0b0818;stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round}
+.on{stroke:#0b0818;stroke-width:1.1;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.lit{opacity:var(--lights,1);transition:opacity 1.5s}
+.cl{fill:var(--cloud,#2b2552)}
+.clh{fill:var(--cloudHi,#3d3570)}
+.bldg{cursor:pointer}
+.bldg .hl{opacity:0;transition:opacity .2s}
+.bldg.hot .hl{opacity:1}
+.plot{cursor:pointer}
+.ntxt{font-family:"Tilt Neon","Chakra Petch",sans-serif}
+.bob{animation:bob 6s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.sway{animation:sway 40s ease-in-out infinite alternate}
-@keyframes sway{to{transform:translateX(60px)}}
 .blink{animation:blink 2.2s steps(1) infinite}
-@keyframes blink{50%{opacity:.15}}
+@keyframes blink{50%{opacity:.1}}
+.flick{animation:flick 7s linear infinite}
+@keyframes flick{0%,60%,63%,66%,100%{opacity:1}61.5%,64.5%{opacity:.25}}
+.scan{animation:scan 3s linear infinite}
+@keyframes scan{from{transform:translateY(0)}to{transform:translateY(14px)}}
+.pulse{animation:pls 2.6s ease-in-out infinite}
+@keyframes pls{50%{opacity:.45}}
 .twinkle{animation:tw 3.5s ease-in-out infinite}
 @keyframes tw{50%{opacity:.3}}
-.flick{animation:flick 6s linear infinite}
-@keyframes flick{0%,40%,44%,100%{opacity:1}42%{opacity:.4}}
-#lit{opacity:var(--lights,0);transition:opacity 1.5s;pointer-events:none}
-.plot{cursor:pointer}
-.ntxt{font-family:"Tilt Neon","Big Shoulders Display",sans-serif}
-.bldg{cursor:pointer}
+.fall{animation:fall .9s linear infinite}
+@keyframes fall{to{stroke-dashoffset:-40}}
+.flow{animation:flow 1.6s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-.9}}
+.drift{animation:drift 90s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translateX(80px)}}
+.spinP{transform-box:fill-box;transform-origin:center;animation:sp .25s linear infinite}
+@keyframes sp{50%{transform:scaleX(.15)}}
 
-/* plaques (labels) */
+/* hover tags + count pips: little neon signs */
 #labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.lbl{position:absolute;left:0;top:0;pointer-events:auto;border:1.5px solid var(--plaque-edge);border-radius:6px;padding:5px 16px 4px;
-  background:linear-gradient(180deg,var(--plaque-a),var(--plaque-b) 55%,var(--plaque-c));color:var(--plaque-ink);
-  font:800 15px/1 var(--f-display);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;cursor:pointer;
-  box-shadow:0 2px 0 var(--plaque-edge),0 8px 16px rgba(10,6,2,.35);transition:box-shadow .3s,translate .18s,scale .18s;will-change:transform}
-.lbl::before,.lbl::after{content:"";position:absolute;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff3cf,#6e4b16 70%)}
-.lbl::before{left:5px}.lbl::after{right:5px}
-.lbl:hover,.lbl.hot{translate:0 -3px}
-.lbl.sel{box-shadow:0 2px 0 var(--plaque-edge),0 0 0 3px var(--glow),0 8px 18px rgba(10,6,2,.4)}
-.night .lbl{box-shadow:0 2px 0 var(--plaque-edge),0 0 14px var(--glow),0 0 2px var(--glow)}
-.lbl .bub{position:absolute;top:-10px;right:-10px;min-width:22px;height:22px;padding:0 5px;border-radius:11px;display:grid;place-items:center;
-  font:600 12px/1 var(--f-mono);letter-spacing:0;color:#fff;background:radial-gradient(circle at 35% 30%,#ff8a7a,#c41d2a 60%,#7a0d16);border:1.5px solid #2a0a0a;box-shadow:0 0 10px rgba(255,60,60,.6)}
-.lbl.pop{animation:lpop .55s cubic-bezier(.3,1.6,.5,1)}
-@keyframes lpop{35%{scale:1.18}}
+.lbl{position:absolute;left:0;top:0;border:1.5px solid var(--glow);border-radius:3px;padding:6px 14px 5px;background:rgba(8,6,20,.88);color:#fff;
+  font:400 19px/1 var(--f-neon);letter-spacing:.06em;white-space:nowrap;cursor:pointer;text-align:center;
+  text-shadow:0 0 2px #fff,0 0 8px var(--glow),0 0 16px var(--glow);
+  box-shadow:0 0 0 1px rgba(0,0,0,.5),0 0 14px color-mix(in srgb,var(--glow) 55%,transparent),inset 0 0 10px color-mix(in srgb,var(--glow) 25%,transparent);
+  opacity:0;scale:.85;pointer-events:none;transition:opacity .16s,scale .2s cubic-bezier(.3,1.6,.5,1);will-change:transform}
+.lbl small{display:block;margin-top:3px;font:400 16px/1 var(--f-led);letter-spacing:.04em;text-shadow:0 0 6px var(--glow);color:var(--glow)}
+.lbl.show,.lbl.sel,.lbl:focus-visible{opacity:1;scale:1;pointer-events:auto}
+.lbl::after{content:"";position:absolute;left:50%;bottom:-12px;width:1.5px;height:10px;margin-left:-.75px;background:var(--glow);box-shadow:0 0 6px var(--glow)}
+.pip{position:absolute;left:0;top:0;min-width:24px;height:24px;padding:0 6px;display:grid;place-items:center;font:400 20px/1 var(--f-led);color:#fff;
+  background:#e8235f;border:1.5px solid #ffd1e0;border-radius:3px;box-shadow:0 0 14px rgba(255,40,100,.9);pointer-events:none;transition:opacity .2s}
+.pip[hidden]{display:none}
 
 /* map controls */
 .mapctl{position:fixed;z-index:22;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(var(--qh) + 12px);display:grid;gap:6px}
-.mapctl button{width:40px;height:40px;border-radius:11px;border:1.5px solid var(--line);background:var(--hud);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:var(--shadow);display:grid;place-items:center;cursor:pointer;color:var(--ink)}
-.mapctl button:hover{border-color:var(--brass)}
+.mapctl button{width:40px;height:40px;border-radius:2px;border:1px solid var(--wire);background:rgba(10,8,28,.82);display:grid;place-items:center;cursor:pointer;color:var(--cyan);filter:drop-shadow(0 0 4px rgba(53,230,255,.5))}
+.mapctl button:hover{border-color:var(--cyan);box-shadow:0 0 12px rgba(53,230,255,.45)}
 @media (max-width:720px){.mapctl{display:none}}
 
-/* ---------- HUD top ---------- */
-.hud-top{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:10px;
+/* ---------- HUD top: neon title + LED ticker + neon switch ---------- */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:19;background:var(--bg)}
+.hud-top{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
   padding-top:calc(env(safe-area-inset-top,0px) + 12px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));pointer-events:none}
-.pill{pointer-events:auto;background:var(--hud);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:12px;box-shadow:var(--shadow);border:1.5px solid var(--line)}
-.brand{display:flex;align-items:baseline;gap:12px;padding:8px 14px;min-width:0}
-.brand b{font:800 21px/1 var(--f-display);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
-.brand b i{font-style:normal;color:var(--brass)}
-.brand span{font:500 12.5px var(--f-mono);color:var(--ink-2);white-space:nowrap}
-.seg{display:flex;padding:4px;gap:2px}
-.seg button{border:0;background:transparent;padding:7px 14px;border-radius:8px;font:700 13px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
-@media (max-width:440px){.brand span{display:none}.brand b{font-size:17px;letter-spacing:.06em}}
+.sign{pointer-events:auto;display:grid;gap:4px;min-width:0}
+.sign .t{font:400 32px/1 var(--f-neon);color:#fff0fb;letter-spacing:.03em;white-space:nowrap;
+  text-shadow:0 0 2px #fff,0 0 7px #ff4fa8,0 0 16px #ff4fa8,0 0 32px #ff2f8f,0 2px 0 rgba(0,0,0,.6)}
+.sign .t em{font-style:normal;color:#eafdff;text-shadow:0 0 2px #fff,0 0 7px #35e6ff,0 0 16px #35e6ff,0 0 32px #1fb8ff,0 2px 0 rgba(0,0,0,.6)}
+.sign .t .flk{animation:tube 7s linear infinite}
+@keyframes tube{0%,70%,72%,75%,100%{opacity:1}71%,73.5%{opacity:.2}}
+.ticker{display:inline-flex;gap:10px;align-items:center;font:400 20px/1 var(--f-led);color:var(--amber);letter-spacing:.08em;text-shadow:0 0 6px rgba(255,200,61,.65);padding:3px 8px 2px;background:rgba(10,8,28,.7);border:1px solid #3a2f12;border-radius:2px;width:max-content}
+.ticker i{width:6px;height:6px;border-radius:50%;background:var(--lime);box-shadow:0 0 6px var(--lime);animation:blink 2s steps(1) infinite}
+.plate{pointer-events:auto;padding:1px;background:linear-gradient(90deg,rgba(53,230,255,.7),rgba(255,79,168,.7));--cut:10px}
+.plate>.in{background:rgba(10,8,28,.9);--cut:10px}
+.switch{display:flex;align-items:center;padding:3px 6px}
+.switch i{width:1.5px;height:20px;background:var(--wire)}
+.switch button{border:0;background:none;padding:6px 12px 5px;font:400 21px/1 var(--f-neon);letter-spacing:.06em;color:#4f4677;cursor:pointer;transition:color .2s,text-shadow .2s}
+.switch button:hover{color:#8c80bd}
+.switch button[aria-pressed="true"]{color:#eafdff;text-shadow:0 0 2px #fff,0 0 8px #35e6ff,0 0 18px #35e6ff}
+@media (max-width:440px){.sign .t{font-size:24px}.ticker{font-size:17px}.switch button{font-size:18px;padding:5px 8px}}
 
-/* ---------- quick add ---------- */
+/* ---------- quick-add: a holo console ---------- */
 #quick{position:fixed;left:0;right:0;bottom:0;z-index:30;pointer-events:none;
   padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.qcard{pointer-events:auto;max-width:720px;margin:0 auto;background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:10px;display:grid;grid-template-columns:minmax(0,1fr);gap:9px;position:relative}
-.qcard::before{content:"";position:absolute;inset:-1.5px;border-radius:inherit;border-top:2px solid var(--brass);pointer-events:none;opacity:.8}
+.qglow{pointer-events:auto;max-width:740px;margin:0 auto;filter:drop-shadow(0 0 8px rgba(255,79,168,.4)) drop-shadow(0 0 22px rgba(53,230,255,.18))}
+.qframe{padding:1.5px;background:linear-gradient(100deg,#35e6ff,#b46cff 50%,#ff4fa8)}
+.qcard{position:relative;background:linear-gradient(180deg,rgba(22,15,48,.97),rgba(9,7,24,.97));padding:10px 10px 9px;display:grid;grid-template-columns:minmax(0,1fr);gap:9px}
+.qcard::after,.inner::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px)}
 .qrow{display:flex;gap:8px}
-#qInput{flex:1;min-width:0;font:500 16px var(--f-body);padding:12px 14px;border-radius:var(--r-md);border:1.5px solid var(--line);background:var(--panel-2);color:var(--ink)}
-#qInput::placeholder{color:var(--ink-3)}
-#qInput:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
-.btn-go{font:800 18px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--plaque-ink);border:1.5px solid var(--plaque-edge);border-radius:var(--r-md);padding:0 20px;cursor:pointer;
-  background:linear-gradient(180deg,var(--plaque-a),var(--plaque-b) 55%,var(--plaque-c));box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 0 var(--plaque-edge)}
-.btn-go:active{translate:0 2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.field{flex:1;min-width:0;padding:1px;background:var(--wire);--cut:9px;transition:background .2s}
+.field:focus-within{background:linear-gradient(90deg,var(--cyan),var(--violet))}
+.field>div{display:flex;align-items:center;background:#07061a;--cut:9px;height:100%}
+.prompt{padding:0 4px 0 12px;font:400 26px/1 var(--f-led);color:var(--cyan);text-shadow:0 0 8px var(--cyan)}
+#qInput{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font:500 16px var(--f-body);padding:12px 12px 12px 4px;outline:none}
+#qInput::placeholder{color:#6a6196}
+.btn-go{flex:none;--cut:9px;border:0;padding:0 22px;cursor:pointer;font:700 15px var(--f-display);letter-spacing:.22em;text-transform:uppercase;color:var(--accent-ink);
+  background:linear-gradient(180deg,#ffa0d8,#ff4fa8 55%,#e02f8a);transition:filter .15s}
+.btn-go:hover{filter:brightness(1.12) saturate(1.1)}
+.btn-go:active{filter:brightness(.92)}
 .qmeta{display:flex;align-items:center;gap:10px;min-width:0}
 .chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex:none;font:600 13px var(--f-body);padding:5px 11px;border-radius:8px;border:1.5px solid var(--line);background:transparent;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
-.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--c,var(--ink-3));box-shadow:0 0 0 2px color-mix(in srgb,var(--c,var(--ink-3)) 25%,transparent)}
-.chip[aria-checked="true"]{border-color:var(--c,var(--ink));color:var(--ink);background:color-mix(in srgb,var(--c,var(--ink)) 13%,transparent)}
-.chip .n{font:600 12px var(--f-mono);color:var(--ink-3)}
-#qHint{font:500 12.5px var(--f-mono);color:var(--ink-2);white-space:nowrap;flex:none}
-#qHint b{color:var(--ink);font-weight:600}
-@media (max-width:600px){.qmeta{flex-direction:column;align-items:stretch;gap:6px}#qHint{white-space:normal;min-height:1.2em}}
+.chip{flex:none;--cut:6px;font:600 12px var(--f-display);letter-spacing:.12em;text-transform:uppercase;padding:6px 10px 5px;border:0;
+  background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px var(--wire);color:#8f86b8;display:inline-flex;align-items:center;gap:7px;cursor:pointer;white-space:nowrap;border-radius:2px}
+.chip:hover{color:var(--ink)}
+.chip .dot{width:7px;height:7px;rotate:45deg;background:var(--c,#8f86b8);box-shadow:0 0 6px var(--c,transparent)}
+.chip[aria-checked="true"]{color:#fff;background:color-mix(in srgb,var(--c,var(--cyan)) 18%,transparent);box-shadow:inset 0 0 0 1px var(--c,var(--cyan)),0 0 10px color-mix(in srgb,var(--c,var(--cyan)) 40%,transparent);text-shadow:0 0 8px var(--c,var(--cyan))}
+.chip .n{font:400 16px/1 var(--f-led);letter-spacing:0;color:var(--ink-3)}
+#qHint{font:400 18px/1 var(--f-led);color:var(--amber);text-shadow:0 0 6px rgba(255,200,61,.5);white-space:nowrap;flex:none;letter-spacing:.03em}
+#qHint b{color:#fff;font-weight:400}
+@media (max-width:600px){.qmeta{flex-direction:column;align-items:stretch;gap:6px}#qHint{white-space:normal;min-height:1.1em}}
 
-/* ---------- sheet ---------- */
-#sheet{position:fixed;z-index:25;top:calc(env(safe-area-inset-top,0px) + 68px);right:max(16px,env(safe-area-inset-right,0px));bottom:calc(var(--qh) + 6px);
-  width:min(440px,calc(100vw - 32px));background:var(--panel);border:1.5px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;animation:sheetIn .24s cubic-bezier(.2,1.2,.4,1)}
+/* ---------- building panel: a neon-framed screen ---------- */
+#sheet{position:fixed;z-index:25;top:calc(env(safe-area-inset-top,0px) + 92px);right:max(16px,env(safe-area-inset-right,0px));bottom:calc(var(--qh) + 8px);
+  width:min(440px,calc(100vw - 32px));display:flex;filter:drop-shadow(0 0 10px color-mix(in srgb,var(--c) 45%,transparent));animation:sheetIn .24s cubic-bezier(.2,1.2,.4,1)}
 #sheet.wide{right:auto;left:50%;transform:translateX(-50%);width:min(760px,calc(100vw - 32px))}
+#sheet .frame{flex:1;display:flex;min-height:0;min-width:0;width:100%;padding:1.5px;--cut:18px;background:linear-gradient(160deg,var(--c),color-mix(in srgb,var(--c) 30%,#2f2752) 35%,#2f2752 65%,var(--c))}
+#sheet .inner{position:relative;flex:1;display:flex;flex-direction:column;min-height:0;min-width:0;--cut:18px;background:linear-gradient(180deg,#151030,#0a0820)}
 @keyframes sheetIn{from{translate:0 14px;opacity:0}to{translate:0 0;opacity:1}}
 @media (min-width:721px){#app.sheet-open:not(.wide-open) #stage{right:calc(min(440px,100vw - 32px) + 20px)}}
-#app.wide-open #stage{filter:saturate(.7) brightness(.75)}
+#app.wide-open #stage{filter:saturate(.7) brightness(.5)}
 @media (max-width:720px){
   #sheet,#sheet.wide{top:calc(env(safe-area-inset-top,0px) + 34vh);left:max(8px,env(safe-area-inset-left,0px));right:max(8px,env(safe-area-inset-right,0px));width:auto;transform:none}
-  #sheet.wide{top:calc(env(safe-area-inset-top,0px) + 64px)}
+  #sheet.wide{top:calc(env(safe-area-inset-top,0px) + 92px)}
+  .lbl.sel{opacity:0;pointer-events:none}
 }
-.sh-head{display:flex;align-items:center;gap:12px;padding:14px 12px 12px 16px;border-bottom:1.5px solid var(--line);
-  background:radial-gradient(circle at 7px 7px,var(--brass) 1.6px,transparent 2.2px),radial-gradient(circle at calc(100% - 7px) 7px,var(--brass) 1.6px,transparent 2.2px),linear-gradient(180deg,color-mix(in srgb,var(--c) 9%,transparent),transparent)}
-.sh-icon{flex:none;width:42px;height:42px;border-radius:10px;display:grid;place-items:center;color:var(--c);border:1.5px solid color-mix(in srgb,var(--c) 45%,transparent);background:color-mix(in srgb,var(--c) 12%,transparent)}
-.sh-title{font:800 26px/1 var(--f-display);letter-spacing:.08em;text-transform:uppercase}
-.sh-sub{font:500 12.5px var(--f-mono);color:var(--ink-2);margin-top:4px}
-.icon-btn{margin-left:auto;flex:none;width:38px;height:38px;border-radius:10px;border:1.5px solid var(--line);background:var(--panel-2);display:grid;place-items:center;cursor:pointer;color:var(--ink-2)}
-.icon-btn:hover{color:var(--ink);border-color:var(--brass)}
-.sh-body{flex:1;min-height:0;overflow:auto;padding:12px 14px 22px;overscroll-behavior:contain}
+.sh-head{display:flex;align-items:center;gap:12px;padding:16px 14px 12px 20px;border-bottom:1px solid var(--line);position:relative;z-index:1}
+.sh-icon{flex:none;width:42px;height:42px;display:grid;place-items:center;color:var(--c);border:1.5px solid var(--c);border-radius:2px;box-shadow:0 0 10px color-mix(in srgb,var(--c) 45%,transparent),inset 0 0 10px color-mix(in srgb,var(--c) 30%,transparent);filter:drop-shadow(0 0 4px var(--c))}
+.sh-title{font:400 32px/1 var(--f-neon);color:#fff;letter-spacing:.03em;text-shadow:0 0 2px #fff,0 0 8px var(--c),0 0 20px var(--c)}
+.sh-sub{font:400 18px/1 var(--f-led);color:var(--ink-2);margin-top:5px;letter-spacing:.04em}
+.icon-btn{margin-left:auto;flex:none;width:36px;height:36px;border-radius:2px;border:1px solid var(--wire);background:transparent;display:grid;place-items:center;cursor:pointer;color:var(--ink-2)}
+.icon-btn:hover{color:#fff;border-color:var(--c);box-shadow:0 0 10px color-mix(in srgb,var(--c) 40%,transparent)}
+.sh-body{position:relative;z-index:1;flex:1;min-height:0;overflow:auto;padding:12px 16px 22px;overscroll-behavior:contain;scrollbar-color:var(--wire) transparent}
 
 /* lists */
 ul{list-style:none;margin:0;padding:0}
 .filters{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 6px}
 .grp{margin-top:12px}
-.grp-h{display:flex;align-items:baseline;gap:8px;font:700 13px var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);padding:0 6px 4px}
-.grp-h.over{color:var(--alert)}
-.grp-h .n{font:600 11.5px var(--f-mono);letter-spacing:0}
-.item{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:start;gap:10px;padding:9px 8px;border-radius:10px}
-.item:hover{background:var(--panel-2)}
-.ck{margin-top:1px;width:24px;height:24px;border-radius:50%;border:2px solid var(--c);background:transparent;display:grid;place-items:center;cursor:pointer;padding:0;color:var(--c);box-shadow:inset 0 0 0 2px var(--panel)}
+.grp-h{display:flex;align-items:baseline;gap:8px;font:700 12px var(--f-display);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);padding:0 6px 4px}
+.grp-h.over{color:var(--alert);text-shadow:0 0 8px rgba(255,106,134,.6)}
+.grp-h .n{font:400 17px/1 var(--f-led);letter-spacing:0}
+.item{display:grid;grid-template-columns:28px minmax(0,1fr);align-items:start;gap:10px;padding:9px 8px;border-radius:2px;border-left:2px solid transparent}
+.item:hover{background:rgba(255,255,255,.04);border-left-color:var(--c)}
+.ck{margin-top:1px;width:22px;height:22px;border-radius:2px;border:1.5px solid var(--c);background:transparent;display:grid;place-items:center;cursor:pointer;padding:0;color:var(--c);box-shadow:0 0 8px color-mix(in srgb,var(--c) 40%,transparent)}
 .ck svg{opacity:0;transition:opacity .15s}
-.ck:hover svg{opacity:.45}
-.item.done .ck{background:var(--c);color:var(--panel)}
+.ck:hover svg{opacity:.5}
+.item.done .ck{background:var(--c);color:#0a0820}
 .item.done .ck svg{opacity:1}
 .ttl{display:block;width:100%;background:none;border:0;text-align:left;font:500 15px/1.35 var(--f-body);color:var(--ink);cursor:pointer;padding:0;overflow-wrap:anywhere}
 .item.done .ttl{text-decoration:line-through;color:var(--ink-3)}
 .meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:5px;font-size:12px;color:var(--ink-2)}
-.tag{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:6px;background:var(--panel-2);font-weight:600;white-space:nowrap}
-.tag.t{font:500 11.5px var(--f-mono)}
-.item:hover .tag{background:var(--panel)}
-.tag.over{color:var(--alert)}
-.tag.ex{border:1.5px dashed var(--ink-3);background:transparent}
-.cat-dot{width:8px;height:8px;border-radius:50%;background:var(--c)}
-.ai{color:var(--accent);display:inline-flex}
-.edit{background:var(--panel-2);border-radius:12px;padding:12px;margin:2px 0 8px;display:grid;gap:10px;border:1.5px solid var(--line)}
-.edit label{font:700 12px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);display:grid;gap:5px}
-.edit input{font:500 15px var(--f-body);padding:9px 11px;border-radius:9px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);min-width:0;width:100%}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:1px 7px;border-radius:2px;border:1px solid var(--line);font-weight:600;white-space:nowrap}
+.tag.t{font:400 16px/1.1 var(--f-led);color:var(--amber);border-color:#3a2f12}
+.tag.over{color:var(--alert);border-color:#5a1f30}
+.tag.ex{border-style:dashed;border-color:var(--ink-3)}
+.cat-dot{width:7px;height:7px;rotate:45deg;background:var(--c);box-shadow:0 0 6px var(--c)}
+.ai{color:var(--cyan);display:inline-flex;filter:drop-shadow(0 0 4px var(--cyan))}
+.edit{background:rgba(255,255,255,.035);border-radius:2px;padding:12px;margin:2px 0 8px;display:grid;gap:10px;border:1px solid var(--line);border-left:2px solid var(--cyan)}
+.edit label{font:700 11px var(--f-display);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);display:grid;gap:5px}
+.edit input{font:500 15px var(--f-body);padding:9px 11px;border-radius:2px;border:1px solid var(--wire);background:#07061a;color:var(--ink);min-width:0;width:100%}
+.edit input:focus{outline:none;border-color:var(--cyan)}
 .edit .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .edit .acts{display:flex;gap:8px;flex-wrap:wrap}
-.btn{border:1.5px solid var(--line);background:var(--panel);border-radius:9px;padding:8px 13px;font-weight:600;font-size:13.5px;cursor:pointer}
-.btn:hover{border-color:var(--brass)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn{border:1px solid var(--wire);background:transparent;border-radius:2px;padding:7px 12px;font:600 12px var(--f-display);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;color:var(--ink-2)}
+.btn:hover{border-color:var(--cyan);color:#fff}
+.btn.primary{background:var(--pink);border-color:var(--pink);color:var(--accent-ink);box-shadow:0 0 12px rgba(255,79,168,.45)}
 .btn.danger{color:var(--alert)}
-.btn.ghost{border-color:transparent;background:transparent;color:var(--ink-2)}
+.btn.ghost{border-color:transparent}
 .btn:disabled{opacity:.55;cursor:default}
 .empty{padding:26px 10px;text-align:center;color:var(--ink-2);line-height:1.5}
-.empty b{display:block;font:800 21px var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin-bottom:4px}
-.done-toggle{margin-top:14px;width:100%;text-align:left;border:0;background:transparent;padding:8px 6px;font:700 13px var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);cursor:pointer}
-.banner{font-size:13px;line-height:1.45;padding:10px 12px;border-radius:10px;background:color-mix(in srgb,var(--brass) 14%,transparent);border:1px solid color-mix(in srgb,var(--brass) 35%,transparent);margin-bottom:8px}
-.sec-h{font:700 13px var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:18px 6px 8px;display:flex;gap:8px;align-items:center}
+.empty b{display:block;font:400 24px var(--f-neon);color:#fff;margin-bottom:6px;text-shadow:0 0 8px var(--c,var(--cyan))}
+.done-toggle{margin-top:14px;width:100%;text-align:left;border:0;background:transparent;padding:8px 6px;font:700 12px var(--f-display);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);cursor:pointer}
+.banner{font-size:13px;line-height:1.45;padding:10px 12px;border-radius:2px;background:rgba(255,200,61,.06);border:1px solid #3a2f12;border-left:2px solid var(--amber);margin-bottom:8px}
+.sec-h{font:700 12px var(--f-display);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);margin:18px 6px 8px;display:flex;gap:8px;align-items:center}
 .sec-h:first-child{margin-top:4px}
 .week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-.day{border-radius:10px;background:var(--panel-2);padding:8px 2px;text-align:center;display:grid;gap:3px;justify-items:center;border:1.5px solid transparent}
-.day.today{border-color:var(--b-cal)}
-.day small{font:700 12px var(--f-display);letter-spacing:.1em;color:var(--ink-3);text-transform:uppercase}
-.day strong{font:600 17px var(--f-mono)}
+.day{border-radius:2px;background:rgba(255,255,255,.035);padding:8px 2px;text-align:center;display:grid;gap:3px;justify-items:center;border:1px solid var(--line)}
+.day.today{border-color:var(--b-cal);box-shadow:0 0 10px rgba(255,79,168,.35)}
+.day small{font:700 11px var(--f-display);letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase}
+.day strong{font:400 24px/1 var(--f-led);color:#fff}
 .dots{display:flex;gap:2px;min-height:6px}
-.dots i{width:6px;height:6px;border-radius:50%;background:var(--c)}
-.trow{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;padding:9px 6px;border-radius:10px;align-items:baseline}
-.trow time{font:600 12.5px var(--f-mono);color:var(--ink-2)}
+.dots i{width:6px;height:6px;rotate:45deg;background:var(--c);box-shadow:0 0 5px var(--c)}
+.trow{display:grid;grid-template-columns:70px minmax(0,1fr);gap:10px;padding:9px 6px;align-items:baseline;border-bottom:1px dashed var(--line)}
+.trow time{font:400 18px/1 var(--f-led);color:var(--amber)}
 .trow .t{overflow-wrap:anywhere}
-.soon{border:1.5px dashed var(--line);border-radius:14px;padding:14px;margin-top:18px}
-.soon h4{margin:0 0 4px;font:800 19px var(--f-display);letter-spacing:.08em;text-transform:uppercase}
+.soon{border:1px dashed var(--wire);border-radius:2px;padding:14px;margin-top:18px}
+.soon h4{margin:0 0 6px;font:400 22px var(--f-neon);color:#fff;text-shadow:0 0 8px var(--c,var(--cyan))}
 .soon p{margin:0 0 10px;color:var(--ink-2);line-height:1.5;font-size:14px}
 .ghost{opacity:.6}
-.mail{border-radius:12px;background:var(--panel-2);padding:11px 12px;margin-bottom:8px}
+.mail{border-radius:2px;background:rgba(255,255,255,.035);border:1px solid var(--line);padding:11px 12px;margin-bottom:8px}
 .mail .from{font-weight:700;font-size:13.5px}
 .mail .sub{font-size:14px;margin-top:2px}
 .mail .why{font-size:12.5px;color:var(--ink-2);margin-top:4px}
-.idea{border-radius:14px;background:var(--panel-2);padding:12px 12px 10px;margin-bottom:10px;border:1.5px solid var(--line)}
+.idea{border-radius:2px;background:rgba(255,225,77,.04);padding:12px 12px 10px;margin-bottom:10px;border:1px solid var(--line);border-left:2px solid var(--c-idea)}
 .idea h4{margin:0;font:600 15.5px/1.35 var(--f-body);overflow-wrap:anywhere}
-.idea .when{font:500 12px var(--f-mono);color:var(--ink-3);margin-top:3px}
+.idea .when{font:400 16px/1 var(--f-led);color:var(--ink-3);margin-top:4px}
 .idea ol{margin:8px 0 2px;padding-left:20px;font-size:14px;line-height:1.45;color:var(--ink-2)}
 .idea .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
-.idea .btn{padding:6px 11px;font-size:13px}
-.loading{padding:30px 10px;text-align:center;color:var(--ink-2)}
+.loading{padding:30px 10px;text-align:center;color:var(--ink-2);font:400 20px var(--f-led)}
 
-#toast{position:fixed;left:50%;bottom:calc(var(--qh) + 14px);translate:-50% 0;z-index:40;background:var(--ink);color:var(--panel);border-radius:12px;padding:10px 10px 10px 16px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow);font-weight:600;font-size:14px;max-width:calc(100vw - 32px);animation:sheetIn .2s ease}
-#toast button{border:0;background:color-mix(in srgb,var(--panel) 18%,transparent);color:var(--panel);font-weight:700;border-radius:8px;padding:6px 11px;cursor:pointer}
+#toast{position:fixed;left:50%;bottom:calc(var(--qh) + 14px);translate:-50% 0;z-index:40;background:rgba(10,8,28,.96);color:var(--ink);border:1px solid var(--cyan);border-radius:2px;padding:9px 9px 9px 14px;display:flex;gap:12px;align-items:center;box-shadow:0 0 18px rgba(53,230,255,.35);font:400 19px/1.1 var(--f-led);letter-spacing:.03em;max-width:calc(100vw - 32px);animation:sheetIn .2s ease}
+#toast button{border:1px solid var(--pink);background:transparent;color:var(--pink);font:600 12px var(--f-display);letter-spacing:.14em;text-transform:uppercase;border-radius:2px;padding:6px 10px;cursor:pointer}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- FC Barcelona panel: blaugrana + gold, Sofascore-style data ---------- */
+#sheet.barca{filter:drop-shadow(0 0 10px rgba(165,0,68,.5)) drop-shadow(0 0 18px rgba(0,77,152,.35))}
+#sheet.barca .frame{background:linear-gradient(160deg,#2f7dff,#004d98 22%,#a50044 55%,#2f2752 75%,#edbb00)}
+#sheet.barca .inner{background:linear-gradient(180deg,#120c2a,#0a0820 40%)}
+#sheet.barca .sh-head{background:repeating-linear-gradient(90deg,rgba(0,77,152,.28) 0 22px,rgba(165,0,68,.28) 22px 44px);border-bottom:2px solid #edbb00}
+#sheet.barca .sh-title{color:#fff6d0;text-shadow:0 0 2px #fff,0 0 8px #edbb00,0 0 20px #a50044}
+#sheet.barca .sh-icon{--c:#edbb00}
+.btabs{display:flex;margin:-4px -2px 10px;border-bottom:1px solid var(--line)}
+.btabs button{flex:1;border:0;background:none;padding:10px 6px 9px;font:700 12.5px var(--f-display);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;display:inline-flex;justify-content:center;align-items:center;gap:6px}
+.btabs button[aria-selected="true"]{color:#fff;border-bottom-color:#edbb00;text-shadow:0 0 8px rgba(237,187,0,.6)}
+.ldot{width:7px;height:7px;border-radius:50%;background:#ff3b5c;box-shadow:0 0 8px #ff3b5c;animation:blink 1.2s steps(1) infinite}
+.crest{flex:none;width:20px;height:20px;border-radius:50%;display:inline-grid;place-items:center;font:700 8px/1 var(--f-display);letter-spacing:0;color:#e8e4ff;background:#3a3358;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.crest.fcb{background:linear-gradient(90deg,#004d98 0 50%,#a50044 50% 100%);box-shadow:inset 0 0 0 1.5px #edbb00}
+.crest.big{width:46px;height:46px;font-size:15px}
+.mlist{margin:0}
+.mrow{display:grid;grid-template-columns:56px minmax(0,1fr) 26px 22px;gap:10px;align-items:center;padding:9px 6px;border-bottom:1px solid var(--line)}
+.mrow:hover{background:rgba(255,255,255,.035)}
+.mrow.live{background:linear-gradient(90deg,rgba(255,59,92,.12),transparent);border-left:2px solid #ff3b5c}
+.mwhen{display:grid;gap:3px;text-align:center}
+.mwhen b{font:400 17px/1 var(--f-led);color:var(--ink);font-weight:400}
+.mwhen span{font:400 16px/1 var(--f-led);color:var(--ink-3)}
+.mwhen em.lv{font-style:normal;color:#ff3b5c;text-shadow:0 0 6px #ff3b5c}
+.mteams{display:grid;gap:4px;min-width:0}
+.mteams small{font:600 10.5px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.mteams div{display:flex;align-items:center;gap:8px;min-width:0;font-size:14px;color:var(--ink-2)}
+.mteams div span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mteams .win{color:#fff;font-weight:600}
+.mteams .dim{color:var(--ink-3)}
+.mscore{display:grid;gap:4px;text-align:right;margin-top:16px}
+.mscore b{font:400 20px/1 var(--f-led);color:var(--ink-2);font-weight:400}
+.mscore b.win{color:#fff}
+.res{width:22px;height:22px;display:grid;place-items:center;border-radius:4px;font:700 11px var(--f-display);color:#fff}
+.res.rW{background:#1fae5a}.res.rD{background:#7d7a96}.res.rL{background:#e0354b}.res.rn{background:transparent}
+.form{display:flex;gap:6px;padding:0 6px}
+.form .res{width:28px;height:28px;font-size:13px}
+.sb{border:1px solid var(--line);border-radius:4px;padding:14px 12px 12px;background:linear-gradient(180deg,rgba(0,77,152,.22),rgba(165,0,68,.18));position:relative;overflow:hidden}
+.sb::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#004d98 0 33%,#a50044 33% 66%,#edbb00 66%)}
+.sb-comp{text-align:center;font:600 11px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.sb-main{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin-top:12px}
+.sb-team{display:grid;justify-items:center;gap:7px;text-align:center;min-width:0}
+.sb-team b{font:600 13.5px/1.25 var(--f-body);overflow-wrap:anywhere}
+.sb-mid{display:grid;justify-items:center;gap:6px}
+.sb-score{font:400 54px/1 var(--f-led);color:#ffe14d;text-shadow:0 0 10px rgba(237,187,0,.7);letter-spacing:.04em}
+.sb-score i{font-style:normal;opacity:.6;margin:0 4px}
+.sb-score.dim{color:#6a6196;text-shadow:none}
+.sb-score.vs{font-size:30px;color:#9fe8ff;text-shadow:0 0 8px rgba(53,230,255,.6)}
+.st-live{font:700 11.5px var(--f-display);letter-spacing:.16em;color:#fff;background:#e0234a;padding:3px 8px;border-radius:3px;box-shadow:0 0 12px rgba(255,59,92,.6);animation:pls 1.6s ease-in-out infinite}
+.st-ft{font:700 11.5px var(--f-display);letter-spacing:.16em;color:var(--ink-2);text-transform:uppercase}
+.st-ns{font:400 17px/1 var(--f-led);color:var(--amber)}
+.sb-note{margin:12px 0 0;text-align:center;font-size:12.5px;color:var(--ink-2)}
+.evs{margin-top:12px;border-top:1px dashed var(--line);padding-top:8px;display:grid;gap:5px}
+.evs li{display:grid;grid-template-columns:44px 14px minmax(0,1fr);gap:8px;align-items:center;font-size:13px}
+.evs li.home{grid-template-columns:minmax(0,1fr) 14px 44px;direction:rtl;text-align:right}
+.evs li.home>*{direction:ltr}
+.emin{font:400 16px/1 var(--f-led);color:var(--amber)}
+.eico{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#bbb 60%,#777);box-shadow:0 0 0 1px #0a0820}
+.eico.yellow{border-radius:2px;width:9px;height:12px;background:#ffd400}.eico.red{border-radius:2px;width:9px;height:12px;background:#e0234a}
+.ename small{display:block;font-size:11.5px;color:var(--ink-3)}
+.hint-row{margin:4px 6px 10px;font-size:13.5px;color:var(--ink-2);line-height:1.45}
+.empty.sm{padding:14px 6px;font-size:13.5px}
+.bars{display:grid;gap:12px;padding:2px 4px}
+.bar .bl{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;font-size:12.5px;color:var(--ink-2);text-align:center}
+.bar .bl b{font:400 18px/1 var(--f-led);color:var(--ink-2)}
+.bar .bl b:first-child{text-align:left}.bar .bl b:last-child{text-align:right}
+.bar .bl b.hi{color:#fff}
+.bar .bt{display:flex;gap:4px;margin-top:5px;height:6px}
+.bar .bt i{display:block;height:100%;border-radius:3px}
+.bar .bt .h{background:#2f7dff;margin-left:auto}.bar .bt .a{background:#e0306e}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tile{border:1px solid var(--line);border-radius:4px;padding:10px 12px;background:rgba(255,255,255,.03);display:grid;gap:4px}
+.tile small{font:600 10.5px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.tile b{font:400 34px/1 var(--f-led);color:#fff;font-weight:400}
+.tile b i{font-style:normal;color:var(--ink-3);margin:0 2px}
+.tile b sup{font-size:16px;color:var(--ink-2)}
+.tile span{font-size:12px;color:var(--ink-2)}
+.tile:first-child{border-color:#edbb00;box-shadow:inset 0 0 14px rgba(237,187,0,.15)}
+.facts{margin:10px 6px 0;padding-left:18px;font-size:13px;line-height:1.5;color:var(--ink-2)}
+.facts li::marker{color:#edbb00}
+.sec-h .sub{font:400 11px var(--f-body);letter-spacing:0;text-transform:none;color:var(--ink-3)}
+.filters.lead{flex-wrap:nowrap}
+.leaders{list-style:none;margin:6px 0 0;padding:0}
+.leaders li{display:grid;grid-template-columns:20px 34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 6px;border-bottom:1px solid var(--line)}
+.leaders .rk{font:400 18px/1 var(--f-led);color:var(--ink-3);text-align:center}
+.leaders .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--f-display);font-style:normal;color:#fff;background:linear-gradient(135deg,#004d98,#a50044);box-shadow:inset 0 0 0 1.5px rgba(237,187,0,.7)}
+.leaders .pn{font-weight:600;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.leaders .rate{font:700 13px var(--f-display);color:#fff;padding:4px 7px;border-radius:4px;min-width:42px;text-align:center}
+.leaders .val{font:400 22px/1 var(--f-led);color:#fff}
+.tbl{display:grid;font-size:12.5px;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.tr{display:grid;grid-template-columns:26px minmax(0,1fr) 24px 24px 24px 24px 32px 32px;gap:4px;align-items:center;padding:6px 8px;border-bottom:1px solid var(--line);color:var(--ink-2);text-align:center;position:relative}
+.tr:last-child{border-bottom:0}
+.tr.th{font:600 10.5px var(--f-display);letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase;background:rgba(255,255,255,.03)}
+.tr .tn{display:flex;align-items:center;gap:7px;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:var(--ink)}
+.tr b{color:#fff;font-weight:700}
+.tr.ucl::before,.tr.rel::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 2px 2px 0;background:#2f7dff}
+.tr.rel::before{background:#e0354b}
+.tr.me{background:linear-gradient(90deg,rgba(0,77,152,.35),rgba(165,0,68,.25));color:#fff}
+.tr.me .tn{font-weight:700}
+.src{margin:14px 6px 0;font-size:11.5px;color:var(--ink-3);line-height:1.45}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
 <div id="app">
   <div id="world">
     <div id="stage">
-      <svg id="scene" viewBox="170 -40 1080 900" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <svg id="scene" viewBox="420 160 1360 1000" preserveAspectRatio="none" aria-hidden="true"></svg>
       <div id="labels"></div>
     </div>
   </div>
 
   <header class="hud-top">
-    <div class="pill brand"><b>Xavier's <i>Island</i></b><span id="today"></span></div>
-    <div class="pill seg" role="group" aria-label="View">
-      <button id="vIsland" aria-pressed="true">Island</button>
-      <button id="vList" aria-pressed="false">List</button>
+    <div class="sign">
+      <div class="t" aria-label="Xavier's Island">Xavier's <em>Is<span class="flk">l</span>and</em></div>
+      <div class="ticker"><i></i><span id="today"></span></div>
     </div>
+    <div class="plate cham"><div class="in cham switch" role="group" aria-label="View">
+      <button id="vIsland" aria-pressed="true">Island</button><i></i><button id="vList" aria-pressed="false">List</button>
+    </div></div>
   </header>
 
   <div class="mapctl" aria-label="Map controls">
-    <button id="zIn" aria-label="Zoom in"><svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg></button>
-    <button id="zOut" aria-label="Zoom out"><svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 8h10"/></svg></button>
-    <button id="zFit" aria-label="Show the whole island"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="9" r="6"/><path d="M9 1v3M9 14v3M1 9h3M14 9h3" stroke-linecap="round"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/></svg></button>
+    <button id="zIn" aria-label="Zoom in"><svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M8 3v10M3 8h10"/></svg></button>
+    <button id="zOut" aria-label="Zoom out"><svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M3 8h10"/></svg></button>
+    <button id="zFit" aria-label="Show the whole island"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 2 16 9 9 16 2 9Z"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/></svg></button>
   </div>
 
   <aside id="sheet" hidden aria-labelledby="shTitle"></aside>
 
   <form id="quick" autocomplete="off">
-    <div class="qcard">
+    <div class="qglow"><div class="qframe cham"><div class="qcard cham">
       <div class="qrow">
         <label class="sr" for="qInput">Add a to-do or idea</label>
-        <input id="qInput" placeholder="Add anything… e.g. “problem sheet due fri” or “idea: solar lamp”" enterkeyhint="done">
-        <button class="btn-go" type="submit">Add</button>
+        <div class="field cham"><div class="cham"><span class="prompt" aria-hidden="true">›</span><input id="qInput" placeholder="add anything… “problem sheet due fri” or “idea: solar lamp”" enterkeyhint="done"></div></div>
+        <button class="btn-go cham" type="submit">Add</button>
       </div>
       <div class="qmeta">
         <div class="chips" id="qChips" role="radiogroup" aria-label="Where it goes"></div>
         <div id="qHint" aria-live="polite"></div>
       </div>
-    </div>
+    </div></div></div>
   </form>
   <div id="toast" hidden role="status"></div>
 </div>
@@ -276,617 +385,545 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&l
 /* =====================================================================
    ISOMETRIC ENGINE
    ===================================================================== */
-const S = 34, CX = 700, CY = 520, CO = 0.8660254, SI = 0.5, TAU = Math.PI * 2;
+const S = 30, CX = 1100, CY = 760, CO = 0.8660254, SI = 0.5, TAU = Math.PI * 2;
 const P = (x, y, z = 0) => [CX + (x - y) * CO * S, CY + (x + y) * SI * S - z * S];
 const r1 = n => Math.round(n * 10) / 10;
 const r3 = n => Math.round(n * 1000) / 1000;
 const pts = a => a.map(p => r1(p[0]) + "," + r1(p[1])).join(" ");
+const pathOf = a => "M" + a.map(p => r1(p[0]) + "," + r1(p[1])).join(" L");
 function shade(hex, amt) {
   const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
   const t = amt < 0 ? 0 : 255, k = Math.abs(amt);
   r = Math.round(r + (t - r) * k); g = Math.round(g + (t - g) * k); b = Math.round(b + (t - b) * k);
   return "#" + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
 }
-let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+let seed = 23; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const pick = a => a[Math.floor(rnd() * a.length)];
 const poly = (p, a, fill, cls = "o") => el("polygon", { points: pts(a), fill, class: cls }, p);
 const line = (p, a, b, stroke, w = 1, extra = {}) => el("line", { x1: r1(a[0]), y1: r1(a[1]), x2: r1(b[0]), y2: r1(b[1]), stroke, "stroke-width": w, "stroke-linecap": "round", ...extra }, p);
-
-// face group: local units = world units. u runs left→right across the face, v runs top→bottom.
 function faceG(p, side, x, y, z, w, d, h) {
   let o, m;
   if (side === "L") { o = P(x, y + d, z + h); m = [CO * S, SI * S, 0, S]; }
   else if (side === "R") { o = P(x + w, y + d, z + h); m = [CO * S, -SI * S, 0, S]; }
-  else { o = P(x, y, z); m = [CO * S, SI * S, -CO * S, SI * S]; } // top: u along x, v along y
+  else { o = P(x, y, z); m = [CO * S, SI * S, -CO * S, SI * S]; }
   return el("g", { transform: `matrix(${m.map(r3).join(",")},${r1(o[0])},${r1(o[1])})` }, p);
 }
-function texture(g, w, h, kind) {
-  let d = "";
-  if (kind === "brick" || kind === "stone") {
-    const rh = kind === "brick" ? .2 : .34, bw = kind === "brick" ? .46 : .62;
-    for (let v = rh, row = 0; v < h - .02; v += rh, row++) d += `M0 ${r3(v)}H${w}`;
-    for (let v = 0, row = 0; v < h; v += rh, row++) for (let u = (row % 2 ? bw / 2 : 0) + bw; u < w; u += bw) d += `M${r3(u)} ${r3(v)}V${r3(Math.min(h, v + rh))}`;
-    el("path", { d, stroke: "#1a120c", "stroke-width": .6, opacity: kind === "brick" ? .32 : .25, fill: "none", "vector-effect": "non-scaling-stroke" }, g);
-  } else if (kind === "panel") {
-    for (let u = .55; u < w; u += .55) d += `M${r3(u)} 0V${h}`;
-    el("path", { d, stroke: "#11161b", "stroke-width": .8, opacity: .5, fill: "none", "vector-effect": "non-scaling-stroke" }, g);
-    let rv = "";
-    for (let u = .08; u < w; u += .275) for (const v of [.08, h - .08]) rv += `M${r3(u - .025)} ${r3(v)}a.025 .025 0 1 0 .05 0a.025 .025 0 1 0 -.05 0`;
-    el("path", { d: rv, fill: "#c9d2da", opacity: .7 }, g);
-  }
-}
-function box(p, x, y, z, w, d, h, col, tex) {
+function box(p, x, y, z, w, d, h, col) {
   poly(p, [P(x, y + d, z), P(x + w, y + d, z), P(x + w, y + d, z + h), P(x, y + d, z + h)], col);
-  poly(p, [P(x + w, y + d, z), P(x + w, y, z), P(x + w, y, z + h), P(x + w, y + d, z + h)], shade(col, -.26));
-  poly(p, [P(x, y, z + h), P(x + w, y, z + h), P(x + w, y + d, z + h), P(x, y + d, z + h)], shade(col, .2));
-  if (tex) { texture(faceG(p, "L", x, y, z, w, d, h), w, h, tex); texture(faceG(p, "R", x, y, z, w, d, h), d, h, tex); }
+  poly(p, [P(x + w, y + d, z), P(x + w, y, z), P(x + w, y, z + h), P(x + w, y + d, z + h)], shade(col, -.3));
+  poly(p, [P(x, y, z + h), P(x + w, y, z + h), P(x + w, y + d, z + h), P(x, y + d, z + h)], shade(col, .14));
 }
 function pyramid(p, x, y, z, w, d, h, col) {
   const A = P(x + w / 2, y + d / 2, z + h), a = P(x, y, z), b = P(x + w, y, z), c = P(x + w, y + d, z), e = P(x, y + d, z);
-  poly(p, [a, e, A], shade(col, .12)); poly(p, [a, b, A], shade(col, -.1));
-  poly(p, [e, c, A], col); poly(p, [c, b, A], shade(col, -.28));
+  poly(p, [a, e, A], shade(col, .1)); poly(p, [a, b, A], shade(col, -.1)); poly(p, [e, c, A], col); poly(p, [c, b, A], shade(col, -.3));
 }
 function frustum(p, x, y, z, w, d, h, i, col) {
   const b = [P(x, y, z), P(x + w, y, z), P(x + w, y + d, z), P(x, y + d, z)];
   const t = [P(x + i, y + i, z + h), P(x + w - i, y + i, z + h), P(x + w - i, y + d - i, z + h), P(x + i, y + d - i, z + h)];
   poly(p, [b[0], b[3], t[3], t[0]], shade(col, .1)); poly(p, [b[0], b[1], t[1], t[0]], shade(col, -.1));
-  poly(p, [b[3], b[2], t[2], t[3]], col); poly(p, [b[1], b[2], t[2], t[1]], shade(col, -.26));
-  poly(p, t, shade(col, .16));
+  poly(p, [b[3], b[2], t[2], t[3]], col); poly(p, [b[1], b[2], t[2], t[1]], shade(col, -.3)); poly(p, t, shade(col, .14));
 }
-function cyl(p, x, y, z, r, h, grad, top) {
+function cyl(p, x, y, z, r, h, fill, top) {
   const c = P(x, y, z), rx = r * S * 1.2247, ry = r * S * .7071, H = h * S;
-  el("path", { d: `M${r1(c[0] - rx)},${r1(c[1])} A${r1(rx)},${r1(ry)} 0 0 0 ${r1(c[0] + rx)},${r1(c[1])} V${r1(c[1] - H)} A${r1(rx)},${r1(ry)} 0 0 1 ${r1(c[0] - rx)},${r1(c[1] - H)} Z`, fill: `url(#${grad})`, class: "o" }, p);
+  el("path", { d: `M${r1(c[0] - rx)},${r1(c[1])} A${r1(rx)},${r1(ry)} 0 0 0 ${r1(c[0] + rx)},${r1(c[1])} V${r1(c[1] - H)} A${r1(rx)},${r1(ry)} 0 0 1 ${r1(c[0] - rx)},${r1(c[1] - H)} Z`, fill, class: "o" }, p);
   el("ellipse", { cx: r1(c[0]), cy: r1(c[1] - H), rx: r1(rx), ry: r1(ry), fill: top, class: "o" }, p);
   return { cx: c[0], cy: c[1], rx, ry, top: c[1] - H };
 }
-function band(p, x, y, z, r, col = "#3a2a14", w = 1.6) { // a ring around a cylinder (front half)
-  const c = P(x, y, z), rx = r * S * 1.2247, ry = r * S * .7071;
-  el("path", { d: `M${r1(c[0] - rx)},${r1(c[1])} A${r1(rx)},${r1(ry)} 0 0 0 ${r1(c[0] + rx)},${r1(c[1])}`, fill: "none", stroke: col, "stroke-width": w }, p);
-}
-function dome(p, x, y, z, r, h, fill) {
-  const c = P(x, y, z), rx = r * S * 1.2247, ry = r * S * .7071, H = h * S;
-  el("path", { d: `M${r1(c[0] - rx)},${r1(c[1])} A${r1(rx)},${r1(H)} 0 0 1 ${r1(c[0] + rx)},${r1(c[1])} A${r1(rx)},${r1(ry)} 0 0 1 ${r1(c[0] - rx)},${r1(c[1])} Z`, fill, class: "o" }, p);
-  let d = "";
-  for (let k = 1; k < 6; k++) { const a = k / 6 * Math.PI, bx = c[0] - rx * Math.cos(a), by = c[1] + ry * Math.sin(a); d += `M${r1(bx)},${r1(by)} Q${r1(c[0] - rx * Math.cos(a) * .95)},${r1(c[1] - H * .85)} ${r1(c[0])},${r1(c[1] - H)}`; }
-  el("path", { d, fill: "none", stroke: "#1a120c", "stroke-width": .9, opacity: .55 }, p);
-  return [c[0], c[1] - H];
-}
-function gearD(r, n, depth = .2, holes = 6) {
-  const ri = r * (1 - depth), st = TAU / n; let d = "";
-  for (let i = 0; i < n; i++) {
-    const a = i * st, q = [[ri, a], [r, a + st * .14], [r, a + st * .44], [ri, a + st * .58]];
-    q.forEach(([rr, aa], j) => d += (i === 0 && j === 0 ? "M" : "L") + r3(rr * Math.cos(aa)) + " " + r3(rr * Math.sin(aa)));
-  }
-  d += "Z";
-  const hr = r * .15; d += `M${r3(hr)} 0a${r3(hr)} ${r3(hr)} 0 1 0 ${r3(-2 * hr)} 0a${r3(hr)} ${r3(hr)} 0 1 0 ${r3(2 * hr)} 0Z`;
-  for (let k = 0; k < holes; k++) { const a = k / holes * TAU, cx = r * .5 * Math.cos(a), cy = r * .5 * Math.sin(a), hh = r * .16; d += `M${r3(cx + hh)} ${r3(cy)}a${r3(hh)} ${r3(hh)} 0 1 0 ${r3(-2 * hh)} 0a${r3(hh)} ${r3(hh)} 0 1 0 ${r3(2 * hh)} 0Z`; }
-  return d;
-}
-function gear(p, cx, cy, r, n, fill = "url(#gBrassR)", dur = 20, ccw = false) {
-  const g = el("g", { transform: `translate(${r3(cx)} ${r3(cy)})` }, p);
-  const s = el("g", { class: "spin" + (ccw ? " ccw" : ""), style: `animation-duration:${dur}s` }, g);
-  el("path", { d: gearD(r, n), fill, "fill-rule": "evenodd", class: "on" }, s);
+// neon without filters: halo + body + hot core, drawn where it sits so depth stays correct
+function neonD(p, d, color, w = 1.6, local = true) {
+  const g = el("g", { class: "lit" }, p), ve = local ? { "vector-effect": "non-scaling-stroke" } : {};
+  el("path", { d, fill: "none", stroke: color, "stroke-width": w * 5, opacity: .16, "stroke-linecap": "round", "stroke-linejoin": "round", ...ve }, g);
+  el("path", { d, fill: "none", stroke: color, "stroke-width": w * 2.2, opacity: .45, "stroke-linecap": "round", "stroke-linejoin": "round", ...ve }, g);
+  el("path", { d, fill: "none", stroke: shade(color, .55), "stroke-width": w, "stroke-linecap": "round", "stroke-linejoin": "round", ...ve }, g);
   return g;
 }
-function archWin(g, lg, u, v, w, h, frame = "#b8862f") {
-  const r = w / 2, d = `M${r3(u)},${r3(v + h)} V${r3(v + r)} A${r3(r)},${r3(r)} 0 0 1 ${r3(u + w)},${r3(v + r)} V${r3(v + h)} Z`;
-  el("path", { d, fill: "#1f343b", class: "on" }, g);
-  el("path", { d: `M${r3(u + w * .2)},${r3(v + h - .05)} V${r3(v + r)}`, stroke: "#9fd3dd", "stroke-width": 1.5, opacity: .5, "vector-effect": "non-scaling-stroke" }, g);
-  el("path", { d: `M${r3(u + w / 2)},${r3(v + .02)} V${r3(v + h)} M${r3(u)},${r3(v + r + (h - r) * .45)} H${r3(u + w)}`, stroke: frame, "stroke-width": 1.2, fill: "none", "vector-effect": "non-scaling-stroke" }, g);
-  if (lg) el("path", { d, fill: "#ffc561", opacity: .95 }, lg);
+function neonText(p, u, v, size, text, color, anchor = "middle") {
+  const g = el("g", { class: "lit", transform: `translate(${r3(u)} ${r3(v)}) scale(${r3(size / 100)})` }, p);
+  const mk = (stroke, w, op, fill) => { const t = el("text", { x: 0, y: 0, "font-size": 100, class: "ntxt", "text-anchor": anchor, fill, stroke, "stroke-width": w, opacity: op, "stroke-linejoin": "round" }, g); t.textContent = text; };
+  mk(color, 26, .18, "none"); mk(color, 10, .5, "none"); mk("none", 0, 1, shade(color, .6));
+  return g;
 }
-function rectWin(g, lg, u, v, w, h) {
-  el("rect", { x: r3(u), y: r3(v), width: w, height: h, fill: "#1f343b", class: "on" }, g);
-  el("path", { d: `M${r3(u + w / 2)} ${r3(v)}V${r3(v + h)}M${r3(u)} ${r3(v + h / 2)}H${r3(u + w)}`, stroke: "#b8862f", "stroke-width": 1, "vector-effect": "non-scaling-stroke" }, g);
-  if (lg) el("rect", { x: r3(u), y: r3(v), width: w, height: h, fill: "#ffc561" }, lg);
+function windows(f, w, h, litCol, density = .55, rowH = .42) { // rows of windows on a face, dark by day, lit by night
+  let dk = "", lt = "";
+  for (let v = .5; v < h - .25; v += rowH) { const row = `M.18 ${r3(v)}H${r3(w - .18)}`; dk += row; if (rnd() < density) lt += row; }
+  const dash = pick([".2 .14", ".14 .1", ".3 .16", ".1 .1 .3 .1"]);
+  el("path", { d: dk, stroke: "#0a0b16", "stroke-width": .17, "stroke-dasharray": dash, fill: "none" }, f);
+  if (lt) el("path", { d: lt, stroke: litCol, "stroke-width": .15, "stroke-dasharray": dash, fill: "none", class: "lit", opacity: .85 }, f);
 }
-function porthole(g, lg, u, v, r) {
-  el("circle", { cx: u, cy: v, r: r + .06, fill: "url(#gBrassR)", class: "on" }, g);
-  el("circle", { cx: u, cy: v, r, fill: "#1f343b", class: "on" }, g);
-  if (lg) el("circle", { cx: u, cy: v, r, fill: "#ffc561" }, lg);
-}
-function gauge(g, u, v, r) {
-  el("circle", { cx: u, cy: v, r: r + .05, fill: "url(#gBrassR)", class: "on" }, g);
-  el("circle", { cx: u, cy: v, r, fill: "#efe6cf", class: "on" }, g);
-  const a = -2.2 + rnd() * 2.4;
-  el("line", { x1: u, y1: v, x2: r3(u + Math.cos(a) * r * .8), y2: r3(v + Math.sin(a) * r * .8), stroke: "#b0201c", "stroke-width": 1.3, "vector-effect": "non-scaling-stroke" }, g);
-}
-// neon: dull glass tube by day (geo), glowing copy by night (lit)
-function neon(g, lg, d, color, w = 2.2) {
-  el("path", { d, fill: "none", stroke: "#8f979e", "stroke-width": w, "stroke-linecap": "round", "stroke-linejoin": "round", opacity: .85, "vector-effect": "non-scaling-stroke" }, g);
-  if (lg) el("path", { d, fill: "none", stroke: color, "stroke-width": w + .6, "stroke-linecap": "round", "stroke-linejoin": "round", "vector-effect": "non-scaling-stroke" }, lg);
-}
-function neonText(g, lg, u, v, size, text, color) {
-  const mk = (p, fill) => { const t = el("text", { x: 0, y: 0, "font-size": 100, class: "ntxt", "text-anchor": "middle", fill, transform: `translate(${r3(u)} ${r3(v)}) scale(${r3(size / 100)})` }, p); t.textContent = text; return t; };
-  mk(g, "#3a3d42");
-  if (lg) mk(lg, color);
-}
-function lamp(p, lg, x, y) {
-  const b = P(x, y), t = P(x, y, 1.5);
-  line(p, b, t, "#22262b", 2.4);
-  line(p, [t[0] - 6, t[1] + 2], [t[0] + 6, t[1] + 2], "#22262b", 1.6);
-  el("path", { d: `M${r1(t[0] - 4)},${r1(t[1] - 1)} h8 l-1.5,-8 h-5 z`, fill: "#e8d9a8", class: "o" }, p);
-  el("path", { d: `M${r1(t[0] - 4)},${r1(t[1] - 9)} h8 l-4,-4 z`, fill: "#22262b" }, p);
-  el("circle", { cx: r1(t[0]), cy: r1(t[1] - 5), r: 14, fill: "url(#gLampGlow)" }, lg);
-  el("circle", { cx: r1(t[0]), cy: r1(t[1] - 5), r: 3, fill: "#fff1c4" }, lg);
-}
-function steam(p, sx, sy, n = 3) {
-  for (let i = 0; i < n; i++) el("circle", { cx: r1(sx), cy: r1(sy), r: 6, class: "steam", style: `animation-delay:${r1(i * 1.4 + rnd())}s` }, p);
-}
-function tree(p, x, y, s, type) {
-  const [bx, by] = P(x, y);
-  el("ellipse", { cx: r1(bx + 5), cy: r1(by + 2), rx: r1(15 * s), ry: r1(6 * s), fill: "#000", opacity: .18 }, p);
-  el("rect", { x: r1(bx - 2.5 * s), y: r1(by - 16 * s), width: r1(5 * s), height: r1(17 * s), fill: "#4a3020", class: "o" }, p);
-  if (type === "cypress") {
-    el("path", { d: `M${r1(bx)},${r1(by - 70 * s)} C${r1(bx + 15 * s)},${r1(by - 50 * s)} ${r1(bx + 13 * s)},${r1(by - 20 * s)} ${r1(bx)},${r1(by - 10 * s)} C${r1(bx - 13 * s)},${r1(by - 20 * s)} ${r1(bx - 15 * s)},${r1(by - 50 * s)} ${r1(bx)},${r1(by - 70 * s)}Z`, fill: "#33502f", class: "o" }, p);
-    el("path", { d: `M${r1(bx - 3 * s)},${r1(by - 62 * s)} C${r1(bx - 9 * s)},${r1(by - 45 * s)} ${r1(bx - 8 * s)},${r1(by - 28 * s)} ${r1(bx - 3 * s)},${r1(by - 18 * s)}`, fill: "none", stroke: "#56784a", "stroke-width": 2 }, p);
-  } else {
-    [[-10, -26, 13, "#3d5a34"], [10, -28, 12, "#3d5a34"], [0, -38, 15, "#4a6b3e"], [-4, -44, 7, "#6a8c56"]].forEach(([dx, dy, r, c], i) =>
-      el("circle", { cx: r1(bx + dx * s), cy: r1(by + dy * s), r: r1(r * s), fill: c, class: i === 3 ? "" : "o" }, p));
-  }
-}
-const R0 = 10.4;
-const rad = t => R0 * (1 + .05 * Math.sin(3 * t + .6) + .035 * Math.sin(5 * t + 2.1) + .02 * Math.sin(8 * t + .3));
-const ring = (k, z, n = 72, jag = 0, ph = 0) => Array.from({ length: n }, (_, i) => {
-  const t = i / n * TAU, r = rad(t) * k * (1 + (jag ? jag * (Math.sin(t * 9 + ph) * .5 + Math.sin(t * 17 + ph * 2) * .3 + (rnd() - .5) * .9) : 0));
-  return P(r * Math.cos(t), r * Math.sin(t), z);
-});
-function smoothPath(a) {
-  let d = ""; const n = a.length;
-  for (let i = 0; i < n; i++) {
-    const p0 = a[(i - 1 + n) % n], p1 = a[i], p2 = a[(i + 1) % n], p3 = a[(i + 2) % n];
-    if (i === 0) d += `M${r1(p1[0])},${r1(p1[1])}`;
-    d += `C${r1(p1[0] + (p2[0] - p0[0]) / 6)},${r1(p1[1] + (p2[1] - p0[1]) / 6)} ${r1(p2[0] - (p3[0] - p1[0]) / 6)},${r1(p2[1] - (p3[1] - p1[1]) / 6)} ${r1(p2[0])},${r1(p2[1])}`;
-  }
-  return d + "Z";
-}
-function plaza(p, x0, y0, x1, y1, col = "#8b8276") {
-  poly(p, [P(x0, y0, .02), P(x1, y0, .02), P(x1, y1, .02), P(x0, y1, .02)], col);
-  const f = faceG(p, "T", x0, y0, .02); let d = "";
-  for (let u = .5; u < x1 - x0; u += .5) d += `M${u} 0V${r3(y1 - y0)}`;
-  for (let v = .5; v < y1 - y0; v += .5) d += `M0 ${v}H${r3(x1 - x0)}`;
-  el("path", { d, stroke: "#4e463c", "stroke-width": .7, opacity: .35, fill: "none", "vector-effect": "non-scaling-stroke" }, f);
-  el("rect", { x: 0, y: 0, width: r3(x1 - x0), height: r3(y1 - y0), fill: "none", stroke: "#5e5447", "stroke-width": 2.2, "vector-effect": "non-scaling-stroke" }, f);
+function panelLines(f, w, h, step = .9) {
+  let d = ""; for (let u = step; u < w; u += step) d += `M${r3(u)} 0V${r3(h)}`;
+  el("path", { d, stroke: "#000", "stroke-width": .8, opacity: .35, fill: "none", "vector-effect": "non-scaling-stroke" }, f);
 }
 
 /* =====================================================================
-   SCENE
+   SCENE: a floating neon sky-island
    ===================================================================== */
+const N = 11;
 const clockHands = [];
 const LABELS = [];
-let island, lit;
+const SB = {};
+let defsEl;
+const gradCache = {};
+function cg(col) { // horizontal shading for round surfaces and rock layers
+  if (gradCache[col]) return gradCache[col];
+  const id = "cg" + col.slice(1);
+  defsEl.insertAdjacentHTML("beforeend", `<linearGradient id="${id}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${shade(col, .22)}"/><stop offset=".38" stop-color="${col}"/><stop offset=".65" stop-color="${shade(col, -.15)}"/><stop offset="1" stop-color="${shade(col, -.45)}"/></linearGradient>`);
+  return (gradCache[col] = `url(#${id})`);
+}
+function vgrad(col) { // top-bright, fading-down gradient (waterfalls)
+  const id = "vg" + col.slice(1);
+  if (!gradCache[id]) { defsEl.insertAdjacentHTML("beforeend", `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".9"/><stop offset=".4" stop-color="${col}" stop-opacity=".55"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient>`); gradCache[id] = 1; }
+  return `url(#${id})`;
+}
+function hgrad(col) { // trail gradient: solid at the ship, fading behind
+  const id = "hg" + col.slice(1);
+  if (!gradCache[id]) { defsEl.insertAdjacentHTML("beforeend", `<linearGradient id="${id}" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="${col}" stop-opacity=".95"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient>`); gradCache[id] = 1; }
+  return `url(#${id})`;
+}
+function arcD(x, y, z, r, t0 = 0, t1 = 1) {
+  const c = P(x, y, z), rx = r * S * 1.2247, ry = r * S * .7071;
+  const pt = t => [c[0] - rx * Math.cos(Math.PI * t), c[1] + ry * Math.sin(Math.PI * t)];
+  const a = pt(t0), b = pt(t1);
+  return `M${r1(a[0])},${r1(a[1])} A${r1(rx)},${r1(ry)} 0 0 0 ${r1(b[0])},${r1(b[1])}`;
+}
+function circleD(u, v, r) { return `M${r3(u - r)} ${r3(v)}a${r3(r)} ${r3(r)} 0 1 0 ${r3(2 * r)} 0a${r3(r)} ${r3(r)} 0 1 0 ${r3(-2 * r)} 0`; }
+function antennaBall(p, a, len, col) {
+  line(p, a, [a[0], a[1] - len], "#0b0818", 1.8);
+  el("circle", { cx: r1(a[0]), cy: r1(a[1] - len), r: 2.6, fill: shade(col, -.3), class: "o" }, p);
+  const g = el("g", { class: "lit blink", style: `animation-delay:${r1(rnd() * 2)}s` }, p);
+  el("circle", { cx: r1(a[0]), cy: r1(a[1] - len), r: 8, fill: col, opacity: .3 }, g); el("circle", { cx: r1(a[0]), cy: r1(a[1] - len), r: 2.4, fill: "#fff" }, g);
+}
+function lampPost(p, x, y, col = "#35e6ff", h = 1.8) {
+  const b = P(x, y), t = P(x, y, h);
+  line(p, b, t, "#0b0818", 2.4); line(p, t, [t[0] + 7, t[1] - 3], "#0b0818", 2);
+  el("rect", { x: r1(t[0] + 4), y: r1(t[1] - 4), width: 7, height: 3, fill: "#2a2f54", class: "o" }, p);
+  const g = el("g", { class: "lit" }, p);
+  el("circle", { cx: r1(t[0] + 7.5), cy: r1(t[1]), r: 12, fill: col, opacity: .18 }, g);
+  el("rect", { x: r1(t[0] + 4.5), y: r1(t[1] - 1.5), width: 6, height: 2, fill: shade(col, .6) }, g);
+}
+const sq = (t, k) => { const c = Math.cos(t), s = Math.sin(t), n = 5; const r = k / Math.pow(Math.pow(Math.abs(c), n) + Math.pow(Math.abs(s), n), 1 / n); return [r * c, r * s]; };
+function rockRing(cx, cy, k, z, jag, n = 60) {
+  return Array.from({ length: n }, (_, i) => { const t = i / n * TAU, kk = k * (1 + jag * ((rnd() - .5) * 1.4 + .5 * Math.sin(t * 7 + k))); const [x, y] = sq(t, kk); return P(cx + x, cy + y, z); });
+}
+function zigzag(a, b, n = 5, amp = 7) {
+  let d = `M${r1(a[0])},${r1(a[1])}`;
+  for (let i = 1; i <= n; i++) { const t = i / n; d += ` L${r1(a[0] + (b[0] - a[0]) * t + (i < n ? (rnd() - .5) * 2 * amp : 0))},${r1(a[1] + (b[1] - a[1]) * t)}`; }
+  return d;
+}
+function cloudBank(p, cx, cy, w, s = 1, hi = true) {
+  const g = el("g", { class: "drift", style: `animation-duration:${r1(70 + rnd() * 60)}s;animation-delay:${-r1(rnd() * 60)}s` }, p);
+  el("ellipse", { cx: r1(cx), cy: r1(cy + 10 * s), rx: r1(w / 2), ry: r1(34 * s), class: "cl" }, g);
+  const n = Math.max(3, Math.round(w / (55 * s)));
+  for (let i = 0; i < n; i++) {
+    const x = cx - w / 2 + (i + .5) * w / n + (rnd() - .5) * 20 * s, r = (34 + rnd() * 34) * s * (1 - Math.abs(i - n / 2) / n * .9);
+    el("circle", { cx: r1(x), cy: r1(cy - r * .35), r: r1(r), class: "cl" }, g);
+    if (hi) el("circle", { cx: r1(x - r * .22), cy: r1(cy - r * .62), r: r1(r * .55), class: "clh", opacity: .7 }, g);
+  }
+}
+function rockSpire(p, x, y, h, w, col = "#2c2f4e", crack = "#ff4fa8") {
+  const j = () => (rnd() - .5) * w * .4;
+  const b = [[x - w + j(), y - w + j()], [x + w + j(), y - w + j()], [x + w + j(), y + w + j()], [x - w + j(), y + w + j()]];
+  const mz = h * (.5 + rnd() * .2), ms = .5 + rnd() * .15;
+  const m = b.map(([bx, by]) => [x + (bx - x) * ms + j() * .4, y + (by - y) * ms + j() * .4]);
+  const Pb = b.map(q => P(q[0], q[1], 0)), Pm = m.map(q => P(q[0], q[1], mz)), Pa = P(x + j() * .5, y + j() * .5, h);
+  [[3, 0, .14], [0, 1, -.04], [1, 2, -.32], [2, 3, 0]].forEach(([i, k, sh]) => { poly(p, [Pb[i], Pb[k], Pm[k], Pm[i]], shade(col, sh)); poly(p, [Pm[i], Pm[k], Pa], shade(col, sh + .08)); });
+  [[2, 3], [1, 2]].forEach(([i, k], fi) => {
+    if (fi && rnd() < .4) return;
+    let pts = []; const u = .3 + rnd() * .4;
+    for (let s = 0; s <= 5; s++) { const t = s / 5 * .95, uu = Math.min(.9, Math.max(.1, u + (rnd() - .5) * .25));
+      const bx = b[i][0] + (b[k][0] - b[i][0]) * uu, by = b[i][1] + (b[k][1] - b[i][1]) * uu, mx = m[i][0] + (m[k][0] - m[i][0]) * uu, my = m[i][1] + (m[k][1] - m[i][1]) * uu;
+      pts.push(P(bx + (mx - bx) * t, by + (my - by) * t, mz * t)); }
+    neonD(p, pathOf(pts), fi ? "#35e6ff" : crack, 1.2, false);
+  });
+}
+function glowTree(p, x, y, s, col) {
+  const [bx, by] = P(x, y);
+  el("ellipse", { cx: r1(bx + 3), cy: r1(by + 1), rx: r1(14 * s), ry: r1(6 * s), fill: "#000", opacity: .35 }, p);
+  el("path", { d: `M${r1(bx - 3 * s)},${r1(by)} L${r1(bx - 1.2 * s)},${r1(by - 26 * s)} L${r1(bx + 1.2 * s)},${r1(by - 26 * s)} L${r1(bx + 3 * s)},${r1(by)}Z M${r1(bx)},${r1(by - 16 * s)} L${r1(bx + 9 * s)},${r1(by - 26 * s)} M${r1(bx)},${r1(by - 12 * s)} L${r1(bx - 8 * s)},${r1(by - 22 * s)}`, fill: "#2a1f34", stroke: "#2a1f34", "stroke-width": 1.6 }, p);
+  const cx = bx, cy = by - 36 * s, pts = [];
+  for (let i = 0; i < 26; i++) { const a = rnd() * TAU, rr = Math.sqrt(rnd()); pts.push([cx + Math.cos(a) * rr * 18 * s, cy + Math.sin(a) * rr * 15 * s]); }
+  const g = el("g", {}, p);
+  pts.forEach(([u, v]) => el("circle", { cx: r1(u), cy: r1(v), r: r1(4.4 * s), fill: shade(col, -.62) }, g));
+  const lg = el("g", { class: "lit" }, p);
+  el("ellipse", { cx: r1(cx), cy: r1(cy), rx: r1(26 * s), ry: r1(22 * s), fill: col, opacity: .14 }, lg);
+  pts.forEach(([u, v], i) => el("circle", { cx: r1(u), cy: r1(v - 1), r: r1((i % 3 ? 2.2 : 3) * s), fill: i % 4 ? col : shade(col, .6) }, lg));
+}
+function crystal(p, x, y, s = 1, col = "#ffe14d") {
+  const [bx, by] = P(x, y), g = el("g", {}, p), lg = el("g", { class: "lit" }, p);
+  el("ellipse", { cx: r1(bx), cy: r1(by - 6 * s), rx: r1(16 * s), ry: r1(12 * s), fill: col, opacity: .18 }, lg);
+  [[-6, 14, -.3], [0, 22, 0], [6, 12, .35], [2, 9, .6]].forEach(([dx, h, tilt]) => {
+    const x0 = bx + dx * s, d = `M${r1(x0 - 3 * s)},${r1(by)} L${r1(x0 + tilt * h * s - 1)},${r1(by - h * s)} L${r1(x0 + 3 * s)},${r1(by)} Z`;
+    el("path", { d, fill: shade(col, -.45), class: "o" }, g); el("path", { d, fill: col, opacity: .85 }, lg);
+  });
+}
+function drone(p, x, y, col = "#35e6ff") {
+  const g = el("g", { class: "bob", style: `animation-duration:${r1(3.5 + rnd() * 2)}s;animation-delay:${-r1(rnd() * 3)}s` }, p);
+  el("ellipse", { cx: x, cy: y, rx: 9, ry: 4, fill: "#2a2f54", class: "o" }, g);
+  [[-12, -3], [12, -3], [-7, 3], [7, 3]].forEach(([dx, dy]) => { line(g, [x, y], [x + dx, y + dy - 2], "#0b0818", 1.2); const r = el("g", { transform: `translate(${x + dx} ${y + dy - 3})` }, g); el("ellipse", { rx: 6, ry: 1.6, fill: "#cfd4ff", opacity: .7, class: "spinP" }, r); });
+  const l = el("g", { class: "lit" }, g); el("circle", { cx: x, cy: y + 3, r: 7, fill: col, opacity: .25 }, l); el("circle", { cx: x, cy: y + 3, r: 1.8, fill: "#fff" }, l);
+}
+function ship(p, path, dur, col, delay = 0) {
+  const g = el("g", {}, p);
+  el("polygon", { points: "-4,-3 -150,-1 -150,1 -4,3", fill: hgrad(col), class: "lit" }, g);
+  el("polygon", { points: "-4,-6 -70,-2 -70,2 -4,6", fill: hgrad(col), opacity: .35, class: "lit" }, g);
+  el("polygon", { points: "16,0 -8,-8 -4,0 -8,8", fill: "#2a2f54", class: "o" }, g);
+  el("polygon", { points: "8,0 0,-3 0,3", fill: "#9fe8ff", class: "lit" }, g);
+  el("animateMotion", { dur: dur + "s", begin: delay + "s", repeatCount: "indefinite", rotate: "auto", path }, g);
+}
+function waterfall(p, side, a0, a1, col, len) {
+  const t0 = side === "L" ? P(a0, N, 0) : P(N, a0, 0), t1 = side === "L" ? P(a1, N, 0) : P(N, a1, 0);
+  const g = el("g", { class: "lit" }, p);
+  el("path", { d: `M${r1(t0[0])},${r1(t0[1])} L${r1(t1[0])},${r1(t1[1])} L${r1(t1[0])},${r1(t1[1] + len)} L${r1(t0[0])},${r1(t0[1] + len)}Z`, fill: vgrad(col) }, g);
+  for (let k = 1; k <= 4; k++) {
+    const f = k / 5, x = t0[0] + (t1[0] - t0[0]) * f, y = t0[1] + (t1[1] - t0[1]) * f;
+    el("line", { x1: r1(x), y1: r1(y), x2: r1(x), y2: r1(y + len * (.55 + rnd() * .3)), stroke: shade(col, .6), "stroke-width": 1.6, opacity: .75, "stroke-dasharray": `${r1(10 + rnd() * 10)} ${r1(18 + rnd() * 12)}`, class: "fall", style: `animation-duration:${r1(.6 + rnd() * .6)}s` }, g);
+  }
+  el("line", { x1: r1(t0[0]), y1: r1(t0[1]), x2: r1(t1[0]), y2: r1(t1[1]), stroke: shade(col, .5), "stroke-width": 3.5, "stroke-linecap": "round" }, g);
+}
+function islet(p, x, y, z, k, lit) {
+  const g = el("g", {}, p);
+  [[.25, z - 4.6, "#1b1c30"], [.5, z - 3.4, "#202238"], [.75, z - 2.1, "#25273f"], [.96, z - .8, "#2a2c47"]].forEach(([kk, zz, c]) => poly(g, rockRing(x, y, k * kk, zz, .14, 36), cg(c)));
+  const top = rockRing(x, y, k, z, .03, 36);
+  el("path", { d: "M" + top.map(q => r1(q[0]) + "," + r1(q[1])).join(" L") + "Z", fill: "#1d3a3a", stroke: "#13282a", "stroke-width": 1.5 }, g);
+  neonD(g, "M" + top.map(q => r1(q[0]) + "," + r1(q[1])).join(" L") + "Z", lit, 1.2, false);
+  const pg = el("g", { class: "plot" }, g), f = faceG(pg, "T", x - k * .5, y - k * .5, z + .02), w = k;
+  const lg = el("g", { class: "lit pulse" }, f);
+  el("rect", { x: .1, y: .1, width: w - .2, height: w - .2, fill: "none", stroke: lit, "stroke-width": 1.4, "stroke-dasharray": "3 6", "stroke-linecap": "round", "vector-effect": "non-scaling-stroke" }, lg);
+  el("path", { d: `M${w / 2 - .35} ${w / 2}H${w / 2 + .35}M${w / 2} ${w / 2 - .35}V${w / 2 + .35}`, stroke: "#fff", "stroke-width": 2, "stroke-linecap": "round", "vector-effect": "non-scaling-stroke" }, lg);
+  el("title", {}, pg).textContent = "Expansion islet";
+  return g;
+}
 
 function drawScene() {
   svg.innerHTML = "";
-  const defs = el("defs", {}, svg);
-  const lin = (id, stops, x2 = 1, y2 = 0) => `<linearGradient id="${id}" x1="0" y1="0" x2="${x2}" y2="${y2}">${stops.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join("")}</linearGradient>`;
-  defs.innerHTML =
-    lin("gBrass", [[0, "#4f340f"], [.25, "#b8862f"], [.42, "#f1d18a"], [.6, "#b07e2c"], [1, "#4a300d"]]) +
-    lin("gCopper", [[0, "#4a200e"], [.25, "#a3532c"], [.42, "#efa477"], [.62, "#9a4b26"], [1, "#401a0b"]]) +
-    lin("gIron", [[0, "#1b1e22"], [.3, "#4c535b"], [.45, "#8d959e"], [.65, "#40464d"], [1, "#16191c"]]) +
-    lin("gVerd", [[0, "#24483f"], [.3, "#4f8f7a"], [.45, "#9fd8c4"], [.65, "#467f6c"], [1, "#1f3d35"]]) +
-    lin("gWood", [[0, "#3b2618"], [.4, "#7a5132"], [.55, "#9c6c45"], [1, "#2f1e12"]]) +
-    lin("gBrassR", [[0, "#f3d690"], [.5, "#b8862f"], [1, "#6a4714"]], 1, 1) +
-    `<linearGradient id="skyG" gradientUnits="userSpaceOnUse" x1="0" y1="-300" x2="0" y2="900"><stop id="sk0" offset="0" stop-color="#7fb4cf"/><stop id="sk1" offset=".6" stop-color="#d9e4dc"/><stop id="sk2" offset="1" stop-color="#f1dcb2"/></linearGradient>
-     <radialGradient id="gDome" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#b9ead8"/><stop offset=".45" stop-color="#5a9c86"/><stop offset="1" stop-color="#1f3d35"/></radialGradient>
-     <radialGradient id="gDomeCu" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#ffc49c"/><stop offset=".45" stop-color="#b0603a"/><stop offset="1" stop-color="#4a200e"/></radialGradient>
-     <radialGradient id="gBulb" cx=".36" cy=".32" r=".8"><stop offset="0" stop-color="#ffffff" stop-opacity=".95"/><stop offset=".35" stop-color="#e8f3f2" stop-opacity=".7"/><stop offset="1" stop-color="#8fb5b8" stop-opacity=".55"/></radialGradient>
-     <radialGradient id="gBulbLit"><stop offset="0" stop-color="#fff6c8"/><stop offset=".55" stop-color="#ffd25a" stop-opacity=".85"/><stop offset="1" stop-color="#ff9d2e" stop-opacity="0"/></radialGradient>
-     <radialGradient id="gLampGlow"><stop offset="0" stop-color="#ffd27a" stop-opacity=".9"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
-     <radialGradient id="gHalo"><stop offset="0" stop-color="#ffe28a" stop-opacity=".7"/><stop offset="1" stop-color="#ffe28a" stop-opacity="0"/></radialGradient>
-     <radialGradient id="gSun"><stop offset=".5" stop-color="#fff3d0"/><stop offset="1" stop-color="#fff3d0" stop-opacity="0"/></radialGradient>
-     <radialGradient id="gCrys"><stop offset="0" stop-color="#e6ffff"/><stop offset="1" stop-color="#3fe0f0" stop-opacity="0"/></radialGradient>
-     <filter id="fNight" color-interpolation-filters="sRGB"><feColorMatrix id="nightM" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"/></filter>
-     <filter id="fGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b1"/><feGaussianBlur in="SourceGraphic" stdDeviation="1.6" result="b2"/><feMerge><feMergeNode in="b1"/><feMergeNode in="b1"/><feMergeNode in="b2"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-     <clipPath id="bulbClip"><circle cx="0" cy="0" r="74"/></clipPath>`;
+  defsEl = el("defs", {}, svg);
+  defsEl.innerHTML = `
+    <linearGradient id="skyG" gradientUnits="userSpaceOnUse" x1="0" y1="-300" x2="0" y2="1300"><stop id="sk0" offset="0" stop-color="#0a0820"/><stop id="sk1" offset=".5" stop-color="#1c1442"/><stop id="sk2" offset="1" stop-color="#36245e"/></linearGradient>
+    <linearGradient id="coreG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb0ec"/><stop offset=".35" stop-color="#ff5fd0"/><stop offset=".7" stop-color="#b46cff"/><stop offset="1" stop-color="#5a6cff"/></linearGradient>
+    <linearGradient id="beamG" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffe14d" stop-opacity=".45"/><stop offset="1" stop-color="#ffe14d" stop-opacity="0"/></linearGradient>
+    <radialGradient id="bulbG" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#fff6b0" stop-opacity=".5"/><stop offset="1" stop-color="#ffe14d" stop-opacity=".08"/></radialGradient>
+    <radialGradient id="pondG" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#f0b8ff"/><stop offset=".6" stop-color="#b46cff"/><stop offset="1" stop-color="#5a2a9a"/></radialGradient>
+    <clipPath id="bulbClip"><circle cx="0" cy="0" r="46"/></clipPath>`;
 
-  /* ---- sky ---- */
-  el("rect", { x: -3000, y: -3000, width: 7400, height: 7000, fill: "url(#skyG)" }, svg);
+  /* ---- sky, far clouds, ships ---- */
+  el("rect", { x: -3000, y: -3000, width: 9000, height: 9000, fill: "url(#skyG)" }, svg);
   const stars = el("g", { id: "stars", opacity: 0 }, svg);
-  for (let i = 0; i < 90; i++) el("circle", { cx: r1(-300 + rnd() * 2000), cy: r1(-300 + rnd() * 700), r: r1(.7 + rnd() * 1.5), fill: "#fff", class: i % 3 ? "" : "twinkle", style: `animation-delay:${r1(rnd() * 3)}s` }, stars);
-  const sun = el("g", { id: "sun" }, svg);
-  el("circle", { cx: 1180, cy: 40, r: 110, fill: "url(#gSun)" }, sun);
-  el("circle", { cx: 1180, cy: 40, r: 42, fill: "#fff0c6" }, sun);
+  for (let i = 0; i < 90; i++) el("circle", { cx: r1(200 + rnd() * 1800), cy: r1(-200 + rnd() * 800), r: r1(.6 + rnd() * 1.3), fill: "#fff", class: i % 3 ? "" : "twinkle", style: `animation-delay:${r1(rnd() * 3)}s` }, stars);
   const moon = el("g", { id: "moon", opacity: 0 }, svg);
-  el("circle", { cx: 1180, cy: 40, r: 34, fill: "#e9e6d6" }, moon);
-  el("circle", { cx: 1194, cy: 30, r: 30, fill: "#151a3a", opacity: .9 }, moon);
+  el("circle", { cx: 1640, cy: 120, r: 30, fill: "#e9e4ff" }, moon); el("circle", { cx: 1653, cy: 110, r: 27, fill: "#0e0a28" }, moon);
+  const far = el("g", { opacity: .55 }, svg);
+  cloudBank(far, 360, 560, 520, 1.1); cloudBank(far, 1850, 520, 560, 1.1); 
+  const skyL = el("g", {}, svg);
+  ship(skyL, "M-300,240 C500,140 1300,330 2500,170", 26, "#35e6ff");
+  ship(skyL, "M2500,420 C1800,300 900,520 -300,380", 34, "#ff4fa8", -12);
 
-  // distant islets
-  const far = el("g", { id: "far", opacity: .5 }, svg);
-  [[90, 330, .5], [1360, 250, .38], [1270, 640, .3], [40, 720, .28]].forEach(([x, y, s]) => {
-    el("path", { d: `M${x - 90 * s},${y} Q${x},${y - 40 * s} ${x + 90 * s},${y} L${x + 40 * s},${y + 60 * s} L${x + 5 * s},${y + 150 * s} L${x - 30 * s},${y + 70 * s}Z`, fill: "var(--haze,#8fa3ac)" }, far);
-    el("path", { d: `M${x - 20 * s},${y - 22 * s} v-40 h10 v40 M${x + 25 * s},${y - 20 * s} v-24 h14 v24`, fill: "var(--haze,#8fa3ac)" }, far);
-  });
-  // cloud sea below
-  const sea = el("g", {}, svg);
-  for (let row = 0; row < 3; row++) {
-    const g = el("g", { class: "sway", style: `animation-duration:${50 + row * 15}s` }, sea);
-    for (let i = 0; i < 16; i++) el("ellipse", { cx: r1(-400 + i * 150 + rnd() * 80), cy: r1(960 + row * 70 + rnd() * 30), rx: r1(110 + rnd() * 70), ry: r1(40 + rnd() * 20), class: "cl", opacity: .55 + row * .15 }, g);
+  /* ---- expansion islets behind, linked by light beams ---- */
+  const back = el("g", {}, svg);
+  const isA = [-2.5, -19.5, 1.4, 2.6], isB = [-19.5, -2.5, .4, 2.3];
+  islet(back, ...isA, "#35e6ff"); islet(back, ...isB, "#ff4fa8");
+  const beam = (a, b, col) => { const g = el("g", { class: "lit" }, back); [[10, .1], [4, .35], [1.6, 1]].forEach(([w, o]) => el("line", { x1: r1(a[0]), y1: r1(a[1]), x2: r1(b[0]), y2: r1(b[1]), stroke: o === 1 ? shade(col, .6) : col, "stroke-width": w, opacity: o, "stroke-linecap": "round" }, g)); };
+  beam(P(-3.2, -11, 0), P(-2.6, -17, 1.4), "#35e6ff");
+  beam(P(-11, -3.2, 0), P(-17.2, -2.5, .4), "#ff4fa8");
+  [[isA, 1], [isB, -1]].forEach(([[x, y, z], s]) => { glowTree(back, x + .9 * s, y + .3, .9, s > 0 ? "#35e6ff" : "#ff4fa8"); crystal(back, x - .9, y + .9, .8); });
+
+  /* ---- island underside: stepped rock with neon cracks ---- */
+  const under = el("g", {}, svg);
+  const strata = [[1.0, -1.4, .015, "#2e3150"], [.9, -3.3, .06, "#2a2c49"], [.76, -5.3, .09, "#262842"], [.6, -7.3, .11, "#22233b"], [.42, -9.3, .13, "#1d1e34"], [.24, -11, .15, "#19192d"], [.09, -12.5, .1, "#15152a"]];
+  const rings = strata.map(([k, z, jag]) => rockRing(0, 0, N * k, z, jag));
+  for (let i = strata.length - 1; i >= 0; i--) poly(under, rings[i], cg(strata[i][3]));
+  for (let i = 1; i < 5; i++) {
+    const front = rings[i].filter(q => q[1] > CY - strata[i][1] * S + 30);
+    for (let c = 0; c < 4; c++) { const a = front[Math.floor(rnd() * front.length)]; if (!a) continue; neonD(under, zigzag(a, [a[0] + (rnd() - .5) * 20, a[1] + 30 + rnd() * 40], 4, 6), rnd() < .5 ? "#ff4fa8" : "#35e6ff", 1.2, false); }
   }
-  const hi = el("g", {}, svg);
-  [[-150, 110, 1], [380, 160, .7], [1500, 60, .8]].forEach(([x, y, s]) => {
-    const g = el("g", { transform: `translate(${x} ${y}) scale(${s})` }, hi), c = el("g", { class: "sway" }, g);
-    [[0, 0, 40, 18], [50, -12, 55, 24], [110, 0, 42, 18]].forEach(([cx, cy, rx, ry]) => el("ellipse", { cx, cy, rx, ry, class: "cl", opacity: .8 }, c));
-  });
 
-  island = el("g", { id: "island" }, svg);
-  lit = el("g", { id: "lit", filter: "url(#fGlow)" }, null);
-
-  /* ---- underside rock ---- */
-  const under = el("g", {}, island);
-  const strata = [[.12, -9.4, "#2a211b"], [.3, -8.0, "#32281f"], [.48, -6.4, "#3b2f25"], [.66, -4.7, "#46382b"], [.82, -3.0, "#554433"], [.94, -1.5, "#64503c"]];
-  const crystals = [];
-  strata.forEach(([k, z, c], li) => {
-    const a = ring(k, z, 48, .12, li * 1.7);
-    poly(under, a, c, "o");
-    a.forEach((p, i) => {
-      if (p[1] > CY + (z * -S) + 10 && rnd() < .3) crystals.push([p[0], p[1], 6 + rnd() * 10]);
-      if (p[1] > CY - z * S + 30 && rnd() < .12) { const L = 20 + rnd() * 50; el("path", { d: `M${r1(p[0])},${r1(p[1])} q${r1(rnd() * 8 - 4)},${r1(L / 2)} ${r1(rnd() * 6 - 3)},${r1(L)}`, fill: "none", stroke: "#2b2219", "stroke-width": 1.4, opacity: .8 }, under); }
-    });
-    el("polyline", { points: pts(a.slice(6, 30)), fill: "none", stroke: shade(c, .2), "stroke-width": 1.4, opacity: .6 }, under);
-  });
-  crystals.forEach(([x, y, h]) => {
-    const d = `M${r1(x - 3)},${r1(y - 2)} L${r1(x)},${r1(y + h)} L${r1(x + 3)},${r1(y - 2)} Z`;
-    el("path", { d, fill: "#8fc6c8", class: "o" }, under);
-    el("path", { d, fill: "#5ff2ff" }, lit);
-    el("circle", { cx: r1(x), cy: r1(y + h * .5), r: 10, fill: "url(#gCrys)", opacity: .7 }, lit);
-  });
-  // levitation engines on the rim
-  [-.25, .75, 1.75, 2.75].forEach(t => {
-    const r = rad(t) * .93, x = r * Math.cos(t), y = r * Math.sin(t);
-    const c = cyl(under, x, y, -3.4, .5, 2.2, "gBrass", "#5e3f12");
-    band(under, x, y, -2.6, .5); band(under, x, y, -1.8, .5);
-    const b = P(x, y, -3.4);
-    el("path", { d: `M${r1(b[0] - 10)},${r1(b[1])} l4,14 h12 l4,-14 z`, fill: "#2a2e33", class: "o" }, under);
-    const rot = el("g", { transform: `translate(${r1(b[0])} ${r1(b[1] + 16)})` }, under);
-    el("ellipse", { rx: 40, ry: 5, fill: "#3d434a", opacity: .85, class: "prop o" }, rot);
-    el("ellipse", { cx: r1(b[0]), cy: r1(b[1] + 18), rx: 34, ry: 10, fill: "none", stroke: "#3fe0f0", "stroke-width": 3 }, lit);
+  /* ---- platform slab ---- */
+  const plat = el("g", {}, svg);
+  box(plat, -N, -N, -1.4, 2 * N, 2 * N, 1.4, "#2b2f4e");
+  ["L", "R"].forEach((side, si) => {
+    const f = faceG(plat, side, -N, -N, -1.4, 2 * N, 2 * N, 1.4);
+    panelLines(f, 2 * N, 1.4, 1.1);
+    let vd = ""; for (let u = .6; u < 2 * N - .6; u += 2.2) vd += `M${r3(u)} .62h.9v.12h-.9zM${r3(u)} .86h.9v.12h-.9z`;
+    el("path", { d: vd, fill: "#0b0918" }, f);
+    el("path", { d: vd, fill: si ? "#35e6ff" : "#b46cff", opacity: .7, class: "lit" }, f);
+    let lt = ""; for (let u = 1.7; u < 2 * N - .6; u += 2.2) lt += `M${r3(u)} .8h.25`; el("path", { d: lt, stroke: "#ffc83d", "stroke-width": .14, class: "lit" }, f);
+    neonD(f, `M0 .1H${2 * N}`, "#ff4fa8", 1.6);
+    neonD(f, `M0 1.32H${2 * N}`, "#35e6ff", 1);
   });
 
   /* ---- top surface ---- */
-  const ground = el("g", {}, island);
-  el("path", { d: smoothPath(ring(1, -.7)), fill: "#5d4a37", class: "o" }, ground);
-  el("path", { d: smoothPath(ring(1, 0)), fill: "#7d7468", class: "o" }, ground);
-  el("path", { d: smoothPath(ring(.965, 0)), fill: "#5f6e42", stroke: "#4b5834", "stroke-width": 2 }, ground);
-  [[-5, 3, 2.2], [5.5, 1.5, 1.6], [-2, -6, 2], [3, 7, 1.6], [-8, -1, 1.2]].forEach(([x, y, r]) => {
-    const c = P(x, y); el("ellipse", { cx: r1(c[0]), cy: r1(c[1]), rx: r1(r * S * 1.22), ry: r1(r * S * .7), fill: "#6f7f4c", opacity: .8 }, ground);
+  poly(plat, [P(-N, -N), P(N, -N), P(N, N), P(-N, N)], "#262a46");
+  const fl = faceG(plat, "T", -N, -N, 0), L2 = 2 * N, U = v => r3(v + N);
+  el("rect", { x: .6, y: .6, width: L2 - 1.2, height: L2 - 1.2, fill: "#1b1e33" }, fl);
+  // parks
+  [[4.9, 4.9, 5.4, 5.4], [-10.4, 4.6, 9.0, 5.8], [-10.4, -10.4, 5.8, 5.8], [8.8, -4.6, 1.6, 3.6]].forEach(([x, y, w, h]) => {
+    el("rect", { x: U(x), y: U(y), width: w, height: h, rx: .6, fill: "#16332f" }, fl);
+    for (let i = 0; i < Math.round(w * h / 3); i++) el("circle", { cx: r3(U(x) + .5 + rnd() * (w - 1)), cy: r3(U(y) + .5 + rnd() * (h - 1)), r: r3(.3 + rnd() * .6), fill: "#1c4038", opacity: .8 }, fl);
+    el("rect", { x: U(x), y: U(y), width: w, height: h, rx: .6, fill: "none", stroke: "#2a5a50", "stroke-width": .12 }, fl);
   });
-  // lanes
-  const lanes = [
-    [[2.5, 4.0], [2.2, 5.6], [-1, 6.1], [-4.6, 6.0], [-5.6, 6.0]], [[5.6, 0.4], [6.8, 1.6]],
-    [[3.6, 0.5], [5.6, 0.4], [6.2, -1.5]], [[-2.6, 0.6], [-5.0, 0.6], [-7.0, -0.7]],
-    [[0.5, -2.6], [0.6, -5.8]], [[-5.0, 0.6], [-3.4, -6.0]]
-  ];
-  lanes.forEach(l => el("polyline", { points: pts(l.map(p => P(...p))), fill: "none", stroke: "#4f473c", "stroke-width": 30, "stroke-linecap": "round", "stroke-linejoin": "round" }, ground));
-  lanes.forEach(l => el("polyline", { points: pts(l.map(p => P(...p))), fill: "none", stroke: "#8b8276", "stroke-width": 25, "stroke-linecap": "round", "stroke-linejoin": "round" }, ground));
-  lanes.forEach(l => el("polyline", { points: pts(l.map(p => P(...p))), fill: "none", stroke: "#4f473c", "stroke-width": 25, "stroke-dasharray": "2 7", opacity: .35 }, ground));
-  plaza(ground, -3.4, -3.4, 4.4, 4.4);
-  plaza(ground, -9.0, -4.6, -5.0, -0.6);
-  plaza(ground, 4.6, -5.8, 9.2, -1.2);
-  plaza(ground, -1.2, -9.4, 3.8, -5.8, "#7d756a");
-  plaza(ground, -7.6, 4.8, -5.4, 7.2, "#7d756a");
-  // back railing
-  const rail = (front) => {
-    const a = ring(.985, 0, 96), g = el("g", {}, front ? null : ground);
-    for (let i = 0; i < a.length; i++) {
-      const t = i / a.length * TAU, isFront = Math.cos(t) + Math.sin(t) > -.2;
-      if (isFront !== front) continue;
-      const b = a[i], n = a[(i + 1) % a.length];
-      line(g, [b[0], b[1] - 13], [n[0], n[1] - 13], "#1d2024", 2);
-      line(g, [b[0], b[1] - 6], [n[0], n[1] - 6], "#1d2024", 1.2);
-      if (i % 2 === 0) { line(g, b, [b[0], b[1] - 15], "#1d2024", 2); el("circle", { cx: r1(b[0]), cy: r1(b[1] - 15), r: 1.8, fill: "#b8862f" }, g); }
-    }
-    return g;
-  };
-  rail(false);
+  // plaza
+  el("rect", { x: U(-2.8), y: U(-2.8), width: 5.6, height: 5.6, fill: "#2a2d4a" }, fl);
+  let pg = ""; for (let k = -2.3; k < 2.8; k += .7) pg += `M${U(k)} ${U(-2.8)}V${U(2.8)}M${U(-2.8)} ${U(k)}H${U(2.8)}`;
+  el("path", { d: pg, stroke: "#3a3e66", "stroke-width": .6, opacity: .7, fill: "none", "vector-effect": "non-scaling-stroke" }, fl);
+  // roads: ring around the HQ + four spokes to the edge
+  const ringD = `M${U(-3.5)} ${U(-3.5)}H${U(3.5)}V${U(3.5)}H${U(-3.5)}Z`;
+  const spokes = `M${U(4.15)} ${U(0)}H${L2}M${U(-4.15)} ${U(0)}H0M${U(0)} ${U(4.15)}V${L2}M${U(0)} ${U(-4.15)}V0`;
+  el("path", { d: ringD + spokes, fill: "none", stroke: "#121426", "stroke-width": 1.3 }, fl);
+  el("path", { d: ringD + spokes, fill: "none", stroke: "#ffd27a", "stroke-width": .06, "stroke-dasharray": ".35 .35", opacity: .7 }, fl);
+  const curb = `M${U(-2.85)} ${U(-2.85)}H${U(2.85)}V${U(2.85)}H${U(-2.85)}Z` +
+    [[1, 0], [-1, 0], [0, 1], [0, -1]].map(([dx, dy]) => [-.65, .65].map(o => dx ? `M${U(dx * 4.15)} ${U(o)}H${dx > 0 ? L2 - .6 : .6}` : `M${U(o)} ${U(dy * 4.15)}V${dy > 0 ? L2 - .6 : .6}`).join("")).join("") +
+    `M${U(-4.15)} ${U(-4.15)}H${U(-.65)}M${U(.65)} ${U(-4.15)}H${U(4.15)}V${U(-.65)}M${U(4.15)} ${U(.65)}V${U(4.15)}H${U(.65)}M${U(-.65)} ${U(4.15)}H${U(-4.15)}V${U(.65)}M${U(-4.15)} ${U(-.65)}V${U(-4.15)}`;
+  neonD(fl, curb, "#35e6ff", 1);
+  [[4.25, 0, 1], [-4.85, 0, 1], [0, 4.25, 0], [0, -4.85, 0]].forEach(([x, y, alongY]) => { let d = ""; for (let k = -.5; k <= .5; k += .2) d += alongY ? `M${U(x)} ${U(k)}h.55` : `M${U(k)} ${U(y)}v.55`; el("path", { d, stroke: "#d8d4ee", "stroke-width": .1, opacity: .55 }, fl); });
+  // edge walkway trim
+  neonD(fl, `M.32 .32H${L2 - .32}V${L2 - .32}H.32Z`, "#ff4fa8", 1.5);
+  // pond + glowing river that spills over the edge
+  el("circle", { cx: U(-4.8), cy: U(7.0), r: 1.35, fill: "url(#pondG)" }, fl);
+  neonD(fl, circleD(U(-4.8), U(7.0), 1.35), "#e2a8ff", 1.2);
+  const riv = `M${U(-4.4)} ${U(8.2)} Q${U(-3.3)} ${U(9.4)} ${U(-3.2)} ${L2}`;
+  el("path", { d: riv, fill: "none", stroke: "#7a3ac0", "stroke-width": 1.1, "stroke-linecap": "round" }, fl);
+  const rl = el("g", { class: "lit" }, fl);
+  el("path", { d: riv, fill: "none", stroke: "#c98aff", "stroke-width": .9, opacity: .7, "stroke-linecap": "round" }, rl);
+  el("path", { d: riv, fill: "none", stroke: "#f6e0ff", "stroke-width": .12, "stroke-dasharray": ".2 .7", class: "flow", "stroke-linecap": "round" }, rl);
+  el("circle", { cx: U(-4.8), cy: U(7.0), r: 1.0, fill: "#e2a8ff", opacity: .25 }, rl);
 
-  /* ---- pneumatic tubes (drawn before buildings) ---- */
-  const tubes = el("g", {}, island);
-  const TUBES = [
-    [[6.1, -2.0], [6.1, -0.6], [3.05, -0.6]],
-    [[5.35, -4.3], [-2.9, -4.3], [-2.9, -2.6], [-5.85, -2.6]]
-  ];
-  TUBES.forEach((tp, ti) => {
-    const z = 1.5, sp = tp.map(p => P(p[0], p[1], z));
-    for (let i = 0; i < tp.length - 1; i++) {
-      const [a, b] = [tp[i], tp[i + 1]], len = Math.hypot(b[0] - a[0], b[1] - a[1]);
-      for (let s = 0; s <= len; s += 1.6) { const x = a[0] + (b[0] - a[0]) * s / len, y = a[1] + (b[1] - a[1]) * s / len; line(tubes, P(x, y, 0), P(x, y, z), "#26292d", 2.4); }
-    }
-    const d = "M" + sp.map(p => r1(p[0]) + "," + r1(p[1])).join(" L");
-    el("path", { d, fill: "none", stroke: "#1a120c", "stroke-width": 11, "stroke-linejoin": "round" }, tubes);
-    el("path", { d, fill: "none", stroke: "#7d9ea3", "stroke-width": 8, "stroke-linejoin": "round", opacity: .9 }, tubes);
-    el("path", { d, fill: "none", stroke: "#d6eef0", "stroke-width": 2, "stroke-linejoin": "round", opacity: .6, transform: "translate(0 -2)" }, tubes);
-    sp.forEach(p => el("ellipse", { cx: r1(p[0]), cy: r1(p[1]), rx: 5, ry: 7, fill: "url(#gBrassR)", class: "o" }, tubes));
-    const dur = 7 + ti * 3;
-    const cap = el("rect", { x: -5, y: -3, width: 10, height: 6, rx: 3, fill: "#c46a3a", stroke: "#1a120c", "stroke-width": .8 }, tubes);
-    el("animateMotion", { dur: dur + "s", repeatCount: "indefinite", path: d, rotate: "auto" }, cap);
-    const capL = el("rect", { x: -6, y: -3.5, width: 12, height: 7, rx: 3.5, fill: "#5ff2ff" }, lit);
-    el("animateMotion", { dur: dur + "s", repeatCount: "indefinite", path: d, rotate: "auto" }, capL);
-    el("path", { d, fill: "none", stroke: "#2fb6c8", "stroke-width": 2.5, opacity: .7 }, lit);
+  // cars circling the HQ (drawn under the buildings, so the HQ hides the ones behind it)
+  const carLane = (r, rev) => { const c = [P(r, -r), P(r, r), P(-r, r), P(-r, -r)]; const a = rev ? c.slice().reverse() : c; return "M" + a.map(q => r1(q[0]) + "," + r1(q[1])).join(" L") + "Z"; };
+  [[3.25, false, 0, "#35e6ff"], [3.25, false, -7, "#ff4fa8"], [3.8, true, -3, "#7dff6a"], [3.8, true, -11, "#ffc83d"]].forEach(([r, rev, beg, col]) => {
+    const g = el("g", {}, plat);
+    el("rect", { x: -8, y: -4, width: 16, height: 8, rx: 2, fill: "#2a2f54", class: "o" }, g);
+    el("rect", { x: -3, y: -3, width: 7, height: 6, rx: 1, fill: "#0b0918" }, g);
+    const l = el("g", { class: "lit" }, g);
+    el("rect", { x: -8, y: -4, width: 16, height: 8, rx: 2, fill: "none", stroke: col, "stroke-width": 1.2 }, l);
+    el("rect", { x: 7, y: -3, width: 16, height: 6, fill: "#fff6c8", opacity: .2 }, l);
+    el("circle", { cx: 7.5, cy: -2, r: 1.3, fill: "#fff" }, l); el("circle", { cx: 7.5, cy: 2, r: 1.3, fill: "#fff" }, l);
+    el("animateMotion", { dur: "16s", begin: beg + "s", repeatCount: "indefinite", rotate: "auto", path: carLane(r, rev) }, g);
   });
 
-  /* ---- objects, painter-sorted ---- */
+  /* ---- objects on top, painter-sorted ---- */
   const objs = [];
   const add = (d, fn) => objs.push({ d, fn });
-  const building = (id, d, fn) => add(d, (root, lroot) => {
-    const g = el("g", { class: "bldg", "data-b": id }, root);
-    const lg = el("g", {}, lroot);
-    fn(g, lg);
+  const building = (id, d, fn) => add(d, root => { const g = el("g", { class: "bldg", "data-b": id }, root); fn(g); });
+  const hlRect = (g, x, y, w, d, col) => { const hl = el("g", { class: "hl" }, g); neonD(faceG(hl, "T", x, y, .02), `M0 0H${w}V${d}H0Z`, col, 2.6); };
+
+  // ===== TASK HQ (to-dos): a stepped tower with a glowing core, like a reactor
+  building("todo", 0, g => {
+    hlRect(g, -2.9, -2.9, 5.8, 5.8, "#35e6ff");
+    box(g, -2.5, -2.5, 0, 5, 5, .35, "#30355a");
+    ["L", "R"].forEach(s => neonD(faceG(g, s, -2.5, -2.5, 0, 5, 5, .35), "M0 .09H5", "#35e6ff", 1.2));
+    box(g, -2, -2, .35, 4, 4, .45, "#383e66");
+    [[-2.2, 1.75], [1.75, -2.2]].forEach(([x, y]) => { cyl(g, x + .22, y + .22, .8, .22, 3.7, cg("#5a6090"), "#6a70a0"); [1.6, 2.8, 4.0].forEach(z => { const c = P(x + .22, y + .22, z); el("ellipse", { cx: r1(c[0]), cy: r1(c[1]), rx: r1(.24 * S * 1.2247), ry: r1(.24 * S * .7071), fill: "none", stroke: "#2a2f54", "stroke-width": 2 }, g); }); });
+    box(g, -1.5, -1.5, .8, 3, 3, 5.4, "#232848");
+    ["L", "R"].forEach(s => {
+      const f = faceG(g, s, -1.5, -1.5, .8, 3, 3, 5.4);
+      el("rect", { x: .42, y: .85, width: 2.16, height: 4.2, fill: "#0b0920", class: "on" }, f);
+      el("rect", { x: .52, y: .95, width: 1.96, height: 4.0, fill: "url(#coreG)", class: "lit" }, f);
+      let m = "M1.5 .95V4.95"; for (let v = 1.45; v < 4.9; v += .5) m += `M.52 ${r3(v)}H2.48`;
+      el("path", { d: m, stroke: "#2a1c4a", "stroke-width": 1.4, "vector-effect": "non-scaling-stroke" }, f);
+      neonD(f, "M.08 .1V5.3M2.92 .1V5.3", "#35e6ff", 1.2);
+      neonD(f, "M.1 .62H2.9", "#ff4fa8", 1.2);
+      if (s === "L") neonText(f, 1.5, .48, .34, "TASK HQ", "#35e6ff");
+      else { const ig = el("g", { transform: "translate(1.5 .33) scale(.5)" }, f); neonD(ig, "M-.4 -.25h.18v.18h-.18zM-.4 .07h.18v.18h-.18zM-.1 -.16h.5M-.1 .16h.5", "#7dff6a", 1.2); }
+    });
+    box(g, -1.75, -1.75, 6.2, 3.5, 3.5, .3, "#383e66");
+    neonD(g, pathOf([P(-1.75, 1.75, 6.5), P(1.75, 1.75, 6.5), P(1.75, -1.75, 6.5)]), "#ff4fa8", 1.3, false);
+    frustum(g, -1.4, -1.4, 6.5, 2.8, 2.8, .7, .5, "#2e3356");
+    box(g, -.55, -.55, 7.2, 1.1, 1.1, .7, "#3a4070");
+    poly(g, [P(-.55, -.55, 7.9), P(.55, -.55, 7.9), P(.55, .55, 7.9), P(-.55, .55, 7.9)], "#35e6ff", "lit");
+    const a = P(0, 0, 7.9); antennaBall(g, a, 40, "#ff3a5a");
+    LABELS.push({ b: "todo", x: a[0], y: a[1] - 52, px: a[0] + 20, py: a[1] - 26 });
   });
 
-  // ===== GUILDHALL (to-dos)
-  building("todo", 1.0, (g, lg) => {
-    const c = P(0.5, 0.5); el("ellipse", { cx: c[0] + 12, cy: c[1] + 10, rx: 230, ry: 120, fill: "#000", opacity: .16 }, g);
-    box(g, -2.4, -2.4, 0, 5.8, 5.8, .45, "#9a9184", "stone");
-    box(g, -2.0, -2.0, .45, 5.0, 5.0, 2.7, "#7b3a28", "brick");
-    // front (L) face
-    const [L, LL] = [faceG(g, "L", -2, -2, .45, 5, 5, 2.7), faceG(lg, "L", -2, -2, .45, 5, 5, 2.7)];
-    [[1.55, .22], [3.25, .22]].forEach(([u, w]) => { el("rect", { x: u, y: .05, width: w, height: 2.65, fill: "#b9ae9c", class: "on" }, L); el("rect", { x: u + .03, y: .05, width: .06, height: 2.65, fill: "#e0d6c4" }, L); });
-    el("path", { d: "M1.95 2.7 V1.75 A.55 .55 0 0 1 3.05 1.75 V2.7 Z", fill: "#3b2216", class: "on" }, L);
-    el("path", { d: "M2.5 1.2 V2.7 M2.02 1.9 H2.98 M2.02 2.3 H2.98", stroke: "#b8862f", "stroke-width": 1.2, fill: "none", "vector-effect": "non-scaling-stroke" }, L);
-    el("path", { d: "M1.95 2.7 V1.75 A.55 .55 0 0 1 3.05 1.75 V2.7 Z", fill: "#ffb84a", opacity: .9 }, LL);
-    el("path", { d: "M1.8 1.75 A.7 .7 0 0 1 3.2 1.75", stroke: "#b8862f", "stroke-width": 2.4, fill: "none", "vector-effect": "non-scaling-stroke" }, L);
-    [[.85, 1.05], [4.15, 1.05]].forEach(([u, v]) => {
-      el("circle", { cx: u, cy: v, r: .5, fill: "#1f343b", class: "on" }, L);
-      el("circle", { cx: u, cy: v, r: .5, fill: "#ffc561" }, LL);
-      gear(L, u, v, .62, 16, "url(#gBrassR)", 26, u > 2);
-      el("circle", { cx: u, cy: v, r: .12, fill: "#6a4714", class: "on" }, L);
-    });
-    archWin(L, LL, .55, 1.9, .55, .65); archWin(L, LL, 3.9, 1.9, .55, .65);
-    neonText(L, LL, 2.5, .62, .44, "TO-DOS", "#3fe0f0");
-    neon(L, LL, "M1.85 .78 H3.15", "#ff4fa8", 1.8);
-    // right (R) face
-    const [R, RL] = [faceG(g, "R", -2, -2, .45, 5, 5, 2.7), faceG(lg, "R", -2, -2, .45, 5, 5, 2.7)];
-    [.45, 1.6, 2.75, 3.9].forEach(u => { archWin(R, RL, u, .35, .62, 1.15); rectWin(R, RL, u + .06, 1.95, .5, .45); });
-    el("path", { d: "M0 1.75 H5", stroke: "#1a120c", "stroke-width": 7, "vector-effect": "non-scaling-stroke" }, R);
-    el("path", { d: "M0 1.75 H5", stroke: "#b8862f", "stroke-width": 5, "vector-effect": "non-scaling-stroke" }, R);
-    el("path", { d: "M0 1.73 H5", stroke: "#f1d18a", "stroke-width": 1.2, "vector-effect": "non-scaling-stroke" }, R);
-    gauge(R, 1.3, 1.55, .17); gauge(R, 3.45, 1.55, .17);
-    neon(R, RL, "M.12 .2 V2.55 M4.88 .2 V2.55", "#ff4fa8", 1.8);
-    // trim + mansard roof
-    box(g, -2.1, -2.1, 3.15, 5.2, 5.2, .2, "#b8862f");
-    neon(g, lg, `M${pts([P(-2.1, 3.1, 3.15), P(3.1, 3.1, 3.15), P(3.1, -2.1, 3.15)]).replace(/ /g, " L")}`, "#ff4fa8", 2.2);
-    frustum(g, -2.1, -2.1, 3.35, 5.2, 5.2, 1.35, .8, "#4f8f7a");
-    // dormers on the mansard
-    [[-0.6, 2.6], [1.6, 2.6]].forEach(([x, y]) => { const f = faceG(g, "L", x, y - .3, 3.55, .8, .3, .75), fl = faceG(lg, "L", x, y - .3, 3.55, .8, .3, .75); porthole(f, fl, .4, .38, .22); });
-    [[2.6, -.6], [2.6, 1.6]].forEach(([x, y]) => { const f = faceG(g, "R", x - .3, y, 3.55, .3, .8, .75), fl = faceG(lg, "R", x - .3, y, 3.55, .3, .8, .75); porthole(f, fl, .4, .38, .22); });
-    box(g, -1.6, -1.6, 4.7, .5, .5, 1.6, "#6b3324", "brick"); box(g, -1.7, -1.7, 6.3, .7, .7, .14, "#2a2e33");
-    const ch1 = P(-1.35, -1.35, 6.5); steam(g, ch1[0], ch1[1]);
-    const dr = cyl(g, .5, .5, 4.7, 1.15, .9, "gBrass", "#7a5520");
-    for (let k = 1; k < 8; k++) { const a = k / 8 * Math.PI, x = dr.cx - dr.rx * Math.cos(a), y = dr.cy + dr.ry * Math.sin(a) - .9 * S; el("rect", { x: r1(x - 2.5), y: r1(y + 6), width: 5, height: 14, rx: 2.5, fill: "#1f343b", stroke: "#1a120c", "stroke-width": .8 }, g); el("rect", { x: r1(x - 2.5), y: r1(y + 6), width: 5, height: 14, rx: 2.5, fill: "#ffc561" }, lg); }
-    const top = dome(g, .5, .5, 5.6, 1.22, 1.35, "url(#gDome)");
-    const ln = cyl(g, .5, .5, 6.95, .28, .45, "gBrass", "#f1d18a");
-    line(g, [ln.cx, ln.top], [ln.cx, ln.top - 34], "#2a2e33", 2.5);
-    el("circle", { cx: r1(ln.cx), cy: r1(ln.top - 36), r: 4, fill: "#f1d18a", class: "o" }, g);
-    el("circle", { cx: r1(ln.cx), cy: r1(ln.top - 36), r: 4, fill: "#ff4fa8", class: "blink" }, lg);
-    el("ellipse", { cx: r1(dr.cx), cy: r1(top[1] + 1.35 * S * .02 + 44), rx: r1(dr.rx * 1.02), ry: r1(dr.ry), fill: "none", stroke: "#3fe0f0", "stroke-width": 2.4 }, lg);
-    box(g, 2.0, 1.6, 4.4, .45, .45, 1.4, "#6b3324", "brick"); box(g, 1.92, 1.52, 5.8, .61, .61, .12, "#2a2e33");
-    const ch2 = P(2.22, 1.82, 5.95); steam(g, ch2[0], ch2[1]);
-    // steps
-    box(g, 1.85, 3.4, 0, 1.3, .7, .16, "#8d8477"); box(g, 1.85, 3.4, .16, 1.3, .35, .16, "#9a9184");
-  });
-  // ===== CLOCK TOWER (calendar)
-  building("cal", -9.5, (g, lg) => {
-    const c = P(-7, -2.5); el("ellipse", { cx: c[0] + 8, cy: c[1] + 8, rx: 100, ry: 52, fill: "#000", opacity: .16 }, g);
-    box(g, -8.3, -3.8, 0, 2.6, 2.6, .6, "#9a9184", "stone");
-    box(g, -8.1, -3.6, .6, 2.2, 2.2, 5.0, "#5d3426", "brick");
-    const [L, LL] = [faceG(g, "L", -8.1, -3.6, .6, 2.2, 2.2, 5), faceG(lg, "L", -8.1, -3.6, .6, 2.2, 2.2, 5)];
-    el("rect", { x: .25, y: .5, width: 1.7, height: 3.0, fill: "#120d0a", class: "on" }, L);
-    el("rect", { x: .25, y: .5, width: 1.7, height: 3.0, fill: "#ff4fa8", opacity: .25 }, LL);
-    gear(L, 1.15, 1.25, .6, 14, "url(#gBrassR)", 16);
-    gear(L, .68, 2.12, .36, 9, "url(#gCopper)", 9.6, true);
-    gear(L, 1.42, 2.68, .46, 11, "url(#gBrassR)", 12.5, true);
-    gear(L, .7, 3.12, .26, 7, "url(#gIron)", 7, false);
-    el("rect", { x: .25, y: .5, width: 1.7, height: 3.0, fill: "none", stroke: "#b8862f", "stroke-width": 2.4, "vector-effect": "non-scaling-stroke" }, L);
-    el("path", { d: "M.75 5 V4.25 A.35 .35 0 0 1 1.45 4.25 V5 Z", fill: "#3b2216", class: "on" }, L);
-    el("path", { d: "M.75 5 V4.25 A.35 .35 0 0 1 1.45 4.25 V5 Z", fill: "#ffb84a" }, LL);
-    const [R, RL] = [faceG(g, "R", -8.1, -3.6, .6, 2.2, 2.2, 5), faceG(lg, "R", -8.1, -3.6, .6, 2.2, 2.2, 5)];
-    archWin(R, RL, .75, .5, .7, 1.4); archWin(R, RL, .75, 2.4, .7, 1.4);
-    el("path", { d: "M.3 0 V5", stroke: "#1a120c", "stroke-width": 6, "vector-effect": "non-scaling-stroke" }, R);
-    el("path", { d: "M.3 0 V5", stroke: "#b07e2c", "stroke-width": 4, "vector-effect": "non-scaling-stroke" }, R);
-    gauge(R, .3, 4.2, .16);
-    // clock stage
-    box(g, -8.3, -3.8, 5.6, 2.6, 2.6, 1.9, "#34383d", "panel");
-    box(g, -8.38, -3.88, 5.55, 2.76, 2.76, .14, "#b8862f"); box(g, -8.38, -3.88, 7.45, 2.76, 2.76, .14, "#b8862f");
-    ["L", "R"].forEach(side => {
-      const f = faceG(g, side, -8.3, -3.8, 5.6, 2.6, 2.6, 1.9), fl = faceG(lg, side, -8.3, -3.8, 5.6, 2.6, 2.6, 1.9);
-      el("circle", { cx: 1.3, cy: .95, r: .84, fill: "url(#gBrassR)", class: "on" }, f);
-      el("circle", { cx: 1.3, cy: .95, r: .74, fill: "#efe4c8", class: "on" }, f);
-      el("circle", { cx: 1.3, cy: .95, r: .74, fill: "#fff2cf", opacity: .22 }, fl);
-      el("circle", { cx: 1.3, cy: .95, r: .9, fill: "none", stroke: "#ff4fa8", "stroke-width": 2.5, "vector-effect": "non-scaling-stroke", class: "flick" }, fl);
-      el("circle", { cx: 1.3, cy: .95, r: .55, fill: "none", stroke: "#8a6a3a", "stroke-width": .8, "vector-effect": "non-scaling-stroke" }, f);
-      for (let i = 0; i < 60; i++) { const a = i / 60 * TAU, r0 = i % 5 ? .66 : .6; el("line", { x1: r3(1.3 + Math.sin(a) * r0), y1: r3(.95 - Math.cos(a) * r0), x2: r3(1.3 + Math.sin(a) * .71), y2: r3(.95 - Math.cos(a) * .71), stroke: "#2a1b07", "stroke-width": i % 5 ? .5 : 1.4, "vector-effect": "non-scaling-stroke" }, f); }
-      const hh = el("line", { x1: 1.3, y1: .95, x2: 1.3, y2: .6, stroke: "#1a120c", "stroke-width": 3, "stroke-linecap": "round", "vector-effect": "non-scaling-stroke" }, f);
-      const mh = el("line", { x1: 1.3, y1: .95, x2: 1.3, y2: .4, stroke: "#1a120c", "stroke-width": 1.8, "stroke-linecap": "round", "vector-effect": "non-scaling-stroke" }, f);
-      el("circle", { cx: 1.3, cy: .95, r: .05, fill: "#b8862f" }, f);
+  // ===== CHRONO SPIRE (calendar): a tapered obelisk with a clock collar
+  building("cal", -12, g => {
+    const X = -8.5, Y = -3.5;
+    hlRect(g, X - 1.8, Y - 1.8, 3.6, 3.6, "#ff4fa8");
+    box(g, X - 1.5, Y - 1.5, 0, 3, 3, .4, "#30355a");
+    ["L", "R"].forEach(s => neonD(faceG(g, s, X - 1.5, Y - 1.5, 0, 3, 3, .4), "M0 .1H3", "#ff4fa8", 1.2));
+    frustum(g, X - 1, Y - 1, .4, 2, 2, 6, .38, "#262b4c");
+    neonD(g, pathOf([P(X + 1, Y + 1, .4), P(X + .62, Y + .62, 6.4)]), "#35e6ff", 1.3, false);
+    for (let z = 1; z < 4.3; z += .55) { const t = (z - .4) / 6, i = .38 * t, c = P(X + 1 - i - .5, Y + 1 - i, z), d = P(X + 1 - i, Y + 1 - i - .5, z); el("rect", { x: r1(c[0] - 2), y: r1(c[1] - 6), width: 4, height: 8, fill: "#ffb0dc", class: "lit" }, g); el("rect", { x: r1(d[0] - 2), y: r1(d[1] - 6), width: 4, height: 8, fill: "#ffb0dc", opacity: .7, class: "lit" }, g); }
+    box(g, X - .95, Y - .95, 4.5, 1.9, 1.9, 1.5, "#1f2342");
+    ["L", "R"].forEach(s => {
+      const f = faceG(g, s, X - .95, Y - .95, 4.5, 1.9, 1.9, 1.5);
+      el("circle", { cx: .95, cy: .75, r: .6, fill: "#0b0920", class: "on" }, f);
+      const lg = el("g", { class: "lit" }, f);
+      el("circle", { cx: .95, cy: .75, r: .56, fill: "none", stroke: "#ff4fa8", "stroke-width": 6, opacity: .25, "vector-effect": "non-scaling-stroke" }, lg);
+      el("circle", { cx: .95, cy: .75, r: .56, fill: "none", stroke: "#ffa8d8", "stroke-width": 1.6, "vector-effect": "non-scaling-stroke" }, lg);
+      for (let i = 0; i < 12; i++) { const an = i / 12 * TAU, r0 = i % 3 ? .42 : .36; el("line", { x1: r3(.95 + Math.sin(an) * r0), y1: r3(.75 - Math.cos(an) * r0), x2: r3(.95 + Math.sin(an) * .49), y2: r3(.75 - Math.cos(an) * .49), stroke: "#ffd1ea", "stroke-width": i % 3 ? 1 : 2, "vector-effect": "non-scaling-stroke" }, f); }
+      const hg = el("g", { transform: "translate(.95 .75)" }, f);
+      const hh = el("line", { x1: 0, y1: 0, x2: 0, y2: -.26, stroke: "#fff", "stroke-width": 2.4, "stroke-linecap": "round", "vector-effect": "non-scaling-stroke" }, hg);
+      const mh = el("line", { x1: 0, y1: 0, x2: 0, y2: -.4, stroke: "#9fe8ff", "stroke-width": 1.6, "stroke-linecap": "round", "vector-effect": "non-scaling-stroke" }, hg);
       clockHands.push([hh, mh]);
+      neonD(f, "M0 .08H1.9M0 1.42H1.9", "#35e6ff", 1);
     });
-    // spire with pinnacles
-    [[-8.3, -3.8], [-6.1, -3.8], [-8.3, -1.6], [-6.1, -1.6]].sort((a, b) => (a[0] + a[1]) - (b[0] + b[1])).forEach(([x, y], i) => {
-      if (i === 3) return;
-      pyramid(g, x - .1, y - .1, 7.6, .4, .4, 1.1, "#4f8f7a");
+    pyramid(g, X - .62, Y - .62, 6.4, 1.24, 1.24, 3.4, "#2e3356");
+    neonD(g, pathOf([P(X + .62, Y + .62, 6.4), P(X, Y, 9.8)]), "#ff4fa8", 1.3, false);
+    const ap = P(X, Y, 9.8); antennaBall(g, ap, 22, "#ff4fa8");
+    LABELS.push({ b: "cal", x: ap[0], y: ap[1] - 30 });
+  });
+
+  // ===== DATA POST (mail): a depot with a big rooftop neon sign
+  building("mail", -.8, g => {
+    hlRect(g, 4.3, -9.2, 5, 4.4, "#b46cff");
+    box(g, 4.5, -9.0, 0, 4.6, 4.0, .3, "#30355a");
+    ["L", "R"].forEach(s => neonD(faceG(g, s, 4.5, -9.0, 0, 4.6, 4.0, .3), "M0 .08H4.6", "#b46cff", 1.2));
+    box(g, 4.8, -8.7, .3, 4.0, 3.4, 2.5, "#2a2f54");
+    const fL = faceG(g, "L", 4.8, -8.7, .3, 4.0, 3.4, 2.5), fR = faceG(g, "R", 4.8, -8.7, .3, 4.0, 3.4, 2.5);
+    panelLines(fL, 4, 2.5, .8); panelLines(fR, 3.4, 2.5, .85);
+    let wl = ""; for (const u of [.35, .95, 2.75, 3.35]) for (const v of [.55, 1.3]) wl += `M${u} ${v}h.4v.45h-.4z`;
+    el("path", { d: wl, fill: "#0b0918" }, fL); el("path", { d: wl, fill: "#ffb0dc", opacity: .8, class: "lit" }, fL);
+    el("rect", { x: 1.55, y: 1.15, width: .9, height: 1.35, fill: "#0b0918", class: "on" }, fL);
+    el("rect", { x: 1.62, y: 1.22, width: .76, height: 1.28, fill: "#ffc83d", opacity: .6, class: "lit" }, fL);
+    neonD(fL, "M1.35 1.05H2.65", "#ff4fa8", 1.3);
+    neonD(fL, "M0 .1H4", "#b46cff", 1.2); neonD(fR, "M0 .1H3.4", "#b46cff", 1.2);
+    const ig = el("g", { transform: "translate(1.7 1.15) scale(1.6)" }, fR); el("rect", { x: -.42, y: -.3, width: .84, height: .6, fill: "#0b0918", class: "on" }, ig); neonD(ig, "M-.36 -.24h.72v.48h-.72zM-.36 -.24l.36 .26l.36 -.26", "#e2c4ff", 1.3);
+    box(g, 5.4, -8.1, 2.8, 2.6, 2.2, .9, "#323862");
+    ["L", "R"].forEach(s => { const f = faceG(g, s, 5.4, -8.1, 2.8, 2.6, 2.2, .9); windows(f, s === "L" ? 2.6 : 2.2, .9, "#c8a8ff", .9, .45); });
+    // rooftop sign with scaffolding
+    const sz = 3.9, sh = 1.3;
+    [[5.3, -6.4], [8.5, -6.4]].forEach(([x, y]) => line(g, P(x, y, 3.7), P(x, y, sz + sh), "#0b0818", 2));
+    line(g, P(5.3, -6.4, 3.7), P(8.5, -6.4, sz + sh), "#1a1d33", 1.4); line(g, P(8.5, -6.4, 3.7), P(5.3, -6.4, sz + sh), "#1a1d33", 1.4);
+    const sf = faceG(g, "L", 5.0, -6.4, sz, 3.8, 0, sh);
+    el("rect", { x: 0, y: 0, width: 3.8, height: sh, fill: "#0b0918", opacity: .82, class: "on" }, sf);
+    neonD(sf, `M.08 .08H3.72V${sh - .08}H.08Z`, "#ff4fa8", 1.2);
+    neonText(sf, 1.9, 1.06, 1.0, "MAIL", "#c89aff");
+    const dp = P(8.4, -8.3, 2.8); line(g, dp, [dp[0], dp[1] - 14], "#0b0818", 2.6);
+    el("ellipse", { cx: r1(dp[0]), cy: r1(dp[1] - 24), rx: 17, ry: 9, transform: `rotate(-24 ${r1(dp[0])} ${r1(dp[1] - 24)})`, fill: "#c8c2e6", class: "o" }, g);
+    el("ellipse", { cx: r1(dp[0] + 1), cy: r1(dp[1] - 25), rx: 11, ry: 5, transform: `rotate(-24 ${r1(dp[0])} ${r1(dp[1] - 24)})`, fill: "#8f88b8" }, g);
+    const t = P(6.9, -6.4, sz + sh); LABELS.push({ b: "mail", x: t[0], y: t[1] - 24 });
+  });
+
+  // ===== IDEA BEACON (ideas): a holo lightbulb over a projector pad
+  building("ideas", -2.5, g => {
+    const X = -8, Y = 5.5;
+    const hl = el("g", { class: "hl" }, g); neonD(faceG(hl, "T", -N, -N, .02), circleD(X + N, Y + N, 2.0), "#ffe14d", 2.6);
+    const c = cyl(g, X, Y, 0, 1.5, .4, cg("#3a3168"), "#241f45");
+    const em = cyl(g, X, Y, .4, .72, .25, cg("#4a4080"), "#14121f");
+    const lg = el("g", { class: "lit" }, g);
+    el("ellipse", { cx: r1(em.cx), cy: r1(em.top), rx: r1(em.rx * .8), ry: r1(em.ry * .8), fill: "none", stroke: "#ffe14d", "stroke-width": 2 }, lg);
+    el("ellipse", { cx: r1(c.cx), cy: r1(c.top), rx: r1(c.rx * .92), ry: r1(c.ry * .92), fill: "none", stroke: "#ffe14d", "stroke-width": 1.2, opacity: .6, "stroke-dasharray": "4 6" }, lg);
+    const bx = r1(em.cx), by = r1(em.top - 112);
+    el("path", { d: `M${r1(em.cx - em.rx * .8)},${r1(em.top)} L${bx - 32},${by + 34} L${bx + 32},${by + 34} L${r1(em.cx + em.rx * .8)},${r1(em.top)} Z`, fill: "url(#beamG)" }, lg);
+    const holo = el("g", { class: "bob" }, lg);
+    el("circle", { id: "halo", cx: bx, cy: by, r: 70, fill: "#ffe14d", opacity: .12 }, holo);
+    const bulb = `M${bx - 30},${by + 34} C${bx - 30},${by + 22} ${bx - 46},${by + 12} ${bx - 46},${by - 6} A46,46 0 1 1 ${bx + 46},${by - 6} C${bx + 46},${by + 12} ${bx + 30},${by + 22} ${bx + 30},${by + 34} Z`;
+    el("path", { d: bulb, fill: "url(#bulbG)" }, holo);
+    el("path", { d: bulb, fill: "none", stroke: "#ffe14d", "stroke-width": 7, opacity: .2 }, holo);
+    el("path", { d: bulb, fill: "none", stroke: "#fff3a8", "stroke-width": 2 }, holo);
+    const sc = el("g", { transform: `translate(${bx} ${by})` }, holo), scg = el("g", { "clip-path": "url(#bulbClip)" }, sc), scl = el("g", { class: "scan" }, scg);
+    for (let y = -60; y < 60; y += 7) el("line", { x1: -50, y1: y, x2: 50, y2: y, stroke: "#ffe14d", "stroke-width": 1, opacity: .25 }, scl);
+    el("path", { d: `M${bx - 12},${by + 34} V${by + 6} l4,-9 l4,9 l4,-9 l4,9 l4,-9 l4,9 V${by + 34}`, fill: "none", stroke: "#fff8d0", "stroke-width": 2.2, "stroke-linejoin": "round" }, holo);
+    [[40, 56], [48, 52], [56, 46]].forEach(([y, w]) => el("rect", { x: bx - w / 2, y: by + y, width: w, height: 5, rx: 2.5, fill: "none", stroke: "#ffe14d", "stroke-width": 1.6 }, holo));
+    LABELS.push({ b: "ideas", x: bx, y: by - 54 });
+  });
+
+  // ===== BLAUGRANA STADIUM (FC Barcelona): striped bowl, floodlights, live scoreboard
+  building("barca", 15, g => {
+    const x0 = 5.3, y0 = 5.3, W = 4.4, H = 1.5, I = .9, PZ = .35;
+    hlRect(g, x0 - .3, y0 - .3, W + .6, W + .6, "#edbb00");
+    box(g, x0, y0, 0, W, W, H, "#1d1f3a");
+    ["L", "R"].forEach(s => {
+      const f = faceG(g, s, x0, y0, 0, W, W, H); let bl = "", gr = "";
+      for (let u = 0, i = 0; u < W - .01; u += .4, i++) { const seg = `M${r3(u)} .22h.4V${H}h-.4z`; if (i % 2) gr += seg; else bl += seg; }
+      el("path", { d: bl, fill: "#0b3a78" }, f); el("path", { d: gr, fill: "#6e0a3a" }, f);
+      el("path", { d: bl, fill: "#2f7dff", opacity: .2, class: "lit" }, f); el("path", { d: gr, fill: "#ff2f7d", opacity: .16, class: "lit" }, f);
+      let ar = ""; for (let u = .5; u < W - .3; u += 1.2) ar += `M${r3(u)} ${H}V1.05A.2 .2 0 0 1 ${r3(u + .4)} 1.05V${H}Z`;
+      el("path", { d: ar, fill: "#07061a" }, f);
+      neonD(f, `M0 .1H${W}`, "#edbb00", 1.4);
     });
-    pyramid(g, -8.15, -3.65, 7.6, 2.3, 2.3, 3.0, "#4f8f7a");
-    pyramid(g, -6.2, -1.7, 7.6, .4, .4, 1.1, "#4f8f7a");
-    const sp = P(-7, -2.5, 10.6);
-    line(g, sp, [sp[0], sp[1] - 30], "#2a2e33", 2.2);
-    el("circle", { cx: r1(sp[0]), cy: r1(sp[1] - 31), r: 3.5, fill: "#f1d18a", class: "o" }, g);
-    el("circle", { cx: r1(sp[0]), cy: r1(sp[1] - 31), r: 4, fill: "#ff4fa8", class: "blink" }, lg);
-    neon(g, lg, `M${pts([P(-8.15, -1.35, 7.6), P(-7, -2.5, 10.6), P(-5.85, -3.65, 7.6)]).replace(/ /g, " L")}`, "#3fe0f0", 1.8);
-  });
-  // ===== POST OFFICE (mail)
-  building("mail", 3.6, (g, lg) => {
-    const c = P(7, -3.5); el("ellipse", { cx: c[0] + 10, cy: c[1] + 8, rx: 140, ry: 74, fill: "#000", opacity: .16 }, g);
-    box(g, 5.2, -5.2, 0, 3.6, 3.4, .35, "#9a9184", "stone");
-    box(g, 5.4, -5.0, .35, 3.2, 3.0, 2.1, "#46535f", "panel");
-    const [L, LL] = [faceG(g, "L", 5.4, -5, .35, 3.2, 3, 2.1), faceG(lg, "L", 5.4, -5, .35, 3.2, 3, 2.1)];
-    el("path", { d: "M.4 2.1 V1.25 A.36 .36 0 0 1 1.12 1.25 V2.1 Z", fill: "#3b2216", class: "on" }, L);
-    el("path", { d: "M.4 2.1 V1.25 A.36 .36 0 0 1 1.12 1.25 V2.1 Z", fill: "#ffb84a" }, LL);
-    el("rect", { x: 1.4, y: .25, width: 1.5, height: .55, rx: .06, fill: "url(#gBrassR)", class: "on" }, L);
-    const t = el("text", { x: 0, y: 0, "font-size": 100, "font-family": "Big Shoulders Display, sans-serif", "font-weight": 800, "text-anchor": "middle", fill: "#2a1b07", "letter-spacing": 18, transform: "translate(2.15 .69) scale(.0038)" }, L); t.textContent = "POST";
-    rectWin(L, LL, 1.45, 1.05, .55, .7); rectWin(L, LL, 2.3, 1.05, .55, .7);
-    const [R, RL] = [faceG(g, "R", 5.4, -5, .35, 3.2, 3, 2.1), faceG(lg, "R", 5.4, -5, .35, 3.2, 3, 2.1)];
-    [.5, 1.5, 2.5].forEach(u => porthole(R, RL, u, .55, .2));
-    neon(R, RL, "M.85 1.05 H2.15 V1.85 H.85 Z M.85 1.05 L1.5 1.5 L2.15 1.05", "#ff4fa8", 2.2);
-    box(g, 5.35, -5.05, 2.45, 3.3, 3.1, .14, "#b8862f");
-    // gable roof, ridge along x, with glass skylight
-    const z0 = 2.59, zr = 3.7, yb = -5.2, yf = -1.8, ym = -3.5, x0 = 5.25, x1 = 8.75;
-    poly(g, [P(x0, yb, z0), P(x1, yb, z0), P(x1, ym, zr), P(x0, ym, zr)], "#7a4126");
-    poly(g, [P(8.6, -5.0, z0), P(8.6, -2.0, z0), P(8.6, ym, zr - .06)], "#3b4651");
-    const gf = faceG(g, "R", 8.6, -5, z0, 0, 3, 1), gfl = faceG(lg, "R", 8.6, -5, z0, 0, 3, 1);
-    porthole(gf, gfl, 1.5, .55, .22);
-    poly(g, [P(x0, yf, z0), P(x1, yf, z0), P(x1, ym, zr), P(x0, ym, zr)], "#9c5a33");
-    const sk = [P(x0 + .4, yf - .5, z0 + .32), P(x1 - .4, yf - .5, z0 + .32), P(x1 - .4, ym + .25, zr - .16), P(x0 + .4, ym + .25, zr - .16)];
-    poly(g, sk, "#2c4952");
-    for (let k = 1; k < 6; k++) { const xx = x0 + .4 + k * (x1 - x0 - .8) / 6; line(g, P(xx, yf - .5, z0 + .32), P(xx, ym + .25, zr - .16), "#b8862f", 1.2); }
-    poly(lg, sk, "#ffc561", "");
-    poly(g, [P(x1, yf, z0), P(x1, yf, z0 - .12), P(x1, ym, zr - .12), P(x1, ym, zr)], "#5e3015");
-    line(g, P(x0, ym, zr), P(x1, ym, zr), "#b8862f", 2.4);
-    // sorting drum
-    cyl(g, 5.75, -1.55, .35, .42, 1.7, "gCopper", "#b8653a"); band(g, 5.75, -1.55, .9, .42); band(g, 5.75, -1.55, 1.5, .42);
-    dome(g, 5.75, -1.55, 2.05, .42, .35, "url(#gDomeCu)");
-    // mailbox pillar
-    cyl(g, 8.95, -1.35, 0, .2, .75, "gCopper", "#c97648"); dome(g, 8.95, -1.35, .75, .2, .18, "url(#gDomeCu)");
-  });
-  // ===== GENERATOR (steam + neon, decorative)
-  add(-6.4, (root, lroot) => {
-    const g = el("g", {}, root), lg = el("g", {}, lroot);
-    const c1 = cyl(g, 0, -7.9, .02, .8, 2.2, "gCopper", "#b8653a"); band(g, 0, -7.9, .7, .8); band(g, 0, -7.9, 1.5, .8);
-    dome(g, 0, -7.9, 2.22, .8, .55, "url(#gDomeCu)");
-    const c2 = cyl(g, 1.9, -7.9, .02, .8, 2.2, "gCopper", "#b8653a"); band(g, 1.9, -7.9, .7, .8); band(g, 1.9, -7.9, 1.5, .8);
-    dome(g, 1.9, -7.9, 2.22, .8, .55, "url(#gDomeCu)");
-    [[0, -7.9], [1.9, -7.9]].forEach(([x, y]) => { const c = P(x, y, 1.1); el("ellipse", { cx: r1(c[0]), cy: r1(c[1]), rx: .8 * S * 1.2247, ry: .8 * S * .7071, fill: "none", stroke: "#3fe0f0", "stroke-width": 2.4 }, lg); });
-    const st = cyl(g, 1.0, -8.9, .02, .36, 4.6, "gIron", "#16191c");
-    [1.2, 2.6, 4.0].forEach(z => band(g, 1.0, -8.9, z, .36, "#b8862f", 2));
-    const sp = P(1.0, -8.9, 4.62); steam(g, sp[0], sp[1], 4);
-    el("path", { d: `M${pts([P(.8, -7.9, 1.8), P(.95, -7.9, 2.4), P(1.1, -7.9, 1.8)]).replace(/ /g, " L")}`, fill: "none", stroke: "#b8862f", "stroke-width": 4 }, g);
-    const fg = faceG(g, "T", 2.4, -6.9, .04);
-    gear(fg, .9, .9, .95, 20, "url(#gIron)", 30);
-    gear(fg, 2.05, .25, .45, 10, "url(#gBrassR)", 14.25, true);
-  });
-  // ===== WATER TOWER
-  add(-10.4, (root) => {
-    const g = el("g", {}, root);
-    [[-3.9, -8.1], [-2.5, -8.1], [-3.9, -6.7], [-2.5, -6.7]].forEach(([x, y]) => line(g, P(x, y, 0), P(x + (x < -3 ? .2 : -.2), y + (y < -7 ? .2 : -.2), 3), "#2a2e33", 3));
-    line(g, P(-3.9, -6.7, .2), P(-2.5, -6.7, 2.6), "#2a2e33", 1.4); line(g, P(-2.5, -6.7, .2), P(-3.9, -6.7, 2.6), "#2a2e33", 1.4);
-    line(g, P(-2.5, -8.1, .2), P(-2.5, -6.7, 2.6), "#2a2e33", 1.4); line(g, P(-2.5, -6.7, .2), P(-2.5, -8.1, 2.6), "#2a2e33", 1.4);
-    cyl(g, -3.2, -7.4, 3, 1.0, 1.5, "gWood", "#5a3b24");
-    [3.3, 3.8, 4.3].forEach(z => band(g, -3.2, -7.4, z, 1.0, "#22262b", 2));
-    dome(g, -3.2, -7.4, 4.5, 1.05, .6, "url(#gDomeCu)");
-  });
-  // ===== AIRSHIP MAST (ideas)
-  building("ideas", 12.2, (g, lg) => {
-    const base = [[-7.0, 5.5], [-6.0, 5.5], [-6.0, 6.5], [-7.0, 6.5]], topz = 5.2, ti = .3;
-    const top = [[-7.0 + ti, 5.5 + ti], [-6.0 - ti, 5.5 + ti], [-6.0 - ti, 6.5 - ti], [-7.0 + ti, 6.5 - ti]];
-    base.forEach((b, i) => line(g, P(b[0], b[1], 0), P(top[i][0], top[i][1], topz), "#2a2e33", 2.6));
-    for (let lv = 0; lv < 5; lv++) {
-      const z0 = lv * topz / 5, z1 = (lv + 1) * topz / 5, f0 = lv / 5, f1 = (lv + 1) / 5;
-      const at = (i, f, z) => P(base[i][0] + (top[i][0] - base[i][0]) * f, base[i][1] + (top[i][1] - base[i][1]) * f, z);
-      [[3, 2], [2, 1]].forEach(([a, b]) => { line(g, at(a, f0, z0), at(b, f1, z1), "#3a4047", 1.2); line(g, at(b, f0, z0), at(a, f1, z1), "#3a4047", 1.2); line(g, at(a, f1, z1), at(b, f1, z1), "#2a2e33", 1.6); });
-    }
-    box(g, -6.9, 5.6, topz, .8, .8, .12, "#b8862f");
-    const bt = P(-6.5, 6, topz + .12);
-    el("circle", { cx: r1(bt[0]), cy: r1(bt[1] - 5), r: 4, fill: "#c4312f", class: "o" }, g);
-    el("circle", { cx: r1(bt[0]), cy: r1(bt[1] - 5), r: 5, fill: "#ff3a3a", class: "blink" }, lg);
-    // the lightbulb airship
-    const bx = 330, by = 150;
-    const ship = el("g", { class: "bob" }, g), shipL = el("g", { class: "bob" }, lg);
-    el("path", { d: `M${bx},${by + 150} Q${r1((bx + bt[0]) / 2 - 20)},${r1((by + 150 + bt[1]) / 2 + 30)} ${r1(bt[0])},${r1(bt[1] - 6)}`, fill: "none", stroke: "#3a2a1a", "stroke-width": 1.6 }, ship);
-    el("circle", { id: "halo", cx: bx, cy: by, r: 130, fill: "url(#gHalo)", opacity: .3 }, ship);
-    // gondola + props
-    el("path", { d: `M${bx - 46},${by + 118} h92 q-6,22 -24,28 h-44 q-18,-6 -24,-28z`, fill: "url(#gWood)", class: "o" }, ship);
-    el("path", { d: `M${bx - 46},${by + 118} h92`, stroke: "#b8862f", "stroke-width": 3 }, ship);
-    [-26, -8, 10, 28].forEach(dx => { el("circle", { cx: bx + dx, cy: by + 130, r: 3.6, fill: "#1f343b", stroke: "#b8862f", "stroke-width": 1.2 }, ship); el("circle", { cx: bx + dx, cy: by + 130, r: 3.4, fill: "#ffc561" }, shipL); });
-    [-58, 58].forEach(dx => {
-      line(ship, [bx + dx * .7, by + 124], [bx + dx, by + 124], "#2a2e33", 2.2);
-      el("circle", { cx: bx + dx, cy: by + 124, r: 4, fill: "url(#gBrassR)", class: "o" }, ship);
-      const pr = el("g", { transform: `translate(${bx + dx} ${by + 124})` }, ship);
-      el("ellipse", { rx: 3, ry: 20, fill: "#4a3020", opacity: .85, class: "prop" }, pr);
+    // stands (top), then the pit: pitch floor, back inner walls, then the front stand tops on top
+    poly(g, [P(x0, y0, H), P(x0 + W, y0, H), P(x0 + W, y0 + W, H), P(x0, y0 + W, H)], "#262849");
+    const rings = (draw) => [.2, .4, .6, .8].forEach((k, i) => draw(k, i % 2 ? "#a50044" : "#004d98"));
+    rings((k, c) => el("path", { d: pathOf([P(x0 + k, y0 + W - k, H), P(x0 + k, y0 + k, H), P(x0 + W - k, y0 + k, H)]), fill: "none", stroke: c, "stroke-width": 3.2, opacity: .9 }, g));
+    poly(g, [P(x0 + I, y0 + I, PZ), P(x0 + W - I, y0 + I, PZ), P(x0 + W - I, y0 + W - I, PZ), P(x0 + I, y0 + W - I, PZ)], "#1f7a3a", "");
+    const pf = faceG(g, "T", x0 + I, y0 + I, PZ), pw = W - 2 * I;
+    let mow = ""; for (let u = 0; u < pw; u += .52) mow += `M${r3(u)} 0h.26v${r3(pw)}h-.26z`; el("path", { d: mow, fill: "#2a9047" }, pf);
+    el("path", { d: `M.12 .12H${r3(pw - .12)}V${r3(pw - .12)}H.12ZM${r3(pw / 2)} .12V${r3(pw - .12)}` + circleD(pw / 2, pw / 2, .32) + `M.12 ${r3(pw / 2 - .5)}h.42v1h-.42M${r3(pw - .12)} ${r3(pw / 2 - .5)}h-.42v1h.42`, fill: "none", stroke: "#e8fff0", "stroke-width": 1, opacity: .85, "vector-effect": "non-scaling-stroke" }, pf);
+    el("circle", { cx: r3(pw * .62), cy: r3(pw * .45), r: .07, fill: "#fff" }, pf);
+    const wallR = [P(x0 + I, y0 + I, PZ), P(x0 + I, y0 + W - I, PZ), P(x0 + I, y0 + W - I, H), P(x0 + I, y0 + I, H)];
+    const wallL = [P(x0 + I, y0 + I, PZ), P(x0 + W - I, y0 + I, PZ), P(x0 + W - I, y0 + I, H), P(x0 + I, y0 + I, H)];
+    poly(g, wallR, "#232548"); poly(g, wallL, "#2b2e55");
+    [["R", x0 + I, y0 + I, 0, W - 2 * I], ["L", x0 + I, y0 + I, W - 2 * I, 0]].forEach(([s, x, y, w, d]) => {
+      const f = faceG(g, s, x, y, PZ, w, d, H - PZ), len = w || d; let b = "", r = "";
+      for (let v = .08, i = 0; v < H - PZ - .05; v += .2, i++) { const seg = `M0 ${r3(v)}H${r3(len)}`; if (i % 2) r += seg; else b += seg; }
+      el("path", { d: b, stroke: "#2a64c8", "stroke-width": .07, "stroke-dasharray": ".05 .06" }, f);
+      el("path", { d: r, stroke: "#c8306e", "stroke-width": .07, "stroke-dasharray": ".05 .06" }, f);
     });
-    [[-20, -14], [20, 14], [-8, -5], [8, 5]].forEach(([a, b]) => line(ship, [bx + a, by + 100], [bx + b * 1.6, by + 118], "#3a2a1a", 1.4));
-    // screw base
-    [[66, 52], [74, 50], [82, 46], [90, 40]].forEach(([y, w], i) => el("rect", { x: bx - w / 2, y: by + y, width: w, height: 8, rx: 4, fill: i % 2 ? "url(#gBrass)" : "url(#gIron)", class: "o" }, ship));
-    el("path", { d: `M${bx - 12},${by + 98} h24 l-5,6 h-14 z`, fill: "#2a2e33", class: "o" }, ship);
-    // glass envelope
-    el("path", { d: `M${bx - 40},${by + 50} C${bx - 34},${by + 60} ${bx - 27},${by + 62} ${bx - 26},${by + 67} H${bx + 26} C${bx + 27},${by + 62} ${bx + 34},${by + 60} ${bx + 40},${by + 50} Z`, fill: "#b9d4d3", class: "o" }, ship);
-    el("circle", { cx: bx, cy: by, r: 74, fill: "url(#gBulb)", class: "o" }, ship);
-    el("circle", { cx: bx, cy: by + 4, r: 60, fill: "url(#gBulbLit)", opacity: .9 }, shipL);
-    // filament (dull by day, neon by night)
-    const fil = `M${bx - 14},${by + 60} V${by + 18} l5,-10 l5,10 l4,-10 l4,10 l5,-10 l5,10 V${by + 60}`;
-    el("path", { d: fil, fill: "none", stroke: "#7a5a2a", "stroke-width": 2.4, "stroke-linejoin": "round" }, ship);
-    el("path", { d: fil, fill: "none", stroke: "#fff3b0", "stroke-width": 3, "stroke-linejoin": "round" }, shipL);
-    // brass cage
-    const cage = el("g", { transform: `translate(${bx} ${by})` }, ship), cg = el("g", { "clip-path": "url(#bulbClip)" }, cage);
-    [.25, .55, .85].forEach(k => el("ellipse", { cx: 0, cy: 0, rx: r1(74 * k), ry: 74, fill: "none", stroke: "#b8862f", "stroke-width": 2 }, cg));
-    el("line", { x1: 0, y1: -74, x2: 0, y2: 74, stroke: "#b8862f", "stroke-width": 2 }, cg);
-    el("ellipse", { cx: 0, cy: 0, rx: 74, ry: 16, fill: "none", stroke: "#b8862f", "stroke-width": 2.4 }, cg);
-    el("ellipse", { cx: 0, cy: -38, rx: 63, ry: 12, fill: "none", stroke: "#b8862f", "stroke-width": 1.4 }, cg);
-    el("ellipse", { cx: -26, cy: -32, rx: 12, ry: 22, fill: "#fff", opacity: .55, transform: "rotate(35 -26 -32)" }, cage);
-    el("circle", { cx: 0, cy: -76, r: 5, fill: "url(#gBrassR)", class: "o" }, cage);
-    // tail fins
-    el("path", { d: `M${bx + 62},${by + 30} l26,-18 v36 z`, fill: "url(#gCopper)", class: "o" }, ship);
-    el("path", { d: `M${bx - 62},${by + 30} l-26,-18 v36 z`, fill: "url(#gCopper)", class: "o" }, ship);
-    LABELS.push({ b: "ideas", x: bx, y: by - 92, mode: "above" });
+    poly(g, [P(x0, y0 + W, H), P(x0 + W, y0 + W, H), P(x0 + W - I, y0 + W - I, H), P(x0 + I, y0 + W - I, H)], "#262849", "");
+    poly(g, [P(x0 + W, y0, H), P(x0 + W, y0 + W, H), P(x0 + W - I, y0 + W - I, H), P(x0 + W - I, y0 + I, H)], "#262849", "");
+    rings((k, c) => el("path", { d: pathOf([P(x0 + k, y0 + W - k, H), P(x0 + W - k, y0 + W - k, H), P(x0 + W - k, y0 + k, H)]), fill: "none", stroke: c, "stroke-width": 3.2, opacity: .9 }, g));
+    neonD(g, pathOf([P(x0, y0 + W, H), P(x0 + W, y0 + W, H), P(x0 + W, y0, H)]), "#edbb00", 1.2, false);
+    // floodlight masts on the four corners
+    [[x0, y0], [x0 + W, y0], [x0, y0 + W], [x0 + W, y0 + W]].forEach(([x, y]) => {
+      const b = P(x, y, H), t = P(x, y, H + 2.5);
+      line(g, b, t, "#0b0818", 2.6);
+      el("rect", { x: r1(t[0] - 8), y: r1(t[1] - 6), width: 16, height: 7, rx: 1, fill: "#2a2f54", class: "o" }, g);
+      const lg = el("g", { class: "lit" }, g);
+      el("ellipse", { cx: r1(t[0]), cy: r1(t[1] - 2.5), rx: 13, ry: 6, fill: "#fff6d8", opacity: .22 }, lg);
+      el("rect", { x: r1(t[0] - 6), y: r1(t[1] - 4), width: 12, height: 3, fill: "#fffbe8" }, lg);
+    });
+    // scoreboard over the back stand (text is filled from the match data)
+    const sb = faceG(g, "L", x0 + 1.1, y0 + .35, H + .2, 2.2, 0, 1.2);
+    line(g, P(x0 + 1.4, y0 + .35, H), P(x0 + 1.4, y0 + .35, H + .2), "#0b0818", 2.4); line(g, P(x0 + 3.0, y0 + .35, H), P(x0 + 3.0, y0 + .35, H + .2), "#0b0818", 2.4);
+    el("rect", { x: 0, y: 0, width: 2.2, height: 1.2, fill: "#07061a", class: "on" }, sb);
+    el("rect", { x: .06, y: .06, width: 2.08, height: .16, fill: "#004d98" }, sb); el("rect", { x: .06, y: .06, width: 1.04, height: .16, fill: "#a50044" }, sb);
+    neonD(sb, "M.03 .03H2.17V1.17H.03Z", "#edbb00", 1);
+    const mk = (v, size, fill) => { const t = el("text", { x: 0, y: 0, "font-size": 100, "font-family": "VT323, monospace", "text-anchor": "middle", fill, class: "lit", transform: `translate(1.1 ${v}) scale(${size / 100})` }, sb); return t; };
+    SB.l1 = mk(.68, .42, "#ffe14d"); SB.l2 = mk(1.05, .28, "#9fe8ff");
+    const lp = P(x0 + 2.2, y0 + .35, H + 1.4);
+    LABELS.push({ b: "barca", x: lp[0], y: lp[1] - 16, px: lp[0] + 50, py: lp[1] + 8 });
   });
-  // ===== CONSTRUCTION SITE with crane (future building)
-  add(10.4, (root) => {
+
+  // ===== empty build plots (room to grow)
+  const plot = (x0, y0, w, d) => add(x0 + y0 + w + d - 7, root => {
     const g = el("g", { class: "plot" }, root);
-    plaza(g, 6.0, 1.4, 8.7, 4.1, "#7a6a55");
-    box(g, 6.3, 1.7, 0, 2.0, 2.1, .3, "#a49a8c");
-    for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) { const p = P(6.5 + i * .75, 1.9 + j * .75, .3); line(g, p, [p[0], p[1] - 20], "#7a3d22", 1.6); }
-    [[6.3, 3.8], [7.3, 3.8], [8.3, 3.8], [8.3, 2.75]].forEach(([x, y]) => line(g, P(x, y, .3), P(x, y, 2.2), "#5c6168", 1.8));
-    [1.25, 2.2].forEach(z => { line(g, P(6.3, 3.8, z), P(8.3, 3.8, z), "#5c6168", 1.6); line(g, P(8.3, 3.8, z), P(8.3, 2.75, z), "#5c6168", 1.6); });
-    line(g, P(6.3, 3.8, .3), P(7.3, 3.8, 2.2), "#5c6168", 1); line(g, P(8.3, 3.8, .3), P(8.3, 2.75, 2.2), "#5c6168", 1);
-    const cb = [8.2, 1.5], H = 4.4;
-    for (const [dx, dy] of [[0, 0], [.4, 0], [0, .4], [.4, .4]]) line(g, P(cb[0] + dx, cb[1] + dy, 0), P(cb[0] + dx, cb[1] + dy, H), "#c48a12", 2);
-    for (let z = 0; z < H - .1; z += .55) { line(g, P(cb[0], cb[1] + .4, z), P(cb[0] + .4, cb[1] + .4, z + .55), "#c48a12", 1); line(g, P(cb[0] + .4, cb[1] + .4, z), P(cb[0] + .4, cb[1], z + .55), "#c48a12", 1); }
-    const j0 = P(cb[0] + .2, cb[1] + .2, H), j1 = P(cb[0] + .2, cb[1] + .2 + 2.6, H), j2 = P(cb[0] + .2, cb[1] + .2 - .9, H);
-    line(g, j1, j2, "#c48a12", 3); line(g, [j1[0], j1[1] + 5], [j2[0], j2[1] + 5], "#c48a12", 1.4);
-    line(g, j0, [j0[0], j0[1] - 26], "#c48a12", 2.4);
-    line(g, [j0[0], j0[1] - 26], j1, "#2a2e33", 1); line(g, [j0[0], j0[1] - 26], j2, "#2a2e33", 1);
-    box(g, cb[0] + .05, cb[1] - .85, H - .45, .3, .3, .45, "#5c6168");
-    const hk = P(cb[0] + .2, cb[1] + .2 + 1.9, H);
-    line(g, hk, [hk[0], hk[1] + 62], "#2a2e33", 1);
-    el("rect", { x: r1(hk[0] - 9), y: r1(hk[1] + 62), width: 18, height: 12, fill: "url(#gWood)", class: "o" }, g);
-    el("title", {}, g).textContent = "Building site";
-  });
-  // ===== small plot
-  add(6.0, (root) => {
-    const g = el("g", { class: "plot" }, root);
-    plaza(g, -2.6, 6.6, -0.4, 8.6, "#7a6a55");
-    [[-2.4, 6.8], [-0.6, 6.8], [-0.6, 8.4], [-2.4, 8.4]].forEach(([x, y]) => box(g, x - .07, y - .07, 0, .14, .14, .5, "#7a5132"));
-    const s = P(-1.5, 7.6); line(g, s, [s[0], s[1] - 38], "#3b2618", 4);
-    el("rect", { x: r1(s[0] - 22), y: r1(s[1] - 58), width: 44, height: 24, rx: 3, fill: "url(#gBrassR)", class: "o" }, g);
-    el("path", { d: `M${r1(s[0])} ${r1(s[1] - 52)} v12 M${r1(s[0] - 6)} ${r1(s[1] - 46)} h12`, stroke: "#2a1b07", "stroke-width": 3, "stroke-linecap": "round" }, g);
+    const f = faceG(g, "T", x0, y0, .02);
+    el("rect", { x: 0, y: 0, width: w, height: d, fill: "#b46cff", opacity: .06 }, f);
+    const lg = el("g", { class: "lit pulse" }, f);
+    el("rect", { x: .12, y: .12, width: w - .24, height: d - .24, fill: "none", stroke: "#b46cff", "stroke-width": 1.5, "stroke-dasharray": "3 6", "stroke-linecap": "round", "vector-effect": "non-scaling-stroke" }, lg);
+    el("path", { d: `M${w / 2 - .45} ${d / 2}H${w / 2 + .45}M${w / 2} ${d / 2 - .45}V${d / 2 + .45}`, stroke: "#e2c4ff", "stroke-width": 2.2, "stroke-linecap": "round", "vector-effect": "non-scaling-stroke" }, lg);
+    [[.25, .25], [w - .25, .25], [.25, d - .25], [w - .25, d - .25]].forEach(([u, v]) => { const p = P(x0 + u, y0 + v); el("path", { d: `M${r1(p[0] - 3.5)},${r1(p[1])} L${r1(p[0])},${r1(p[1] - 13)} L${r1(p[0] + 3.5)},${r1(p[1])}z`, fill: "#ff8a3d", class: "o" }, g); el("path", { d: `M${r1(p[0] - 2)},${r1(p[1] - 5)}h4`, stroke: "#fff", "stroke-width": 1.4 }, g); });
     el("title", {}, g).textContent = "Empty plot";
   });
-  // ===== lamps + trees
-  [[1.6, 4.9], [-2.0, 6.6], [4.6, 1.0], [6.9, -0.6], [-4.2, 1.1], [-6.2, 0.0], [1.3, -4.6], [3.4, 5.9], [-0.4, -6.0], [-5.4, 5.3]].forEach(([x, y]) => add(x + y, (root, lroot) => lamp(root, lroot, x, y)));
-  [[-9.0, 1.6, 1.1, "round"], [-8.3, 3.8, 1, "cypress"], [-3.6, 8.6, 1, "cypress"], [2.6, 8.8, .95, "round"], [8.8, 0.6, 1, "cypress"],
-   [9.2, -2.0, .9, "round"], [-5.8, -7.4, 1, "cypress"], [4.4, -8.3, 1, "round"], [-9.3, -1.6, .9, "cypress"], [0.6, 9.5, .9, "cypress"],
-   [-7.4, 2.6, .8, "round"], [5.2, 5.0, 1, "round"], [4.4, 6.6, .9, "cypress"], [6.2, 5.6, .8, "round"], [-4.6, -8.6, .8, "round"], [6.5, -7.0, .9, "cypress"]]
-    .forEach(([x, y, s, t]) => add(x + y, root => tree(root, x, y, s, t)));
+  plot(5.0, 1.4, 3.4, 3.0); plot(1.4, 5.0, 3.0, 3.4); plot(-4.4, -8.4, 3.0, 3.4); plot(5.0, -4.4, 3.4, 3.0);
+
+  // ===== nature + street furniture
+  [[4.4, 10.2, "#35e6ff"], [10.2, 4.4, "#ff4fa8"], [-9.6, 9.1, "#ff4fa8"], [-6.4, 9.7, "#35e6ff"], [-10, 3.6, "#b46cff"],
+   [-4.2, -10, "#35e6ff"], [-7, -9.8, "#ff4fa8"], [-1.9, -10.1, "#b46cff"], [9.8, -3.4, "#7dff6a"], [3.4, -10, "#35e6ff"], [-2.6, 10.1, "#7dff6a"]]
+    .forEach(([x, y, c]) => add(x + y, root => glowTree(root, x, y, .95 + rnd() * .25, c)));
+  [[-8.9, 8.1], [-6.2, -9.9], [9.9, -6.6]].forEach(([x, y]) => add(x + y, root => crystal(root, x, y, .9)));
+  [[6, 1.05], [9, 1.05], [-6, -1.05], [-9, -1.05], [1.05, 6], [1.05, 9], [-1.05, -6], [-1.05, -9], [6, -1.05], [-6, 1.05], [-1.05, 6], [1.05, -6]].forEach(([x, y], i) => add(x + y, root => lampPost(root, x, y, ["#35e6ff", "#ff4fa8", "#b46cff", "#ffc83d"][i % 4])));
+  [[-9.8, -9.8, 7.2, .95], [-8.7, -10.2, 4.6, .7], [-10.2, -8.6, 3.6, .6], [-10.0, 9.9, 4.4, .8], [-9.1, 10.2, 2.6, .55], [9.9, -10.0, 5.2, .85], [10.2, -8.9, 3.0, .55], [-10.1, 1.8, 3.2, .65]]
+    .forEach(([x, y, h, w], i) => add(x + y - .5, root => rockSpire(root, x, y, h, w, "#2c2f4e", i % 2 ? "#35e6ff" : "#ff4fa8")));
 
   objs.sort((a, b) => a.d - b.d);
-  const objLayer = el("g", {}, island);
-  objs.forEach(o => o.fn(objLayer, lit));
-  island.appendChild(rail(true));
-  svg.appendChild(lit);
+  const objLayer = el("g", {}, svg);
+  objs.forEach(o => o.fn(objLayer));
 
-  // plaque anchors (svg user coords)
-  const a = (b, x, y, z, mode) => { const p = P(x, y, z); LABELS.push({ b, x: p[0], y: p[1], mode }); };
-  a("todo", 3.9, 3.9, 0, "below");
-  a("cal", -7, -2.5, 11.8, "above");
-  a("mail", 8.8, -1.6, 0, "below");
+  /* ---- waterfalls of light over the front edges ---- */
+  const falls = el("g", {}, svg);
+  waterfall(falls, "L", -3.75, -2.65, "#c06cff", 560);
+  waterfall(falls, "L", 6.0, 6.9, "#35e6ff", 480);
+  waterfall(falls, "L", -8.6, -8.1, "#35e6ff", 420);
+  waterfall(falls, "R", 2.4, 3.3, "#35e6ff", 520);
+  waterfall(falls, "R", -6.0, -5.4, "#ff4fa8", 430);
+
+  /* ---- drones + foreground clouds ---- */
+  const air = el("g", {}, svg);
+  const d1 = P(2.6, -.8, 7.4), d2 = P(-.6, 2.8, 8.4), d3 = P(9.6, -6.0, 5.8), d4 = P(-9.5, 1.0, 5.2);
+  drone(air, r1(d1[0]), r1(d1[1]), "#35e6ff"); drone(air, r1(d2[0]), r1(d2[1]), "#ff4fa8"); drone(air, r1(d3[0]), r1(d3[1]), "#b46cff"); drone(air, r1(d4[0]), r1(d4[1]), "#7dff6a");
+  const fg = el("g", {}, svg);
+  cloudBank(fg, 620, 1170, 640, 1.3); cloudBank(fg, 1580, 1140, 700, 1.3); cloudBank(fg, 1120, 1290, 800, 1.5);
 }
 
 /* =====================================================================
-   TIME OF DAY: steam by day, neon by night
+   TIME OF DAY (always neon; brighter as it gets dark)
    ===================================================================== */
 const PH = {
-  dawn: { sky: ["#6f7fb6", "#e8b9a4", "#ffd7a3"], m: [.92, 0, 0, 0, .02, 0, .82, 0, 0, 0, 0, 0, .86, 0, .05], lights: .45, stars: .2, sun: 1, moon: 0, cloud: "#f6d9c6", haze: "#a39bb0", steam: "#f6e5d9" },
-  day: { sky: ["#7fb4cf", "#d9e4dc", "#f1dcb2"], m: null, lights: 0, stars: 0, sun: 1, moon: 0, cloud: "#ffffff", haze: "#8fa3ac", steam: "#f3f0ea" },
-  dusk: { sky: ["#2e2a6b", "#b4547a", "#ff9a6a"], m: [.78, .05, 0, 0, .03, 0, .6, .05, 0, 0, .05, 0, .78, 0, .06], lights: .85, stars: .4, sun: 0, moon: 0, cloud: "#d98aa0", haze: "#6c5a85", steam: "#e6b8c4" },
-  night: { sky: ["#05081a", "#141a44", "#2b2058"], m: [.34, 0, .02, 0, .0, 0, .38, .04, 0, .01, .04, .06, .62, 0, .06], lights: 1, stars: 1, sun: 0, moon: 1, cloud: "#2c3160", haze: "#232850", steam: "#4a5378" }
+  dawn: { sky: ["#2a2f66", "#7a5a92", "#e8a0a0"], lights: .75, stars: .2, moon: 0, cloud: "#6a5a86", hi: "#9a86b0" },
+  day: { sky: ["#4a4f86", "#7f7cad", "#b7a8cc"], lights: .6, stars: 0, moon: 0, cloud: "#7a77a3", hi: "#a7a3c8" },
+  dusk: { sky: ["#1d1550", "#6a2f7a", "#e0607a"], lights: .9, stars: .4, moon: 0, cloud: "#4a2f66", hi: "#7a4a86" },
+  night: { sky: ["#07061a", "#1a1240", "#33205a"], lights: 1, stars: 1, moon: 1, cloud: "#272150", hi: "#3a3170" }
 };
 let curPhase = null;
 const forcedPhase = (() => { const h = location.hash.slice(1); return PH[h] ? h : null; })();
@@ -895,16 +932,13 @@ function applyPhase() {
   const ph = forcedPhase || (h < 5.5 ? "night" : h < 7.5 ? "dawn" : h < 17.5 ? "day" : h < 19.5 ? "dusk" : "night");
   if (ph === curPhase) return; curPhase = ph; const p = PH[ph];
   ["sk0", "sk1", "sk2"].forEach((id, i) => $("#" + id).setAttribute("stop-color", p.sky[i]));
-  document.documentElement.style.setProperty("--bg", p.sky[2]);
-  svg.style.setProperty("--lights", p.lights); svg.style.setProperty("--cloud", p.cloud); svg.style.setProperty("--haze", p.haze); svg.style.setProperty("--steam", p.steam);
-  $("#stars").setAttribute("opacity", p.stars); $("#sun").setAttribute("opacity", p.sun); $("#moon").setAttribute("opacity", p.moon);
-  if (p.m) { $("#nightM").setAttribute("values", p.m.join(" ") + " 0 0 0 1 0"); island.setAttribute("filter", "url(#fNight)"); } else island.removeAttribute("filter");
-  $("#app").classList.toggle("night", p.lights > .5);
+  svg.style.setProperty("--lights", p.lights); svg.style.setProperty("--cloud", p.cloud); svg.style.setProperty("--cloudHi", p.hi);
+  $("#stars").setAttribute("opacity", p.stars); $("#moon").setAttribute("opacity", p.moon);
 }
 function tickClock() {
   const d = new Date(), m = d.getMinutes(), h = d.getHours() % 12 + m / 60;
-  clockHands.forEach(([hh, mh]) => { hh.setAttribute("transform", `rotate(${r1(h * 30)} 1.3 .95)`); mh.setAttribute("transform", `rotate(${m * 6} 1.3 .95)`); });
-  $("#today").textContent = d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" }) + " · " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  clockHands.forEach(([hh, mh]) => { hh.setAttribute("transform", `rotate(${r1(h * 30)})`); mh.setAttribute("transform", `rotate(${m * 6})`); });
+  $("#today").textContent = d.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short" }).toUpperCase() + " " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
   applyPhase();
 }
 
@@ -912,8 +946,8 @@ function tickClock() {
    CAMERA: pan, zoom, fly-to
    ===================================================================== */
 const stage = $("#stage"), labelsEl = $("#labels");
-const FIT = { x: 190, y: -100, w: 1020, h: 1060 };
-const LIM = { x0: -100, x1: 1500, y0: -250, y1: 1150, wMin: 280, wMax: 1900 };
+const FIT = { x: 430, y: 150, w: 1340, h: 1060 };
+const LIM = { x0: 300, x1: 1900, y0: 50, y1: 1350, wMin: 320, wMax: 2300 };
 let cam = { cx: FIT.x + FIT.w / 2, cy: FIT.y + FIT.h / 2, w: FIT.w };
 const vw = () => stage.clientWidth || 1, vh = () => stage.clientHeight || 1;
 function fitCam(box) { const r = vw() / vh(); const w = Math.max(box.w, box.h * r); return { cx: box.x + box.w / 2, cy: box.y + box.h / 2, w }; }
@@ -942,29 +976,43 @@ function flyTo(t, ms = 550) {
     if (k < 1) flyRaf = requestAnimationFrame(step); };
   flyRaf = requestAnimationFrame(step);
 }
-const FOCUS = { todo: [700, 470, 820], cal: [570, 230, 720], mail: [1010, 480, 760], ideas: [370, 290, 780] };
+const FOCUS = { todo: [P(0, 0, 3.8), 720], cal: [P(-8.5, -3.5, 4.8), 680], mail: [P(6.9, -6.9, 2.4), 700], ideas: [P(-8, 5.5, 2.6), 640], barca: [P(7.5, 7.5, 1.6), 640] };
 function flyToBuilding(b) {
-  const [x, y, w] = FOCUS[b]; let cy = y;
-  if (innerWidth <= 720) { const sheetTop = innerHeight * .34, want = (sheetTop - 10) / 2, h = w * vh() / vw(); cy = y + (vh() / 2 - want) * h / vh(); }
+  const [[x, y], w] = FOCUS[b]; let cy = y;
+  if (innerWidth <= 720) { const sheetTop = innerHeight * .34, want = (sheetTop + 92) / 2 + 10, h = w * vh() / vw(); cy = y + (vh() / 2 - want) * h / vh(); }
   flyTo({ cx: x, cy, w });
 }
-// labels
-const labelEls = {};
+// hover tags + pips
+const labelEls = {}, pipEls = {};
 function buildLabels() {
   labelsEl.innerHTML = "";
   LABELS.forEach(L => {
     const b = document.createElement("button");
     b.className = "lbl"; b.dataset.b = L.b; b.type = "button";
-    b.style.setProperty("--glow", `var(--b-${L.b})`);
-    b.innerHTML = `${BINFO[L.b].t}<span class="bub" hidden></span>`;
+    b.style.setProperty("--glow", `var(--g-${L.b})`);
+    b.innerHTML = `${BINFO[L.b].t}<small>${BINFO[L.b].s}</small>`;
     b.setAttribute("aria-label", `Open ${BINFO[L.b].t}`);
     b.onclick = () => (st.panel === L.b && !st.wide) ? closePanel() : openPanel(L.b);
+    b.onfocus = () => showTag(L.b, true); b.onblur = () => showTag(L.b, false);
     labelsEl.appendChild(b); labelEls[L.b] = b; L.el = b;
+    const p = document.createElement("span"); p.className = "pip"; p.hidden = true; labelsEl.appendChild(p); pipEls[L.b] = p; L.pip = p;
   });
 }
 function placeLabels() {
   LABELS.forEach(L => { if (!L.el) return; const [x, y] = toScreen(L.x, L.y);
-    L.el.style.transform = `translate(${r1(x)}px,${r1(y)}px) translate(-50%,${L.mode === "above" ? "-100%" : "6px"})`; });
+    L.el.style.transform = `translate(${r1(x)}px,${r1(y)}px) translate(-50%,-100%) translateY(-8px)`;
+    const [qx, qy] = toScreen(L.px ?? L.x, L.py ?? L.y); L.pip.style.transform = `translate(${r1(qx)}px,${r1(qy)}px) translate(-50%,-50%)`; });
+}
+let hotB = null;
+function showTag(b, on) {
+  const l = labelEls[b]; if (!l) return; l.classList.toggle("show", on);
+  const g = svg.querySelector(`.bldg[data-b="${b}"]`); if (g) g.classList.toggle("hot", on || st.panel === b);
+  if (pipEls[b]) pipEls[b].style.opacity = on || st.panel === b ? 0 : "";
+}
+function selectB(b) {
+  Object.keys(labelEls).forEach(k => { const on = k === b; labelEls[k].classList.toggle("sel", on);
+    const g = svg.querySelector(`.bldg[data-b="${k}"]`); if (g) g.classList.toggle("hot", on || k === hotB);
+    if (pipEls[k]) pipEls[k].style.opacity = on || k === hotB ? 0 : ""; });
 }
 // pointer: drag to pan, pinch to zoom, tap a building to open it
 const ptrs = new Map(); let drag = null;
@@ -976,7 +1024,9 @@ stage.addEventListener("pointerdown", e => {
 });
 stage.addEventListener("pointermove", e => {
   if (!ptrs.has(e.pointerId)) {
-    const bl = e.target.closest && e.target.closest(".bldg"); Object.values(labelEls).forEach(l => l.classList.toggle("hot", !!bl && l.dataset.b === bl.dataset.b));
+    if (e.pointerType !== "mouse") return;
+    const bl = e.target.closest && e.target.closest(".bldg"), b = bl ? bl.dataset.b : null;
+    if (b !== hotB) { if (hotB) showTag(hotB, false); hotB = b; if (b) showTag(b, true); }
     return;
   }
   const prev = ptrs.get(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]);
@@ -991,12 +1041,13 @@ stage.addEventListener("pointermove", e => {
     if (d0 > 0 && d1 > 0) zoomAt((e.clientX + other[0]) / 2 - r.left, (e.clientY + other[1]) / 2 - r.top, d0 / d1);
   }
 });
+stage.addEventListener("pointerleave", () => { if (hotB) { showTag(hotB, false); hotB = null; } });
 const endPtr = e => {
   if (!ptrs.has(e.pointerId)) return; ptrs.delete(e.pointerId);
   if (ptrs.size === 0) {
     stage.classList.remove("dragging");
     if (drag && !drag.moved && e.type === "pointerup" && drag.hit) {
-      if (drag.hit === "plot") toast("A future building site. Ideas: a Library for module deadlines or an Arena for training.");
+      if (drag.hit === "plot") toast("An empty plot. There's room here for new buildings as the island grows.");
       else (st.panel === drag.hit && !st.wide) ? closePanel() : openPanel(drag.hit);
     }
     drag = null;
@@ -1068,7 +1119,7 @@ function parseQuick(raw) {
 /* =====================================================================
    STATE + STORE
    ===================================================================== */
-const st = { items: new Map(), mode: "loading", panel: null, wide: false, filter: "all", edit: null, showDone: false, chip: "auto", aiOff: false, busy: new Set() };
+const st = { barca: null, bTab: "matches", bSub: "upcoming", bLead: "rating", items: new Map(), mode: "loading", panel: null, wide: false, filter: "all", edit: null, showDone: false, chip: "auto", aiOff: false, busy: new Set() };
 let col = null, sample = null;
 const queues = {};
 function onDbErr(e) {
@@ -1103,6 +1154,7 @@ async function initData() {
   const uid = user ? await user.id() : null;
   if (!db || !uid) { st.mode = "demo"; demoData(); render(); return; }
   col = db.doc(`data/users/${uid}/island`).collection("items");
+  db.doc(`data/users/${uid}/barca`).onSnapshot(s => { st.barca = s.exists ? s.data() : null; render(); }, () => {});
   col.onSnapshot(snap => { st.items = new Map(snap.docs.map(d => [d.id, d.data()])); st.mode = "live"; render(); },
     () => toast("Lost the connection to your island. Reload to reconnect."));
 }
@@ -1157,16 +1209,18 @@ const ICON = {
   todo: '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 10.5h18v1.5H3z"/><path d="M5 10.5c0-4 3-7 7-7s7 3 7 7z" opacity=".55"/><rect x="11.2" y="1" width="1.6" height="3" rx=".8"/><rect x="4.5" y="13" width="2.4" height="6" rx=".5"/><rect x="10.8" y="13" width="2.4" height="6" rx=".5"/><rect x="17.1" y="13" width="2.4" height="6" rx=".5"/><rect x="2.5" y="19.5" width="19" height="2.2" rx=".6"/></svg>',
   cal: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5.5" stroke-width="1" opacity=".6"/><path d="M12 7.5V12l3 2"/></svg>',
   mail: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="1.5"/><path d="m3.5 7 8.5 6.5L20.5 7"/></svg>',
+  barca: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m12 7.2 4 2.9-1.5 4.7h-5L8 10.1z"/><path d="M12 3v4.2M16 10.1l4.2-1.4M14.5 14.8l2.6 3.6M9.5 14.8l-2.6 3.6M8 10.1 3.8 8.7"/></svg>',
   ideas: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2.5a7 7 0 0 0-4.2 12.6c.7.5 1.2 1.3 1.2 2.2V18h6v-.7c0-.9.5-1.7 1.2-2.2A7 7 0 0 0 12 2.5z"/><path d="M9.5 21h5M10 11l1-2 1 2 1-2 1 2" stroke-width="1.4"/></svg>',
   x: '<svg width="18" height="18" viewBox="0 0 18 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m4 4 10 10M14 4 4 14"/></svg>'
 };
 const TICK = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 7.4l2.7 2.7L11.2 4.4" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const SPARK = '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0l1.4 4.6L12 6l-4.6 1.4L6 12l-1.4-4.6L0 6l4.6-1.4z" fill="currentColor"/></svg>';
 const BINFO = {
-  todo: { t: "To-dos", s: "Guildhall", c: "var(--b-todo)" },
-  cal: { t: "Calendar", s: "Clock Tower", c: "var(--b-cal)" },
-  mail: { t: "Mail", s: "Pneumatic Post", c: "var(--b-mail)" },
-  ideas: { t: "Ideas", s: "Lightbulb Airship", c: "var(--b-ideas)" }
+  todo: { t: "To-dos", s: "Task HQ", c: "var(--b-todo)" },
+  cal: { t: "Calendar", s: "Chrono Spire", c: "var(--b-cal)" },
+  mail: { t: "Mail", s: "Data Post", c: "var(--b-mail)" },
+  ideas: { t: "Ideas", s: "Idea Beacon", c: "var(--b-ideas)" },
+  barca: { t: "FC Barcelona", s: "Blaugrana Stadium", c: "#edbb00" }
 };
 const todos = () => [...st.items].filter(([, it]) => it.kind !== "idea");
 const ideas = () => [...st.items].filter(([, it]) => it.kind === "idea").sort((a, b) => b[1].createdAt - a[1].createdAt);
@@ -1229,7 +1283,7 @@ function calBody() {
   return h;
 }
 function mailBody() {
-  return `<div class="soon" style="margin-top:4px"><h4>Opening soon</h4><p>The Pneumatic Post will read Gmail and Outlook each morning, pull out what needs you, and sum up everything else in a few lines. Below is how it will look.</p></div>
+  return `<div class="soon" style="margin-top:4px"><h4>Opening soon</h4><p>The Data Post will read Gmail and Outlook each morning, pull out what needs you, and sum up everything else in a few lines. Below is how it will look.</p></div>
   <h3 class="sec-h">Needs you <span class="tag ex">Example</span></h3>
   <div class="mail ghost"><div class="from">Module leader</div><div class="sub">Coursework brief updated</div><div class="why">Deadline moved a week later. Worth checking the new marking scheme.</div></div>
   <div class="mail ghost"><div class="from">Project group</div><div class="sub">Can we meet Thursday?</div><div class="why">Asks for your availability. Needs a reply.</div></div>
@@ -1239,25 +1293,141 @@ function mailBody() {
 function ideasBody() {
   const list = ideas();
   let h = st.mode === "demo" ? `<div class="banner">Preview mode. The idea below is an example.</div>` : "";
-  if (!list.length) return h + `<div class="empty"><b>No ideas aboard yet</b>Start a note with “idea:” or pick the Idea chip below, then press Enter.</div>`;
+  if (!list.length) return h + `<div class="empty"><b>No ideas yet</b>Start a note with “idea:” or pick the Idea chip below, then press Enter.</div>`;
   return h + list.map(([id, it]) => `<article class="idea" data-id="${id}"><h4>${esc(it.title)}</h4><div class="when">${new Date(it.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}${it.example ? ' · <span class="tag ex">Example</span>' : ""}</div>
     ${Array.isArray(it.steps) && it.steps.length ? `<ol>${it.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
     <div class="acts">${sample && !st.aiOff ? `<button class="btn" data-act="steps" ${st.busy.has(id) ? "disabled" : ""}>${st.busy.has(id) ? "Thinking…" : it.steps ? "New next steps" : "Next steps"}</button>` : ""}<button class="btn" data-act="totodo">Make it a to-do</button><button class="btn danger" data-act="del">Delete</button></div></article>`).join("");
 }
+/* ===== FC Barcelona: matches, live scoreboard, stats ===== */
+const ABBR = { "FC Barcelona": "BAR", "Real Betis": "BET", "Paris Saint-Germain": "PSG", "Real Madrid": "RMA", "Atlético Madrid": "ATM", "Aston Villa": "AVL", "Manchester City": "MCI", "Real Sociedad": "RSO", "Rayo Vallecano": "RAY", "Racing de Santander": "RAC", "Deportivo de La Coruña": "DEP", "Athletic Club": "ATH", "Celta de Vigo": "CEL", "Valencia CF": "VAL", "Sporting CP": "SCP", "Galatasaray": "GAL", "Feyenoord": "FEY", "Como 1907": "COM", "FC Basel": "BAS", "Al Ahly": "AHL", "Villarreal": "VIL", "Espanyol": "ESP", "Osasuna": "OSA", "Getafe": "GET", "Sevilla": "SEV", "Levante": "LEV", "Elche": "ELC", "Málaga": "MAL", "Alavés": "ALA", "Sabah": "SAB" };
+const abbr = n => ABBR[n] || String(n).replace(/^(FC|CF|RC|CD|UD|SD|Real|Club)\s+/i, "").slice(0, 3).toUpperCase();
+const isBar = n => n === "FC Barcelona";
+const crest = (n, big) => `<i class="crest${isBar(n) ? " fcb" : ""}${big ? " big" : ""}" aria-hidden="true">${isBar(n) ? "" : esc(abbr(n).slice(0, 2))}</i>`;
+const mTs = m => m.kickoff ? +new Date(m.kickoff) : +fromISO(m.date) + 12 * 36e5;
+const compLabel = m => m.comp + (m.md ? ` · MD${m.md}` : m.note ? ` · ${m.note}` : "");
+const resOf = m => { const us = isBar(m.home) ? m.hs : m.as, them = isBar(m.home) ? m.as : m.hs; return us > them ? "W" : us < them ? "L" : "D"; };
+const COMPETITIVE = m => !/friendly|gamper/i.test(m.comp);
+function whenOf(m) {
+  if (m.kickoff) { const d = new Date(m.kickoff); return { day: d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }), time: d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }), wd: d.toLocaleDateString("en-GB", { weekday: "short" }) }; }
+  const d = fromISO(m.date); return { day: d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }), time: m.tba ? "TBA" : "", wd: d.toLocaleDateString("en-GB", { weekday: "short" }) };
+}
+function bMatches() { return (st.barca && Array.isArray(st.barca.matches)) ? st.barca.matches : []; }
+function liveNow() {
+  const b = st.barca; if (!b) return null;
+  const lv = b.live && b.live.matchId ? b.live : null;
+  if (lv && lv.status && lv.status !== "live") return null;
+  const m = lv ? bMatches().find(x => x.id === lv.matchId) : bMatches().find(x => x.status === "live");
+  return m ? { m, lv: lv || {} } : null;
+}
+const upcoming = () => bMatches().filter(m => m.status === "ns" || m.status === "live").sort((a, b) => mTs(a) - mTs(b));
+const results = () => bMatches().filter(m => m.status === "ft").sort((a, b) => mTs(b) - mTs(a));
+function mRow(m) {
+  const w = whenOf(m), ft = m.status === "ft", live = m.status === "live", lv = live ? (st.barca.live || {}) : {};
+  const hs = ft ? m.hs : lv.hs, as = ft ? m.as : lv.as, has = hs != null && as != null;
+  const hw = has && hs > as, aw = has && as > hs;
+  return `<li class="mrow${live ? " live" : ""}">
+    <div class="mwhen"><b>${esc(w.day)}</b><span>${live ? `<em class="lv">LIVE</em>` : ft ? "FT" : esc(w.time || w.wd)}</span></div>
+    <div class="mteams"><small>${esc(compLabel(m))}</small><div class="${aw ? "dim" : hw ? "win" : ""}">${crest(m.home)}<span>${esc(m.home)}</span></div><div class="${hw ? "dim" : aw ? "win" : ""}">${crest(m.away)}<span>${esc(m.away)}</span></div></div>
+    <div class="mscore">${has ? `<b class="${hw ? "win" : ""}">${hs}</b><b class="${aw ? "win" : ""}">${as}</b>` : ""}</div>
+    ${ft ? `<span class="res r${resOf(m)}" title="${{ W: "Win", D: "Draw", L: "Loss" }[resOf(m)]}">${resOf(m)}</span>` : `<span class="res rn"></span>`}
+  </li>`;
+}
+function groupByMonth(list) {
+  let h = "", cur = "";
+  list.forEach(m => { const d = new Date(mTs(m)), k = d.toLocaleDateString("en-GB", { month: "long", year: "numeric" }); if (k !== cur) { if (cur) h += "</ul>"; h += `<h3 class="sec-h">${k}</h3><ul class="mlist">`; cur = k; } h += mRow(m); });
+  return h + (cur ? "</ul>" : "");
+}
+function countdown(ts) {
+  const s = Math.max(0, ts - Date.now()) / 1000, d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), mi = Math.floor(s % 3600 / 60);
+  return d ? `${d}d ${h}h` : h ? `${h}h ${mi}m` : `${mi}m`;
+}
+function scoreboard(m, lv, kind) {
+  const ft = kind === "ft", live = kind === "live", w = whenOf(m);
+  const hs = ft ? m.hs : lv && lv.hs, as = ft ? m.as : lv && lv.as, has = hs != null && as != null;
+  const status = live ? `<span class="st-live">LIVE${lv && lv.minute ? ` · ${esc(lv.minute)}'` : ""}</span>` : ft ? `<span class="st-ft">Full time</span>` : `<span class="st-ns">${esc(w.wd)} ${esc(w.day)} · ${esc(w.time || "TBA")}</span>`;
+  const mid = has ? `<div class="sb-score">${hs}<i>:</i>${as}</div>` : live ? `<div class="sb-score dim">–<i>:</i>–</div>` : `<div class="sb-score vs">${m.kickoff ? countdown(mTs(m)) : "TBA"}</div>`;
+  const ev = (ft ? m.events : lv && lv.events) || [];
+  const evH = ev.length ? `<ul class="evs">${ev.map(e => `<li class="${e.side}"><span class="emin">${e.min != null ? esc(e.min) + "'" : esc(e.note || "")}</span><span class="eico ${esc(e.type || "goal")}"></span><span class="ename">${esc(e.name)}${e.assist ? `<small>assist ${esc(e.assist)}</small>` : ""}</span></li>`).join("")}</ul>` : "";
+  return `<div class="sb"><div class="sb-comp">${esc(compLabel(m))} · ${esc(m.venue || "")}</div>
+    <div class="sb-main"><div class="sb-team">${crest(m.home, 1)}<b>${esc(m.home)}</b></div><div class="sb-mid">${mid}${status}</div><div class="sb-team">${crest(m.away, 1)}<b>${esc(m.away)}</b></div></div>
+    ${live && lv && lv.note && !has ? `<p class="sb-note">${esc(lv.note)}</p>` : ""}${evH}</div>`;
+}
+function statBars(stats) {
+  if (!Array.isArray(stats) || !stats.length) return `<div class="empty sm">Match stats show up here when the source publishes them.</div>`;
+  return `<div class="bars">${stats.map(s => { const h = +s.h || 0, a = +s.a || 0, t = h + a || 1, u = s.unit || "";
+    return `<div class="bar"><div class="bl"><b class="${h > a ? "hi" : ""}">${esc(s.h)}${u}</b><span>${esc(s.label)}</span><b class="${a > h ? "hi" : ""}">${esc(s.a)}${u}</b></div><div class="bt"><i class="h" style="width:${r1(h / t * 100)}%"></i><i class="a" style="width:${r1(a / t * 100)}%"></i></div></div>`; }).join("")}</div>`;
+}
+const RATING_COL = r => r >= 9 ? "#2f6bff" : r >= 8 ? "#00a88a" : r >= 7 ? "#3cbf4a" : r >= 6.5 ? "#d9a400" : r >= 6 ? "#f08a24" : "#e5484d";
+const LEADERS = [["rating", "Rating"], ["goals", "Goals"], ["assists", "Assists"], ["ga", "G+A"], ["xg", "xG"], ["bigChances", "Big chances created"], ["dribbles", "Dribbles /90"], ["tackles", "Tackles /90"], ["interceptions", "Interceptions /90"], ["cleanSheets", "Clean sheets"], ["yellow", "Yellow cards"]];
+const initials = n => n.split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase();
+function barcaBody() {
+  const b = st.barca, tab = st.bTab || "matches";
+  let h = `<div class="btabs" role="tablist">${[["matches", "Matches"], ["live", "Live"], ["stats", "Stats"]].map(([k, v]) => `<button role="tab" data-act="btab" data-t="${k}" aria-selected="${tab === k}">${v}${k === "live" && liveNow() ? `<i class="ldot"></i>` : ""}</button>`).join("")}</div>`;
+  if (!b) return h + `<div class="empty"><b>No match data yet</b>Fixtures, results and stats arrive with the first refresh.</div>`;
+  const upd = b.updatedAt ? new Date(b.updatedAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
+  if (tab === "matches") {
+    const sub = st.bSub || "upcoming";
+    h += `<div class="filters" role="radiogroup">${[["upcoming", "Upcoming"], ["results", "Results"]].map(([k, v]) => `<button class="chip" role="radio" data-act="bsub" data-s="${k}" aria-checked="${sub === k}" style="--c:${k === "upcoming" ? "#edbb00" : "#2f7dff"}">${v}</button>`).join("")}</div>`;
+    const list = sub === "upcoming" ? upcoming() : results();
+    h += list.length ? groupByMonth(list) : `<div class="empty sm">Nothing here yet.</div>`;
+  } else if (tab === "live") {
+    const L = liveNow();
+    if (L) { h += scoreboard(L.m, L.lv, "live"); h += `<h3 class="sec-h">Match stats</h3>` + statBars(L.lv.stats); }
+    else {
+      const nx = upcoming()[0], ls = results()[0];
+      h += `<p class="hint-row">No Barça match in play right now.</p>`;
+      if (nx) h += `<h3 class="sec-h">Next match</h3>` + scoreboard(nx, null, "ns");
+      if (ls) h += `<h3 class="sec-h">Last result</h3>` + scoreboard(ls, null, "ft") + (ls.stats ? statBars(ls.stats) : "");
+    }
+  } else {
+    const s = b.seasonStats || {}, ll = s.laliga || {}, ucl = s.ucl || {}, me = (b.table || []).find(r => isBar(r.team));
+    const form = results().filter(COMPETITIVE).slice(0, 5).reverse();
+    h += `<div class="tiles">
+      <div class="tile"><small>LaLiga position</small><b>${me ? me.pos : "–"}<sup>${me ? ({ 1: "st", 2: "nd", 3: "rd" }[me.pos] || "th") : ""}</sup></b><span>${me ? me.pts + " pts" : ""}</span></div>
+      <div class="tile"><small>LaLiga record</small><b>${ll.w ?? "–"}-${ll.d ?? "–"}-${ll.l ?? "–"}</b><span>W-D-L</span></div>
+      <div class="tile"><small>Goals</small><b>${ll.gf ?? "–"}<i>:</i>${ll.ga ?? "–"}</b><span>${ll.p ? r1(ll.gf / ll.p) + " per game" : ""}</span></div>
+      <div class="tile"><small>Clean sheets</small><b>${ll.cs ?? "–"}</b><span>LaLiga</span></div></div>`;
+    if (form.length) h += `<h3 class="sec-h">Form <span class="sub">last ${form.length}, oldest first</span></h3><div class="form">${form.map(m => `<span class="res r${resOf(m)}" title="${esc(m.home)} ${m.hs}-${m.as} ${esc(m.away)}">${resOf(m)}</span>`).join("")}</div>`;
+    if (ucl.p) h += `<p class="hint-row">Champions League: ${ucl.w}W ${ucl.d}D ${ucl.l}L · goals ${ucl.gf}:${ucl.ga}${s.all ? ` · all comps ${s.all.w}W from ${s.all.p}, ${s.all.gf} scored` : ""}</p>`;
+    if (Array.isArray(b.facts) && b.facts.length) h += `<ul class="facts">${b.facts.map(f => `<li>${esc(f)}</li>`).join("")}</ul>`;
+    const key = st.bLead || "rating", rows = (b.leaders || {})[key] || [];
+    h += `<h3 class="sec-h">Top players</h3><div class="filters lead" role="radiogroup">${LEADERS.filter(([k]) => (b.leaders || {})[k]).map(([k, v]) => `<button class="chip" role="radio" data-act="blead" data-k="${k}" aria-checked="${key === k}" style="--c:#edbb00">${v}</button>`).join("")}</div>`;
+    h += `<ol class="leaders">${rows.map(([n, v], i) => `<li><span class="rk">${i + 1}</span><i class="av">${esc(initials(n))}</i><span class="pn">${esc(n)}</span>${key === "rating" ? `<b class="rate" style="background:${RATING_COL(+v)}">${(+v).toFixed(2)}</b>` : `<b class="val">${esc(v)}</b>`}</li>`).join("")}</ol>`;
+    if (b.leadersNote) h += `<p class="src">${esc(b.leadersNote)}</p>`;
+    if (Array.isArray(b.table) && b.table.length) {
+      h += `<h3 class="sec-h">LaLiga table${b.tableNote ? ` <span class="sub">${esc(b.tableNote)}</span>` : ""}</h3><div class="tbl"><div class="tr th"><span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>L</span><span>GD</span><span>Pts</span></div>` +
+        b.table.map(r => `<div class="tr${isBar(r.team) ? " me" : ""}${r.pos <= 4 ? " ucl" : r.pos >= 18 ? " rel" : ""}"><span>${r.pos}</span><span class="tn">${crest(r.team)}${esc(r.team)}</span><span>${r.p}</span><span>${r.w}</span><span>${r.d}</span><span>${r.l}</span><span>${r.gf - r.ga > 0 ? "+" : ""}${r.gf - r.ga}</span><b>${r.pts}</b></div>`).join("") + `</div>`;
+    }
+  }
+  h += `<p class="src">Updated ${esc(upd)}${Array.isArray(b.sources) ? " · " + esc(b.sources.join(" · ")) : ""}</p>`;
+  return h;
+}
+function updateStadium() {
+  if (!SB.l1) return;
+  const L = liveNow(), nx = upcoming().find(m => m.status === "ns");
+  if (L) { const { m, lv } = L; SB.l1.textContent = `${abbr(m.home)} ${lv.hs ?? "-"}:${lv.as ?? "-"} ${abbr(m.away)}`; SB.l2.textContent = `LIVE${lv.minute ? " " + lv.minute + "'" : ""}`; }
+  else if (nx) { const w = whenOf(nx); SB.l1.textContent = `${abbr(nx.home)} v ${abbr(nx.away)}`; SB.l2.textContent = `${w.wd} ${w.time || "TBA"}`.toUpperCase(); }
+  else { SB.l1.textContent = "FORÇA"; SB.l2.textContent = "BARÇA"; }
+  const p = pipEls.barca; if (p) { p.textContent = "LIVE"; p.hidden = !L; }
+  const l = labelEls.barca; if (l) { const nm = L ? "Live now" : nx ? `Next: ${abbr(nx.home)} v ${abbr(nx.away)}` : "Stadium"; l.querySelector("small").textContent = nm; }
+}
+window.islandDebug = { setBarca: d => { st.barca = d; render(); } };
+
 function sheetSub(b) {
+  if (b === "barca") { const me = st.barca && (st.barca.table || []).find(r => isBar(r.team)); return `Blaugrana Stadium${me ? ` · LaLiga ${me.pos}${({ 1: "st", 2: "nd", 3: "rd" })[me.pos] || "th"}, ${me.pts} pts` : ""}`; }
   if (b === "todo") { const n = dueNowCount(), o = todos().filter(([, it]) => !it.done).length; return `${BINFO.todo.s} · ${o} open${n ? ` · ${n} due now` : ""}`; }
   if (b === "ideas") { const n = ideas().length; return `${BINFO.ideas.s} · ${n} idea${n === 1 ? "" : "s"}`; }
   return BINFO[b].s;
 }
 function openPanel(b, wide = false) {
   st.panel = b; st.wide = wide; st.edit = null;
-  sheet.hidden = false; sheet.classList.toggle("wide", wide);
+  sheet.hidden = false; sheet.classList.toggle("wide", wide); sheet.classList.toggle("barca", b === "barca");
   sheet.style.setProperty("--c", BINFO[b].c);
-  sheet.innerHTML = `<div class="sh-head"><div class="sh-icon">${ICON[b]}</div><div><div class="sh-title" id="shTitle">${BINFO[b].t}</div><div class="sh-sub" id="shSub"></div></div><button class="icon-btn" data-act="close" aria-label="Close">${ICON.x}</button></div><div class="sh-body" id="shBody"></div>`;
+  sheet.innerHTML = `<div class="frame cham"><div class="inner cham"><div class="sh-head"><div class="sh-icon">${ICON[b]}</div><div><div class="sh-title" id="shTitle">${BINFO[b].t}</div><div class="sh-sub" id="shSub"></div></div><button class="icon-btn" data-act="close" aria-label="Close">${ICON.x}</button></div><div class="sh-body" id="shBody"></div></div></div>`;
   $("#app").classList.add("sheet-open"); $("#app").classList.toggle("wide-open", wide);
   $("#vIsland").setAttribute("aria-pressed", String(!wide)); $("#vList").setAttribute("aria-pressed", String(wide));
   setChip(b === "ideas" ? "idea" : "auto");
-  Object.values(labelEls).forEach(l => l.classList.toggle("sel", l.dataset.b === b && !wide));
+  selectB(wide ? null : b);
   if (!wide) setTimeout(() => flyToBuilding(b), 30);
   renderPanel();
   try { localStorage.setItem("island.view", wide ? "list" : "island"); } catch (e) {}
@@ -1266,7 +1436,7 @@ function closePanel() {
   st.panel = null; st.edit = null; sheet.hidden = true; sheet.innerHTML = "";
   $("#app").classList.remove("sheet-open", "wide-open");
   $("#vIsland").setAttribute("aria-pressed", "true"); $("#vList").setAttribute("aria-pressed", "false");
-  setChip("auto"); Object.values(labelEls).forEach(l => l.classList.remove("sel"));
+  setChip("auto"); selectB(null);
   try { localStorage.setItem("island.view", "island"); } catch (e) {}
 }
 function renderPanel() {
@@ -1277,15 +1447,16 @@ function renderPanel() {
   $("#shSub").textContent = st.mode === "loading" ? BINFO[st.panel].s : sheetSub(st.panel);
   if (st.mode === "loading" && (st.panel === "todo" || st.panel === "ideas")) { body.innerHTML = `<div class="loading">Opening your island…</div>`; return; }
   const top = body.scrollTop;
-  body.innerHTML = st.panel === "todo" ? todoBody() : st.panel === "cal" ? calBody() : st.panel === "mail" ? mailBody() : ideasBody();
+  body.innerHTML = st.panel === "todo" ? todoBody() : st.panel === "cal" ? calBody() : st.panel === "mail" ? mailBody() : st.panel === "barca" ? barcaBody() : ideasBody();
   body.scrollTop = top;
 }
-function setBubble(b, n) { const l = labelEls[b]; if (!l) return; const bub = l.querySelector(".bub"); bub.textContent = n > 99 ? "99+" : String(n); bub.hidden = !(n > 0); }
-function pulse(b) { const l = labelEls[b]; if (!l) return; l.classList.remove("pop"); void l.offsetWidth; l.classList.add("pop"); }
+function setBubble(b, n) { const p = pipEls[b]; if (p && b === "todo") { p.textContent = n > 99 ? "99+" : String(n); p.hidden = !(n > 0); } const l = labelEls[b]; if (l) l.querySelector("small").textContent = BINFO[b].s + (n > 0 ? (b === "todo" ? ` · ${n} due now` : ` · ${n} idea${n === 1 ? "" : "s"}`) : ""); }
+function pulse(b) { showTag(b, true); clearTimeout(pulse.t); pulse.t = setTimeout(() => { if (hotB !== b) showTag(b, false); }, 1400); }
 function render() {
   const loading = st.mode === "loading", ni = ideas().length, dn = dueNowCount();
   setBubble("todo", loading ? 0 : dn); setBubble("ideas", loading ? 0 : ni);
   const halo = $("#halo"); if (halo) halo.setAttribute("opacity", r1(Math.min(1, .2 + ni * .15)));
+  updateStadium();
   if (labelEls.todo) labelEls.todo.setAttribute("aria-label", `Open To-dos. ${dn} due now.`);
   renderPanel();
 }
@@ -1302,7 +1473,7 @@ function resolveQ(raw) {
 }
 function updateHint() {
   const raw = qInput.value.trim();
-  if (!raw) { qHint.innerHTML = st.chip === "auto" ? `Claude sorts it for you` : `Goes to <b>${st.chip === "idea" ? "Ideas" : CATS[st.chip]}</b>`; return; }
+  if (!raw) { qHint.innerHTML = st.chip === "auto" ? `Claude sorts it` : `Goes to <b>${st.chip === "idea" ? "Ideas" : CATS[st.chip]}</b>`; return; }
   const r = resolveQ(raw);
   qHint.innerHTML = `→ <b>${r.kind === "idea" ? "Ideas" : CATS[r.category]}</b>${r.kind !== "idea" && (r.due || r.time) ? " · " + esc(fmtDue(r.due, r.time)) : ""}`;
 }
@@ -1337,6 +1508,9 @@ sheet.addEventListener("click", e => {
   if (act === "close") return closePanel();
   if (act === "filter") { st.filter = a.dataset.f; return renderPanel(); }
   if (act === "showdone") { st.showDone = !st.showDone; return renderPanel(); }
+  if (act === "btab") { st.bTab = a.dataset.t; $("#shBody").scrollTop = 0; return renderPanel(); }
+  if (act === "bsub") { st.bSub = a.dataset.s; return renderPanel(); }
+  if (act === "blead") { st.bLead = a.dataset.k; return renderPanel(); }
   if (!it) return;
   if (act === "toggle") { const done = !it.done; store.update(id, { done, doneAt: done ? Date.now() : null }); if (done) { pulse("todo"); toast("Done: " + it.title, "Undo", () => store.update(id, { done: false, doneAt: null })); } }
   else if (act === "edit") { st.edit = st.edit === id ? null : id; renderPanel(); const t = $("#ed-title"); if (t) t.focus(); }
@@ -1349,7 +1523,7 @@ sheet.addEventListener("click", e => {
   else if (act === "cancel") { st.edit = null; a.blur(); renderPanel(); }
   else if (act === "del") { st.edit = null; a.blur(); const copy = { ...it }; store.remove(id); toast("Deleted", "Undo", () => store.set(id, copy)); }
   else if (act === "toidea") { st.edit = null; a.blur(); store.update(id, { kind: "idea", due: null, time: null, edited: true }); toast("Moved to Ideas"); pulse("ideas"); }
-  else if (act === "totodo") { store.update(id, { kind: "todo", category: it.category || "misc", edited: true }); toast("Now a to-do in the Guildhall"); pulse("todo"); }
+  else if (act === "totodo") { store.update(id, { kind: "todo", category: it.category || "misc", edited: true }); toast("Now a to-do in Task HQ"); pulse("todo"); }
   else if (act === "steps") ideaSteps(id);
 });
 sheet.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.closest(".edit input")) { e.preventDefault(); const s = sheet.querySelector("[data-act=save]"); s && s.click(); } });

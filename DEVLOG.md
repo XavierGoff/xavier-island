@@ -1,5 +1,132 @@
 # Devlog
 
+## #006 · 17 Oct 2026 · Blaugrana Stadium (FC Barcelona)
+
+**Ask:** a section for FC Barcelona, themed after the club, with the fixture list, past results, a scoreboard for live matches, and a Sofascore-style stats tab.
+
+**In the scene:** a stadium on the front of the island.
+- Blue and garnet striped walls with arched entrances and a gold neon rim.
+- Stands in alternating rows, a sunken pitch with mowing stripes and markings, and four floodlight masts.
+- An LED scoreboard over the back stand. It shows the live score while a match is on, otherwise the next fixture (e.g. `PSG v BAR · TUE 20:00`).
+- A red LIVE pip appears on the stadium while Barça are playing.
+
+**The panel** (blaugrana frame, gold neon title):
+- **Matches:** Upcoming and Results, grouped by month. Each row has the date and time, competition and matchday, both teams, the score, and a W/D/L badge, laid out like Sofascore.
+- **Live:** a scoreboard with the score, a LIVE badge, a goal timeline (scorer, minute, assist), and home/away comparison bars for match stats. When nothing is on, it shows the next match with a countdown and the last result.
+- **Stats:**
+  - LaLiga position, W-D-L, goals for and against, clean sheets
+  - last-5 form, Champions League record and club facts
+  - top players by rating (Sofascore-style colour badges), goals, assists, G+A, xG, big chances, dribbles, tackles, interceptions, clean sheets and yellow cards
+  - the full LaLiga table, with the Champions League places and relegation zone marked
+
+**Data pipeline:**
+- The artifact can't call external APIs, so the data lives in the artifact's database as one document.
+- I seeded it today from fcbarcelona.com (schedule, results, standings, previews) and FotMob (player leaderboards).
+- A **scheduled Claude task** refreshes it every hour from 12:00 to 23:00 UK time. It refetches the same pages and writes the updated document back, and it's told never to invent a score or stat.
+- Honest limitation: the "live" score is only as fresh as the last refresh (up to an hour), and only when a source publishes it. True minute-by-minute live data would need a sports data connector.
+
+**Season so far (as seeded):** 8/8 in LaLiga (34 scored, 7 conceded), 2/2 in the Champions League, and 10/10 in all competitions. Betis v Barça kicked off as this was built.
+
+**Media:** `media/v0.6-stadium.png`, `media/v0.6-barca-matches.png`, `media/v0.6-barca-stats.png`
+
+## #005 · 16 Oct 2026 · Floating neon sky-island + in-world UI
+
+**Feedback on v0.4:**
+- The domes and onion tops read like mosques. That wasn't the vibe.
+- The UI (title, Island/List switch, add bar) looked like generic AI-generated UI and didn't match the world.
+
+**New references:**
+- floating isometric islands with glowing waterfalls, rock spires with neon cracks, and light beams linking them to small islets
+- a floating cyber block with drones
+- an isometric neon city tile with particle trees and ships trailing light
+- two street-level neon scenes, used for mood
+
+**What changed in the scene**
+- **It's a floating island now.** A square city deck sits on stepped rock strata with pink and cyan neon cracks, hanging above a sea of clouds.
+- **Waterfalls of light** pour over the front edges with animated streaks. A glowing purple river flows from a pond across the park and spills over the edge as one of them.
+- **Streets:** a ring road around the HQ with four spokes to the edges. It has neon curbs, crosswalks, dashed lane lines, street lamps, and four cars with neon trims circling the HQ. The cars are drawn under the buildings, so the HQ correctly hides the ones behind it.
+- **Angular towers with spires** instead of domes:
+  - **Task HQ:** a stepped tower with a glowing pink-to-violet core, side pipes and a beacon antenna.
+  - **Chrono Spire:** a tapered obelisk with a clock collar and a neon-edged spire.
+  - **Data Post:** a depot with a giant neon MAIL sign on rooftop scaffolding and a satellite dish.
+- **Nature:** particle trees (canopies made of glowing dots), yellow crystal clusters, and jagged rock spires with neon cracks on the corners.
+- **Room to grow:** 4 empty plots on the island, plus 2 expansion islets floating behind it, linked by light beams.
+- **Sky:** drones bobbing around the buildings, ships with light trails crossing the sky, and puffy cloud banks that drift.
+
+**What changed in the UI**
+- **One committed night look** that matches the scene, instead of the light/dark system styling.
+- **Title:** a neon-tube sign (one letter flickers like a failing tube) with an amber LED dot-matrix ticker for the date and time.
+- **Island/List switch:** neon tube words on a chamfered plate. The active one is lit and the other is a dark, unlit tube.
+- **Add bar:** a holo console with a gradient neon frame, chamfered corners, scanlines, a `›` terminal prompt, a pink key-style ADD button, and an LED readout showing where your item will go.
+- **Building panels:** chamfered neon-framed screens that glow in each building's colour, with neon-tube titles and LED subtitles. Dates use the LED face too.
+
+**Engineering notes**
+- CSS `filter` runs before `clip-path`, so a glow on a chamfered shape needs two layers: an outer element carries the drop-shadow, and an inner element does the clipping.
+- The waterfalls are vertical gradient ribbons with dashed streaks whose `stroke-dashoffset` is animated.
+- The cars follow the ring road using `animateMotion` with `rotate="auto"`.
+
+**Media:** `media/v0.5-skyisland-night.png`, `media/v0.5-taskhq-panel.png`, `media/v0.5-mobile-calendar.png`
+
+## #004 · 16 Oct 2026 · Less blocky, more whimsical
+
+**Feedback on v0.3:** it was too blocky and geometric. It needed to feel more whimsical.
+
+**What changed**
+- **Round silhouettes everywhere.** About 40% of the city towers are now round and tiered, with balcony rings and onion-dome, dome or antenna tops. The box towers get bay-window bumps, striped scalloped awnings, rooftop gardens and little water tanks.
+- **Round windows.** Every window is now a dot, made with round-capped dashed paths, so the city reads softer and more playful.
+- **Icon signs** replace word signs: stars, hearts, moons, cups, fish, noodle bowls, lightning bolts and music notes.
+- **Main buildings redrawn round:**
+  - **Task HQ:** a cylinder tower with "TASK HQ" in neon curving around the front (an SVG `textPath` on the front arc), a balcony ring, a teal dome and a round checklist badge.
+  - **Chrono Spire:** a slim tower with a clock drum and an onion top with a star.
+  - **Data Post:** round, with arched windows, a scalloped awning over the door, a dish, and a curvy mail chute with capsules zipping down to a drone pad.
+- **Platform details:**
+  - a ring of string lights around the HQ, round plazas and curvy lanes
+  - a fountain and three food kiosks with striped domes
+  - blossom trees mixed in with the greenery
+  - onion-domed turrets on the corners
+  - arched undercroft walls with neon outlines
+  - a scalloped edge and a little blimp drifting past
+
+**Engineering notes**
+- New helpers: `arcD` (the front arc of any cylinder at any height, used for windows, neon trims and the curved text), `onion`, `roundSign`, `awning` and `stringLights` (a quadratic curve with three offset dashed bulb strands).
+- Cylinder shading uses one cached horizontal gradient per colour, generated on demand.
+
+**Media:** `media/v0.4-city-night.png`, `media/v0.4-city-day.png`, `media/v0.4-taskhq-night.png`
+
+## #003 · 16 Oct 2026 · Neon city platform
+
+**Feedback on v0.2:**
+- The island needed to be much bigger, with space for more buildings.
+- The post office was hanging off the edge.
+- The name signs were too much.
+- Some floating blue light rings didn't sit right in the scene's depth.
+
+**Reference:** a cyberpunk isometric base: a square plaza with a neon grid floor, set inside a dense neon city. I used it for the mood and layout only. All the art is original.
+
+**What changed**
+- **The island is now a raised city platform.** It's a 26×26 tile grid with a purple border band, pine planters along the rim, and neon edge lines. It stands on pillars above street-level roads with moving traffic.
+- **Lots of room to grow.** The four buildings sit well inside the edges, and five empty plots (dashed neon outlines with orange marker cones) are ready for future buildings.
+- **A procedural city all around it.** Back towers rise up to around 20 storeys, with window rows, blade signs and billboards. A lower district sits in front of and below the platform, and air-cars cross the skyline.
+- **New buildings:**
+  - **Task HQ (to-dos):** a glass tower with a neon checklist sign.
+  - **Chrono Spire (calendar):** a pink neon clock that shows the real time.
+  - **Data Post (mail):** a satellite dish, a parcel chute and a delivery drone.
+  - **Idea Beacon (ideas):** a hologram lightbulb with scanlines over a projector pad. It glows brighter the more ideas you have.
+- **Quieter UI:** name tags only appear when you hover over a building (or tap it, or tab to it). The only thing always on screen is a small count of to-dos due now.
+- **Depth-correct lighting:** I removed the floating rings. Every light now sits on a surface (walls, floors, signs) or at a lamp head.
+- **Restyled panels** to match: techy display type, violet/cyan/pink accents and square checkboxes.
+
+**Engineering notes**
+- I dropped the SVG blur filter. Neon is now drawn as three stacked strokes, which is much cheaper with around 4.7k elements on screen.
+- Windows are a single dashed path per wall face. SVG restarts the dash pattern at each subpath, so each row of windows lines up neatly.
+
+**Next**
+- [ ] Use it for a week
+- [ ] Test Outlook access (Imperial + personal)
+- [ ] Decide what goes on the first empty plot
+
+**Media:** `media/v0.3-platform-night.png`, `media/v0.3-platform-day.png`, `media/v0.3-taskhq-night.png`
+
 ## #002 · 16 Oct 2026 · Steam by day, neon by night
 
 **Feedback on v0.1:** it looked too childish, everything was crammed together, and it needed far more detail.
