@@ -24,6 +24,7 @@
   --qh:122px;
   --cut:14px;
 }
+[hidden]{display:none!important} /* the host page may not ship this rule; without it the empty panel covered the map */
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;overflow:hidden;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit}
@@ -32,9 +33,15 @@ button{font:inherit;color:inherit}
 
 /* ---------- scene ---------- */
 #world{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
-#stage{position:absolute;inset:0;touch-action:none;cursor:grab;transition:right .35s ease,filter .35s ease}
+#stage{position:absolute;inset:0;touch-action:none;cursor:grab;overflow:hidden;transition:filter .35s ease;-webkit-user-select:none;user-select:none}
 #stage.dragging{cursor:grabbing}
-#scene{display:block;width:100%;height:100%;overflow:visible}
+#cam{position:absolute;inset:0;transform-origin:0 0;will-change:transform}
+.lyr{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible}
+#sceneBack,#sceneFront{pointer-events:none;will-change:transform} /* own layers: their ambient motion never repaints the island */
+.hit{fill:transparent}
+/* the island layer is kept still so it can be cached; only a few cheap step-blinks remain on it */
+#scene .pulse,#scene .flow,#scene .scan,#scene .bob,#scene .twinkle,#scene .drift,#scene .fall,#scene .spinP{animation:none}
+#stage.moving .lyr *{animation-play-state:paused!important}
 .o{stroke:#0b0818;stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round}
 .on{stroke:#0b0818;stroke-width:1.1;stroke-linejoin:round;vector-effect:non-scaling-stroke}
 .lit{opacity:var(--lights,1);transition:opacity 1.5s}
@@ -334,7 +341,11 @@ ul{list-style:none;margin:0;padding:0}
 <div id="app">
   <div id="world">
     <div id="stage">
-      <svg id="scene" viewBox="420 160 1360 1000" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div id="cam">
+        <svg id="sceneBack" class="lyr" viewBox="420 160 1360 1000" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <svg id="scene" class="lyr" viewBox="420 160 1360 1000" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <svg id="sceneFront" class="lyr" viewBox="420 160 1360 1000" preserveAspectRatio="none" aria-hidden="true"></svg>
+      </div>
       <div id="labels"></div>
     </div>
   </div>
@@ -378,7 +389,7 @@ ul{list-style:none;margin:0;padding:0}
 "use strict";
 const $ = s => document.querySelector(s);
 const NS = "http://www.w3.org/2000/svg";
-const svg = $("#scene");
+const svg = $("#scene"), svgB = $("#sceneBack"), svgF = $("#sceneFront");
 const el = (t, a = {}, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 
@@ -595,7 +606,7 @@ function islet(p, x, y, z, k, lit) {
 }
 
 function drawScene() {
-  svg.innerHTML = "";
+  svg.innerHTML = ""; svgB.innerHTML = ""; svgF.innerHTML = "";
   defsEl = el("defs", {}, svg);
   defsEl.innerHTML = `
     <linearGradient id="skyG" gradientUnits="userSpaceOnUse" x1="0" y1="-300" x2="0" y2="1300"><stop id="sk0" offset="0" stop-color="#0a0820"/><stop id="sk1" offset=".5" stop-color="#1c1442"/><stop id="sk2" offset="1" stop-color="#36245e"/></linearGradient>
@@ -606,25 +617,57 @@ function drawScene() {
     <clipPath id="bulbClip"><circle cx="0" cy="0" r="46"/></clipPath>`;
 
   /* ---- sky, far clouds, ships ---- */
-  el("rect", { x: -3000, y: -3000, width: 9000, height: 9000, fill: "url(#skyG)" }, svg);
-  const stars = el("g", { id: "stars", opacity: 0 }, svg);
+  el("rect", { x: -3000, y: -3000, width: 9000, height: 9000, fill: "url(#skyG)" }, svgB);
+  const stars = el("g", { id: "stars", opacity: 0 }, svgB);
   for (let i = 0; i < 90; i++) el("circle", { cx: r1(200 + rnd() * 1800), cy: r1(-200 + rnd() * 800), r: r1(.6 + rnd() * 1.3), fill: "#fff", class: i % 3 ? "" : "twinkle", style: `animation-delay:${r1(rnd() * 3)}s` }, stars);
-  const moon = el("g", { id: "moon", opacity: 0 }, svg);
+  const moon = el("g", { id: "moon", opacity: 0 }, svgB);
   el("circle", { cx: 1640, cy: 120, r: 30, fill: "#e9e4ff" }, moon); el("circle", { cx: 1653, cy: 110, r: 27, fill: "#0e0a28" }, moon);
-  const far = el("g", { opacity: .55 }, svg);
+  const far = el("g", { opacity: .55 }, svgB);
   cloudBank(far, 360, 560, 520, 1.1); cloudBank(far, 1850, 520, 560, 1.1); 
-  const skyL = el("g", {}, svg);
+  const skyL = el("g", {}, svgB);
   ship(skyL, "M-300,240 C500,140 1300,330 2500,170", 26, "#35e6ff");
   ship(skyL, "M2500,420 C1800,300 900,520 -300,380", 34, "#ff4fa8", -12);
 
   /* ---- expansion islets behind, linked by light beams ---- */
   const back = el("g", {}, svg);
-  const isA = [-2.5, -19.5, 1.4, 2.6], isB = [-19.5, -2.5, .4, 2.3];
-  islet(back, ...isA, "#35e6ff"); islet(back, ...isB, "#ff4fa8");
+  const isB = [-19.5, -2.5, .4, 2.3];
+  islet(back, ...isB, "#ff4fa8");
+  // stadium islet: a bigger floating deck behind the right edge
+  const SX = 0, SY = -21, SK = 3.4, sIs = el("g", {}, back);
+  [[.3, -5.6, "#1b1c30"], [.55, -4.2, "#202238"], [.78, -2.8, "#25273f"], [.97, -1.3, "#2a2c47"]].forEach(([kk, zz, c]) => poly(sIs, rockRing(SX, SY, SK * kk, zz, .12, 44), cg(c)));
+  for (let c = 0; c < 5; c++) { const a = P(SX - SK + rnd() * SK * 2, SY + SK, -1.3 - rnd() * .5); neonD(sIs, zigzag(a, [a[0] + (rnd() - .5) * 16, a[1] + 26 + rnd() * 30], 4, 5), c % 2 ? "#35e6ff" : "#ff4fa8", 1.2, false); }
+  box(sIs, SX - SK, SY - SK, -.6, 2 * SK, 2 * SK, .6, "#2b2f4e");
+  ["L", "R"].forEach((s, i) => { const f = faceG(sIs, s, SX - SK, SY - SK, -.6, 2 * SK, 2 * SK, .6); panelLines(f, 2 * SK, .6, 1.1); neonD(f, `M0 .08H${2 * SK}`, i ? "#35e6ff" : "#ff4fa8", 1.4); });
+  poly(sIs, [P(SX - SK, SY - SK), P(SX + SK, SY - SK), P(SX + SK, SY + SK), P(SX - SK, SY + SK)], "#1d2036");
+  neonD(faceG(sIs, "T", SX - SK, SY - SK, 0), `M.25 .25H${2 * SK - .25}V${2 * SK - .25}H.25Z`, "#edbb00", 1.3);
+  glowTree(sIs, SX - SK + .7, SY + SK - .7, .8, "#ff4fa8"); glowTree(sIs, SX + SK - .7, SY - SK + .7, .8, "#35e6ff");
+  const stadSlot = el("g", {}, sIs);
+  // cyberpunk skyway: the south spoke road carries on across the gap to the stadium
+  const sky = el("g", {}, back), yA = -17.4, yB = -11, hw = .6;
+  box(sky, -hw, yA, -.3, 2 * hw, yB - yA, .3, "#262a46");
+  const dk = faceG(sky, "T", -hw, yA, .001);
+  let seams = ""; for (let v = .5; v < yB - yA; v += .5) seams += `M0 ${r3(v)}H${2 * hw}`;
+  el("path", { d: seams, stroke: "#13152a", "stroke-width": .05 }, dk);
+  el("path", { d: `M${hw} .1V${r3(yB - yA - .1)}`, stroke: "#ffd27a", "stroke-width": .06, "stroke-dasharray": ".3 .3", opacity: .7 }, dk);
+  const lgS = el("g", { class: "lit" }, dk);
+  el("path", { d: `M${hw - .25} 0V${r3(yB - yA)}M${hw + .25} 0V${r3(yB - yA)}`, stroke: "#35e6ff", "stroke-width": .07, "stroke-dasharray": ".15 .9", class: "flow", style: "animation-duration:1.1s" }, lgS);
+  neonD(faceG(sky, "L", -hw, yA, -.3, 2 * hw, 0, .3), `M0 .06H${2 * hw}`, "#ff4fa8", 1.2);
+  neonD(faceG(sky, "R", -hw, yA, -.3, 2 * hw, yB - yA, .3), `M0 .06H${r3(yB - yA)}`, "#ff4fa8", 1.2);
+  // rails
+  [-hw, hw].forEach((x, i) => { for (let y = yA + .3; y < yB; y += .8) line(sky, P(x, y, 0), P(x, y, .5), "#0b0818", 1.2); neonD(sky, pathOf([P(x, yA, .5), P(x, yB, .5)]), i ? "#35e6ff" : "#b46cff", 1.2, false); });
+  // gantries with neon signs over the deck
+  [-15.8, -13.4].forEach((y, k) => {
+    line(sky, P(-hw - .1, y, 0), P(-hw - .1, y, 1.7), "#0b0818", 2.4); line(sky, P(hw + .1, y, 0), P(hw + .1, y, 1.7), "#0b0818", 2.4);
+    const gf = faceG(sky, "L", -hw - .1, y, 1.25, 2 * hw + .2, 0, .45);
+    el("rect", { x: 0, y: 0, width: r3(2 * hw + .2), height: .45, fill: "#0b0918", class: "on" }, gf);
+    neonD(gf, `M.04 .04H${r3(2 * hw + .16)}V.41H.04Z`, k ? "#35e6ff" : "#edbb00", 1);
+    neonText(gf, hw + .1, .33, .26, k ? "STADIUM" : "FCB", k ? "#9fe8ff" : "#ffe14d");
+  });
+  // hanging under-lights
+  for (let y = yA + 1; y < yB; y += 1.6) { const a = P(0, y, -.3); line(sky, a, [a[0], a[1] + 14], "#0b0818", 1); const g = el("g", { class: "lit" }, sky); el("circle", { cx: r1(a[0]), cy: r1(a[1] + 16), r: 6, fill: "#ff4fa8", opacity: .25 }, g); el("circle", { cx: r1(a[0]), cy: r1(a[1] + 16), r: 2, fill: "#ffd1ea" }, g); }
   const beam = (a, b, col) => { const g = el("g", { class: "lit" }, back); [[10, .1], [4, .35], [1.6, 1]].forEach(([w, o]) => el("line", { x1: r1(a[0]), y1: r1(a[1]), x2: r1(b[0]), y2: r1(b[1]), stroke: o === 1 ? shade(col, .6) : col, "stroke-width": w, opacity: o, "stroke-linecap": "round" }, g)); };
-  beam(P(-3.2, -11, 0), P(-2.6, -17, 1.4), "#35e6ff");
   beam(P(-11, -3.2, 0), P(-17.2, -2.5, .4), "#ff4fa8");
-  [[isA, 1], [isB, -1]].forEach(([[x, y, z], s]) => { glowTree(back, x + .9 * s, y + .3, .9, s > 0 ? "#35e6ff" : "#ff4fa8"); crystal(back, x - .9, y + .9, .8); });
+  [[isB, -1]].forEach(([[x, y, z], s]) => { glowTree(back, x + .9 * s, y + .3, .9, s > 0 ? "#35e6ff" : "#ff4fa8"); crystal(back, x - .9, y + .9, .8); });
 
   /* ---- island underside: stepped rock with neon cracks ---- */
   const under = el("g", {}, svg);
@@ -687,7 +730,6 @@ function drawScene() {
   el("circle", { cx: U(-4.8), cy: U(7.0), r: 1.0, fill: "#e2a8ff", opacity: .25 }, rl);
 
   // cars circling the HQ (drawn under the buildings, so the HQ hides the ones behind it)
-  const carLane = (r, rev) => { const c = [P(r, -r), P(r, r), P(-r, r), P(-r, -r)]; const a = rev ? c.slice().reverse() : c; return "M" + a.map(q => r1(q[0]) + "," + r1(q[1])).join(" L") + "Z"; };
   [[3.25, false, 0, "#35e6ff"], [3.25, false, -7, "#ff4fa8"], [3.8, true, -3, "#7dff6a"], [3.8, true, -11, "#ffc83d"]].forEach(([r, rev, beg, col]) => {
     const g = el("g", {}, plat);
     el("rect", { x: -8, y: -4, width: 16, height: 8, rx: 2, fill: "#2a2f54", class: "o" }, g);
@@ -696,7 +738,8 @@ function drawScene() {
     el("rect", { x: -8, y: -4, width: 16, height: 8, rx: 2, fill: "none", stroke: col, "stroke-width": 1.2 }, l);
     el("rect", { x: 7, y: -3, width: 16, height: 6, fill: "#fff6c8", opacity: .2 }, l);
     el("circle", { cx: 7.5, cy: -2, r: 1.3, fill: "#fff" }, l); el("circle", { cx: 7.5, cy: 2, r: 1.3, fill: "#fff" }, l);
-    el("animateMotion", { dur: "16s", begin: beg + "s", repeatCount: "indefinite", rotate: "auto", path: carLane(r, rev) }, g);
+    const c = [P(r, -r), P(r, r), P(-r, r), P(-r, -r)], k = Math.round(-beg) % 4, a = c[rev ? (k + 1) % 4 : k], b = c[rev ? k : (k + 1) % 4], f = .35 + (-beg % 3) * .1;
+    g.setAttribute("transform", `translate(${r1(a[0] + (b[0] - a[0]) * f)} ${r1(a[1] + (b[1] - a[1]) * f)}) rotate(${r1(Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI)})`);
   });
 
   /* ---- objects on top, painter-sorted ---- */
@@ -818,8 +861,8 @@ function drawScene() {
   });
 
   // ===== BLAUGRANA STADIUM (FC Barcelona): striped bowl, floodlights, live scoreboard
-  building("barca", 15, g => {
-    const x0 = 5.3, y0 = 5.3, W = 4.4, H = 1.5, I = .9, PZ = .35;
+  (g => {
+    const x0 = -2.2, y0 = -23.2, W = 4.4, H = 1.5, I = .9, PZ = .35;
     hlRect(g, x0 - .3, y0 - .3, W + .6, W + .6, "#edbb00");
     box(g, x0, y0, 0, W, W, H, "#1d1f3a");
     ["L", "R"].forEach(s => {
@@ -872,7 +915,7 @@ function drawScene() {
     SB.l1 = mk(.68, .42, "#ffe14d"); SB.l2 = mk(1.05, .28, "#9fe8ff");
     const lp = P(x0 + 2.2, y0 + .35, H + 1.4);
     LABELS.push({ b: "barca", x: lp[0], y: lp[1] - 16, px: lp[0] + 50, py: lp[1] + 8 });
-  });
+  })(el("g", { class: "bldg", "data-b": "barca" }, stadSlot));
 
   // ===== empty build plots (room to grow)
   const plot = (x0, y0, w, d) => add(x0 + y0 + w + d - 7, root => {
@@ -888,10 +931,10 @@ function drawScene() {
   plot(5.0, 1.4, 3.4, 3.0); plot(1.4, 5.0, 3.0, 3.4); plot(-4.4, -8.4, 3.0, 3.4); plot(5.0, -4.4, 3.4, 3.0);
 
   // ===== nature + street furniture
-  [[4.4, 10.2, "#35e6ff"], [10.2, 4.4, "#ff4fa8"], [-9.6, 9.1, "#ff4fa8"], [-6.4, 9.7, "#35e6ff"], [-10, 3.6, "#b46cff"],
+  [[6.4, 7.4, "#35e6ff"], [8.8, 6.0, "#ff4fa8"], [9.4, 9.2, "#35e6ff"], [6.6, 9.8, "#ff4fa8"], [4.4, 10.2, "#35e6ff"], [10.2, 4.4, "#ff4fa8"], [-9.6, 9.1, "#ff4fa8"], [-6.4, 9.7, "#35e6ff"], [-10, 3.6, "#b46cff"],
    [-4.2, -10, "#35e6ff"], [-7, -9.8, "#ff4fa8"], [-1.9, -10.1, "#b46cff"], [9.8, -3.4, "#7dff6a"], [3.4, -10, "#35e6ff"], [-2.6, 10.1, "#7dff6a"]]
     .forEach(([x, y, c]) => add(x + y, root => glowTree(root, x, y, .95 + rnd() * .25, c)));
-  [[-8.9, 8.1], [-6.2, -9.9], [9.9, -6.6]].forEach(([x, y]) => add(x + y, root => crystal(root, x, y, .9)));
+  [[8.0, 8.4], [-8.9, 8.1], [-6.2, -9.9], [9.9, -6.6]].forEach(([x, y]) => add(x + y, root => crystal(root, x, y, .9)));
   [[6, 1.05], [9, 1.05], [-6, -1.05], [-9, -1.05], [1.05, 6], [1.05, 9], [-1.05, -6], [-1.05, -9], [6, -1.05], [-6, 1.05], [-1.05, 6], [1.05, -6]].forEach(([x, y], i) => add(x + y, root => lampPost(root, x, y, ["#35e6ff", "#ff4fa8", "#b46cff", "#ffc83d"][i % 4])));
   [[-9.8, -9.8, 7.2, .95], [-8.7, -10.2, 4.6, .7], [-10.2, -8.6, 3.6, .6], [-10.0, 9.9, 4.4, .8], [-9.1, 10.2, 2.6, .55], [9.9, -10.0, 5.2, .85], [10.2, -8.9, 3.0, .55], [-10.1, 1.8, 3.2, .65]]
     .forEach(([x, y, h, w], i) => add(x + y - .5, root => rockSpire(root, x, y, h, w, "#2c2f4e", i % 2 ? "#35e6ff" : "#ff4fa8")));
@@ -901,7 +944,7 @@ function drawScene() {
   objs.forEach(o => o.fn(objLayer));
 
   /* ---- waterfalls of light over the front edges ---- */
-  const falls = el("g", {}, svg);
+  const falls = el("g", {}, svgF);
   waterfall(falls, "L", -3.75, -2.65, "#c06cff", 560);
   waterfall(falls, "L", 6.0, 6.9, "#35e6ff", 480);
   waterfall(falls, "L", -8.6, -8.1, "#35e6ff", 420);
@@ -909,10 +952,10 @@ function drawScene() {
   waterfall(falls, "R", -6.0, -5.4, "#ff4fa8", 430);
 
   /* ---- drones + foreground clouds ---- */
-  const air = el("g", {}, svg);
+  const air = el("g", {}, svgF);
   const d1 = P(2.6, -.8, 7.4), d2 = P(-.6, 2.8, 8.4), d3 = P(9.6, -6.0, 5.8), d4 = P(-9.5, 1.0, 5.2);
   drone(air, r1(d1[0]), r1(d1[1]), "#35e6ff"); drone(air, r1(d2[0]), r1(d2[1]), "#ff4fa8"); drone(air, r1(d3[0]), r1(d3[1]), "#b46cff"); drone(air, r1(d4[0]), r1(d4[1]), "#7dff6a");
-  const fg = el("g", {}, svg);
+  const fg = el("g", {}, svgF);
   cloudBank(fg, 620, 1170, 640, 1.3); cloudBank(fg, 1580, 1140, 700, 1.3); cloudBank(fg, 1120, 1290, 800, 1.5);
 }
 
@@ -945,18 +988,44 @@ function tickClock() {
 /* =====================================================================
    CAMERA: pan, zoom, fly-to
    ===================================================================== */
-const stage = $("#stage"), labelsEl = $("#labels");
+const stage = $("#stage"), labelsEl = $("#labels"), camEl = $("#cam"), LAYERS = [svgB, svg, svgF];
 const FIT = { x: 430, y: 150, w: 1340, h: 1060 };
 const LIM = { x0: 300, x1: 1900, y0: 50, y1: 1350, wMin: 320, wMax: 2300 };
 let cam = { cx: FIT.x + FIT.w / 2, cy: FIT.y + FIT.h / 2, w: FIT.w };
 const vw = () => stage.clientWidth || 1, vh = () => stage.clientHeight || 1;
 function fitCam(box) { const r = vw() / vh(); const w = Math.max(box.w, box.h * r); return { cx: box.x + box.w / 2, cy: box.y + box.h / 2, w }; }
-function applyCam() {
+function clampCam() {
   cam.w = Math.min(LIM.wMax, Math.max(LIM.wMin, cam.w));
   cam.cx = Math.min(LIM.x1, Math.max(LIM.x0, cam.cx)); cam.cy = Math.min(LIM.y1, Math.max(LIM.y0, cam.cy));
-  const h = cam.w * vh() / vw();
-  svg.setAttribute("viewBox", `${r1(cam.cx - cam.w / 2)} ${r1(cam.cy - h / 2)} ${r1(cam.w)} ${r1(h)}`);
+}
+/* Moving the camera never re-draws the SVG while a gesture is running: the already-drawn layers are slid and
+   scaled with one GPU transform, and the real viewBox is committed (one sharp re-draw) once the motion settles. */
+let vb = null;
+function commitCam() {
+  const h = cam.w * vh() / vw(), box = `${r1(cam.cx - cam.w / 2)} ${r1(cam.cy - h / 2)} ${r1(cam.w)} ${r1(h)}`;
+  LAYERS.forEach(l => l.setAttribute("viewBox", box));
+  vb = { ...cam, W: vw(), H: vh() }; camEl.style.transform = "";
+}
+function applyCam(now) {
+  clampCam();
+  if (now === true || !vb || vb.W !== vw() || vb.H !== vh()) commitCam();
+  else {
+    const s = vw() / cam.w, k = vb.w / cam.w, h = cam.w * vh() / vw(), hb = vb.w * vh() / vw();
+    const tx = (vb.cx - vb.w / 2 - (cam.cx - cam.w / 2)) * s, ty = (vb.cy - hb / 2 - (cam.cy - h / 2)) * s;
+    camEl.style.transform = `translate3d(${r1(tx)}px,${r1(ty)}px,0) scale(${k.toFixed(4)})`;
+    moving();
+  }
   placeLabels();
+}
+let settleT = 0, isMoving = false;
+function moving() {
+  if (!isMoving) { isMoving = true; stage.classList.add("moving"); try { svgB.pauseAnimations(); svgF.pauseAnimations(); } catch (e) {} }
+  clearTimeout(settleT); settleT = setTimeout(settle, 170);
+}
+function settle() {
+  if (flyRaf) { settleT = setTimeout(settle, 120); return; }
+  commitCam(); isMoving = false; stage.classList.remove("moving");
+  try { svgB.unpauseAnimations(); svgF.unpauseAnimations(); } catch (e) {}
 }
 function toScreen(x, y) { const h = cam.w * vh() / vw(); return [(x - (cam.cx - cam.w / 2)) / cam.w * vw(), (y - (cam.cy - h / 2)) / h * vh()]; }
 function toWorld(px, py) { const h = cam.w * vh() / vw(); return [cam.cx - cam.w / 2 + px / vw() * cam.w, cam.cy - h / 2 + py / vh() * h]; }
@@ -965,18 +1034,20 @@ function zoomAt(px, py, f) {
   const nw = Math.min(LIM.wMax, Math.max(LIM.wMin, cam.w * f)), k = nw / cam.w;
   cam.cx = wx + (cam.cx - wx) * k; cam.cy = wy + (cam.cy - wy) * k; cam.w = nw; applyCam();
 }
+function panBy(dx, dy) { const s = cam.w / vw(); cam.cx += dx * s; cam.cy += dy * s; applyCam(); }
 let flyRaf = 0;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function stopFly() { if (flyRaf) { cancelAnimationFrame(flyRaf); flyRaf = 0; } }
 function flyTo(t, ms = 550) {
-  cancelAnimationFrame(flyRaf);
-  if (reduce) { cam = { ...t }; applyCam(); return; }
+  stopFly();
+  if (reduce) { cam = { ...t }; applyCam(true); return; }
   const s = { ...cam }, t0 = performance.now();
   const step = now => { const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3);
-    cam.cx = s.cx + (t.cx - s.cx) * e; cam.cy = s.cy + (t.cy - s.cy) * e; cam.w = s.w + (t.w - s.w) * e; applyCam();
-    if (k < 1) flyRaf = requestAnimationFrame(step); };
+    cam.cx = s.cx + (t.cx - s.cx) * e; cam.cy = s.cy + (t.cy - s.cy) * e; cam.w = s.w + (t.w - s.w) * e;
+    flyRaf = k < 1 ? requestAnimationFrame(step) : 0; applyCam(); };
   flyRaf = requestAnimationFrame(step);
 }
-const FOCUS = { todo: [P(0, 0, 3.8), 720], cal: [P(-8.5, -3.5, 4.8), 680], mail: [P(6.9, -6.9, 2.4), 700], ideas: [P(-8, 5.5, 2.6), 640], barca: [P(7.5, 7.5, 1.6), 640] };
+const FOCUS = { todo: [P(0, 0, 3.8), 720], cal: [P(-8.5, -3.5, 4.8), 680], mail: [P(6.9, -6.9, 2.4), 700], ideas: [P(-8, 5.5, 2.6), 640], barca: [P(0, -20, 1.6), 700] };
 function flyToBuilding(b) {
   const [[x, y], w] = FOCUS[b]; let cy = y;
   if (innerWidth <= 720) { const sheetTop = innerHeight * .34, want = (sheetTop + 92) / 2 + 10, h = w * vh() / vw(); cy = y + (vh() / 2 - want) * h / vh(); }
@@ -997,13 +1068,25 @@ function buildLabels() {
     labelsEl.appendChild(b); labelEls[L.b] = b; L.el = b;
     const p = document.createElement("span"); p.className = "pip"; p.hidden = true; labelsEl.appendChild(p); pipEls[L.b] = p; L.pip = p;
   });
+  // a generous invisible hit-pad under each building, so hover/click don't fall through the gaps between its shapes
+  svg.querySelectorAll(".bldg").forEach(g => {
+    if (g.querySelector(":scope > .hit")) return;
+    const bb = g.getBBox(), ix = bb.width * .14, iy = bb.height * .1;
+    const r = document.createElementNS(NS, "rect");
+    [["x", bb.x + ix], ["y", bb.y + iy], ["width", bb.width - 2 * ix], ["height", bb.height - 2 * iy], ["class", "hit"]].forEach(([k, v]) => r.setAttribute(k, typeof v === "number" ? r1(v) : v));
+    g.insertBefore(r, g.firstChild);
+  });
 }
 function placeLabels() {
   LABELS.forEach(L => { if (!L.el) return; const [x, y] = toScreen(L.x, L.y);
     L.el.style.transform = `translate(${r1(x)}px,${r1(y)}px) translate(-50%,-100%) translateY(-8px)`;
     const [qx, qy] = toScreen(L.px ?? L.x, L.py ?? L.y); L.pip.style.transform = `translate(${r1(qx)}px,${r1(qy)}px) translate(-50%,-50%)`; });
 }
-let hotB = null;
+let hotB = null, hideT = 0;
+function scheduleHide() { // a short grace period lets the pointer travel from a building up to its tag
+  if (hideT) return;
+  hideT = setTimeout(() => { hideT = 0; if (hotB) { showTag(hotB, false); hotB = null; } }, 650);
+}
 function showTag(b, on) {
   const l = labelEls[b]; if (!l) return; l.classList.toggle("show", on);
   const g = svg.querySelector(`.bldg[data-b="${b}"]`); if (g) g.classList.toggle("hot", on || st.panel === b);
@@ -1014,36 +1097,45 @@ function selectB(b) {
     const g = svg.querySelector(`.bldg[data-b="${k}"]`); if (g) g.classList.toggle("hot", on || k === hotB);
     if (pipEls[k]) pipEls[k].style.opacity = on || k === hotB ? 0 : ""; });
 }
-// pointer: drag to pan, pinch to zoom, tap a building to open it
-const ptrs = new Map(); let drag = null;
+function hoverAt(target) {
+  if (target.closest && target.closest(".lbl")) { clearTimeout(hideT); hideT = 0; return; } // hovering the tag keeps it open
+  const bl = target.closest && target.closest(".bldg"), b = bl ? bl.dataset.b : null;
+  if (b) { clearTimeout(hideT); hideT = 0; if (b !== hotB) { if (hotB) showTag(hotB, false); hotB = b; showTag(b, true); } }
+  else if (hotB) scheduleHide();
+}
+/* Input. Mouse/finger: drag to pan, tap a building to open it, two fingers to pinch-zoom.
+   Trackpad: two-finger scroll pans, pinch zooms (Chrome/Edge/Firefox send ctrl+wheel, Safari sends gesture events). */
+const ptrs = new Map(); let drag = null, pinchD = 0;
 stage.addEventListener("pointerdown", e => {
-  if (e.target.closest(".lbl")) return;
-  ptrs.set(e.pointerId, [e.clientX, e.clientY]);
-  if (ptrs.size === 1) { const bl = e.target.closest && e.target.closest(".bldg, .plot"); drag = { x: e.clientX, y: e.clientY, moved: false, hit: bl ? (bl.dataset.b || "plot") : null }; }
-  stage.setPointerCapture(e.pointerId); cancelAnimationFrame(flyRaf);
+  if (e.target.closest(".lbl") || (e.pointerType === "mouse" && e.button !== 0)) return;
+  stopFly(); ptrs.set(e.pointerId, [e.clientX, e.clientY]);
+  if (ptrs.size === 1) { const bl = e.target.closest(".bldg, .plot"); drag = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false, hit: bl ? (bl.dataset.b || "plot") : null }; }
+  else { if (drag) drag.moved = true; const [a, b] = [...ptrs.values()]; pinchD = Math.hypot(a[0] - b[0], a[1] - b[1]);
+    ptrs.forEach((_, id) => { try { stage.setPointerCapture(id); } catch (er) {} }); }
 });
 stage.addEventListener("pointermove", e => {
-  if (!ptrs.has(e.pointerId)) {
-    if (e.pointerType !== "mouse") return;
-    const bl = e.target.closest && e.target.closest(".bldg"), b = bl ? bl.dataset.b : null;
-    if (b !== hotB) { if (hotB) showTag(hotB, false); hotB = b; if (b) showTag(b, true); }
-    return;
-  }
+  if (!ptrs.has(e.pointerId)) { if (e.pointerType === "mouse" && !e.buttons) hoverAt(e.target); return; }
   const prev = ptrs.get(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]);
   if (ptrs.size === 1 && drag) {
-    if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 6) { drag.moved = true; stage.classList.add("dragging"); }
-    if (drag.moved) { cam.cx -= (e.clientX - prev[0]) * cam.w / vw(); cam.cy -= (e.clientY - prev[1]) * cam.w / vw(); applyCam(); }
+    if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 6) {
+      drag.moved = true; stage.classList.add("dragging"); try { stage.setPointerCapture(e.pointerId); } catch (er) {}
+      if (hotB) { showTag(hotB, false); hotB = null; }
+    }
+    if (drag.moved) panBy(prev[0] - e.clientX, prev[1] - e.clientY);
   } else if (ptrs.size === 2) {
-    if (drag) drag.moved = true;
-    const [a, b] = [...ptrs.values()], other = a === ptrs.get(e.pointerId) ? b : a;
-    const d0 = Math.hypot(prev[0] - other[0], prev[1] - other[1]), d1 = Math.hypot(e.clientX - other[0], e.clientY - other[1]);
-    const r = stage.getBoundingClientRect();
-    if (d0 > 0 && d1 > 0) zoomAt((e.clientX + other[0]) / 2 - r.left, (e.clientY + other[1]) / 2 - r.top, d0 / d1);
+    const [a, b] = [...ptrs.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]), r = stage.getBoundingClientRect();
+    const mx = (a[0] + b[0]) / 2 - r.left, my = (a[1] + b[1]) / 2 - r.top;
+    if (pinchD > 0 && d > 0) zoomAt(mx, my, pinchD / d);
+    // the midpoint moving also pans
+    panBy((prev[0] - e.clientX) / 2, (prev[1] - e.clientY) / 2);
+    pinchD = d;
   }
 });
-stage.addEventListener("pointerleave", () => { if (hotB) { showTag(hotB, false); hotB = null; } });
+stage.addEventListener("pointerleave", e => { if (e.pointerType === "mouse" && hotB && !ptrs.size) scheduleHide(); });
+labelsEl.addEventListener("pointerout", e => { if (e.target.closest(".lbl") && !(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".lbl"))) scheduleHide(); });
 const endPtr = e => {
-  if (!ptrs.has(e.pointerId)) return; ptrs.delete(e.pointerId);
+  if (!ptrs.has(e.pointerId)) return; ptrs.delete(e.pointerId); pinchD = 0;
+  if (ptrs.size === 1) { const [[x, y]] = [...ptrs.values()]; drag = { id: [...ptrs.keys()][0], x, y, moved: true, hit: null }; }
   if (ptrs.size === 0) {
     stage.classList.remove("dragging");
     if (drag && !drag.moved && e.type === "pointerup" && drag.hit) {
@@ -1054,12 +1146,26 @@ const endPtr = e => {
   }
 };
 stage.addEventListener("pointerup", endPtr); stage.addEventListener("pointercancel", endPtr);
-stage.addEventListener("wheel", e => { e.preventDefault(); const r = stage.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, Math.exp(e.deltaY * (e.ctrlKey ? .012 : .0016))); }, { passive: false });
-stage.addEventListener("dblclick", e => { const r = stage.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, .6); });
+let gest = null;
+stage.addEventListener("wheel", e => {
+  e.preventDefault(); stopFly();
+  const r = stage.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+  let dx = e.deltaX, dy = e.deltaY;
+  if (e.deltaMode === 1) { dx *= 18; dy *= 18; } else if (e.deltaMode === 2) { dx *= vw(); dy *= vh(); }
+  if (e.ctrlKey || e.metaKey) { if (!gest) zoomAt(px, py, Math.exp(Math.max(-50, Math.min(50, dy)) * .011)); return; } // trackpad pinch
+  if (e.deltaMode === 1 && !dx) { zoomAt(px, py, Math.exp(dy * .0015)); return; } // notched mouse wheel (Firefox)
+  if (e.shiftKey && !dx) { dx = dy; dy = 0; }
+  panBy(dx, dy); // two-finger scroll
+}, { passive: false });
+// Safari pinch
+stage.addEventListener("gesturestart", e => { e.preventDefault(); gest = { w: cam.w }; });
+stage.addEventListener("gesturechange", e => { e.preventDefault(); if (!gest || !e.scale) return; const r = stage.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, gest.w / e.scale / cam.w); });
+stage.addEventListener("gestureend", e => { e.preventDefault(); gest = null; });
+stage.addEventListener("dblclick", e => { if (e.target.closest(".bldg, .lbl")) return; const r = stage.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, .6); });
 $("#zIn").onclick = () => zoomAt(vw() / 2, vh() / 2, .75);
 $("#zOut").onclick = () => zoomAt(vw() / 2, vh() / 2, 1.33);
 $("#zFit").onclick = () => flyTo(fitCam(FIT));
-new ResizeObserver(() => applyCam()).observe(stage);
+new ResizeObserver(() => applyCam(true)).observe(stage);
 
 /* =====================================================================
    DATES + PARSING
@@ -1534,12 +1640,15 @@ document.addEventListener("keydown", e => {
   if ((e.key === "n" || e.key === "/") && !e.metaKey && !e.ctrlKey) { e.preventDefault(); qInput.focus(); }
   else if (e.key === "+" || e.key === "=") zoomAt(vw() / 2, vh() / 2, .8);
   else if (e.key === "-") zoomAt(vw() / 2, vh() / 2, 1.25);
+  else if (e.key === "0") flyTo(fitCam(FIT));
+  else if (e.key.startsWith("Arrow") && !e.target.closest("#sheet")) { e.preventDefault(); const m = 90;
+    panBy(e.key === "ArrowLeft" ? -m : e.key === "ArrowRight" ? m : 0, e.key === "ArrowUp" ? -m : e.key === "ArrowDown" ? m : 0); }
 });
 new ResizeObserver(() => document.documentElement.style.setProperty("--qh", $("#quick").offsetHeight + "px")).observe($("#quick"));
 
 /* boot */
 drawScene(); buildLabels();
-cam = fitCam(FIT); applyCam();
+cam = fitCam(FIT); applyCam(true);
 tickClock(); updateHint(); render();
 setInterval(tickClock, 30000);
 let startView = "island"; try { startView = localStorage.getItem("island.view") || "island"; } catch (e) {}

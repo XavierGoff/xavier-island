@@ -1,5 +1,39 @@
 # Devlog
 
+## #008 · 17 Oct 2026 · Input overhaul: click, pan, pinch, hover
+
+**Bug: half the island ignored the mouse.** The real cause was one CSS rule. The building panel is a fixed-position `<aside>` that sits `hidden` when closed. My stylesheet gave it `display:flex`, which beats the browser's default `[hidden]{display:none}`. My test page added `[hidden]{display:none!important}`, so everything worked in testing. The live host page doesn't add that rule, so on the real site an invisible, empty 440 px panel sat over the right side of the map and swallowed every click, hover and scroll there. That's why the Stadium and Mail never opened. On a narrow window it covered the whole bottom half of the island.
+- **Fix:** one line, `[hidden]{display:none!important}`, now ships inside the app itself.
+- **Lesson:** test with the same page wrapper the real host uses, not a nicer one.
+
+**Trackpad gestures now behave like a map app**
+- Two-finger scroll pans in any direction. Before, it zoomed, so panning felt impossible.
+- Pinch zooms. That's ctrl+wheel in Chrome and the Claude app, gesture events in Safari.
+- Click and drag still pans, and arrow keys pan too. `+`, `-` and `0` zoom and fit.
+
+**Performance:** before this, idle ran at 29 fps and every zoom frame redrew 2,500 SVG shapes (~100 ms).
+- **Layers:** the scene is split into three stacked SVG layers. The back layer holds the sky, stars, moon and passing ships. The middle layer is the island, kept still so the GPU can cache it. The front layer holds the light waterfalls, drones and foreground clouds. Ambient motion only repaints its own thin layer.
+- **Gestures:** while you pan or pinch, the already-drawn layers are just slid and scaled with one GPU transform. The real redraw happens once, about 170 ms after you stop.
+- **Result** (same test machine, 2× retina): idle went from 29 to 60 fps, and pan frames from ~100 ms to ~20 ms.
+- **Cars** on the ring road are now parked rather than driving. Their motion was forcing the whole island layer to repaint.
+
+**Hover:** each building now has an invisible hit-pad under it, so the pointer doesn't fall through the gaps between its shapes and flicker the tag.
+
+**Tests:** all five buildings open with a real mouse click at desktop and narrow widths. Also tested: hover, then click the tag; two-finger pan; pinch; drag; arrow keys.
+
+## #007 · 17 Oct 2026 · Stadium islet + skyway, click fix
+
+**Bug: buildings wouldn't open.** Hovering a building pops up its tag above it, but as soon as the pointer left the building to reach the tag, the tag hid itself. Clicking where the tag had been then hit empty floor. On the stadium the tag even flickered, because it popped up right under the cursor.
+- **Fix:** hovering the tag now keeps it open. There's also a 650 ms grace period, so the pointer can travel from a building up to its tag. Taps are more forgiving too: up to 14 px of wobble, or 8 px if it's quick, still counts as a click rather than a drag.
+- I tested it with simulated real mouse movement: hover the building, move to the tag, click. All five buildings open.
+
+**Stadium moved to its own floating islet** behind the right edge of the island:
+- **The islet:** rock underside with neon cracks, a deck with a gold neon border, and two glowing trees.
+- **The skyway:** the south spoke road carries straight on over a cyberpunk skyway. It has a striped deck, neon rails, pulsing lane lights, two gantries with neon signs (FCB, STADIUM) and hanging under-lights.
+- **The old spot:** the front park on the main island is back to trees and crystals.
+
+**Media:** `media/v0.6.1-stadium-islet.png`, `media/v0.6.1-skyway.png`
+
 ## #006 · 17 Oct 2026 · Blaugrana Stadium (FC Barcelona)
 
 **Ask:** a section for FC Barcelona, themed after the club, with the fixture list, past results, a scoreboard for live matches, and a Sofascore-style stats tab.

@@ -41,6 +41,7 @@ A personal organiser built as a floating neon sky-island. Each building looks af
 - [x] **v0.4:** Whimsical pass: round towers, domes, string lights, fountain, kiosks
 - [x] **v0.5:** Floating neon sky-island, light waterfalls, in-world neon UI
 - [x] **v0.6:** Blaugrana Stadium: FC Barcelona matches, live scoreboard and stats
+- [x] **v0.6.2:** Input overhaul: trackpad pan/pinch, reliable clicks, 2× smoother
 - [ ] **v0.7:** Chrono Spire connected to Outlook (Imperial + personal)
 - [ ] **v0.8:** Data Post with Gmail + Outlook, plus a scheduled morning digest
 - [ ] **v0.9:** New buildings on the empty plots
