@@ -1,4 +1,4 @@
-# Xavier's Island
+# Island Organisation
 
 A personal organiser built as a floating neon sky-island. Each building looks after one part of your life, there are empty plots and expansion islets to grow into, and Claude runs in the background to sort what you add.
 
