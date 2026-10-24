@@ -1,5 +1,31 @@
 # Devlog
 
+## #012 · 23 Oct 2026 · The Data Post reads Gmail
+
+**Ask:** connect Outlook and Gmail, and make the island one click away.
+
+**Island in the sidebar:** it's now pinned to the claude.ai sidebar.
+
+**Connecting the accounts**
+- **Gmail:** connected through Claude's Gmail connector.
+- **Imperial Outlook:** comes next, through the Microsoft 365 connector. That connector is built for work and school accounts.
+- **Personal outlook.com:** it won't fit the Microsoft 365 connector. The plan is to forward it into Gmail, and to publish its calendar as an ICS link.
+
+**The Data Post** (the Mail building) is real now:
+- **Inbox triage:** a scheduled Claude run reads the last 3 days of the inbox at 07:08 and 17:08. It sorts every thread into one of four piles:
+  - Needs you
+  - Worth knowing
+  - On the way (deliveries)
+  - Skipped (newsletters, promos, sign-in codes)
+- **Checking before flagging:** it reads the whole thread before deciding something needs me. It also checks whether a later email already resolved it. A "last chance to register" reminder got filed as done because the registration confirmation arrived that afternoon.
+- **Needs-you cards:** each card links to the email, has "+ To-do" to turn it into a task, and has "Dealt with" to tick it off. The building's pip counts what's still open.
+- **Dispatch:** the 7:22 Morning Dispatch now mentions who needs a reply.
+- **Strictly read-only:** the triage task is told never to send, reply, label, archive or delete anything. Security codes and sign-in links are never copied out of the inbox.
+
+**Privacy for this devlog:** the screenshot uses made-up example emails. The real inbox data lives only in my private part of the island's database.
+
+**Media:** `media/v0.9-data-post-example.png`
+
 ## #011 · 17 Oct 2026 · Six new buildings
 
 **Ask:** a Morning Dispatch, a Studio workshop, a Habit Garden, a world-news place, a Sunday review, a coursework tracker, and a Focus Lighthouse that sums up my focus every week.

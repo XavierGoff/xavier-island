@@ -45,8 +45,8 @@ A personal organiser built as a floating neon sky-island. Each building looks af
 - [x] **v0.6.3:** Gesture polish: no hover flicker while panning, no stuck clicks
 - [x] **v0.7:** La Roja islet (Spain), Champions League stats, daily + match-time refresh
 - [x] **v0.8:** Morning Dispatch, News Tower, Studio, Habit Garden, Coursework, Focus Lighthouse + Sunday review
-- [ ] **v0.9:** Chrono Spire connected to Outlook (Imperial + personal)
-- [ ] **v1.0:** Data Post with Gmail + Outlook, folded into the Morning Dispatch
+- [x] **v0.9:** Data Post reads Gmail (twice-daily triage), island pinned to the sidebar
+- [ ] **v0.10:** Imperial Outlook mail + timetable (Microsoft 365), personal calendar via ICS
 - [ ] **Later:** iPhone shortcut for quick add
 - [ ] **Later:** slow, ambient growth (months, not days)
 

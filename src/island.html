@@ -13,7 +13,8 @@
   --pink:#ff4fa8; --cyan:#35e6ff; --violet:#b46cff; --amber:#ffc83d; --lime:#7dff6a;
   --accent:#ff4fa8; --accent-ink:#1d0414; --alert:#ff6a86; --focus:#35e6ff;
   --c-academic:#5aa8ff; --c-fitness:#ff4f9a; --c-daily:#ffc83d; --c-misc:#3fffc8; --c-idea:#ffe14d;
-  --g-barca:#edbb00; --g-spain:#ff4f5e;
+  --g-barca:#edbb00; --g-spain:#ff4f5e; --g-dispatch:#ffc83d; --g-news:#ff4fa8; --g-studio:#ff8a3d; --g-habits:#5dffb0; --g-cw:#7dff6a; --g-focus:#35e6ff;
+  --b-studio:#ff8a3d; --b-news:#ff4fa8;
   --b-todo:#35e6ff; --b-cal:#ff4fa8; --b-mail:#b46cff; --b-ideas:#ffe14d;
   --g-todo:#35e6ff; --g-cal:#ff4fa8; --g-mail:#b46cff; --g-ideas:#ffe14d;
   --bg:#0a0820;
@@ -50,6 +51,8 @@ input,textarea,#sheet .inner{-webkit-user-select:text;user-select:text}
 .cl{fill:var(--cloud,#2b2552)}
 .clh{fill:var(--cloudHi,#3d3570)}
 .bldg{cursor:pointer}
+#scene g.lit > ellipse,#scene g.lit > circle[opacity]{pointer-events:none}
+.lhbeam{pointer-events:none;opacity:0;transition:opacity .8s}#scene.focusing .lhbeam{opacity:1}.lhcore{opacity:calc(var(--lights,1) * .55)}#scene.focusing .lhcore{opacity:1}
 .bldg .hl{opacity:0;transition:opacity .2s}
 .bldg.hot .hl{opacity:1}
 .plot{cursor:pointer}
@@ -226,6 +229,14 @@ ul{list-style:none;margin:0;padding:0}
 .ghost{opacity:.6}
 .mail{border-radius:2px;background:rgba(255,255,255,.035);border:1px solid var(--line);padding:11px 12px;margin-bottom:8px}
 .mail .from{font-weight:700;font-size:13.5px}
+.mail.need{border-left:2px solid var(--c)}.mail.dn{opacity:.45}.mail.dn .sub{text-decoration:line-through}
+.mail .mh{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.mail time{font:400 15px/1 var(--f-led);color:var(--ink-3)}
+.mail .acts{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.mail a.btn{text-decoration:none;color:var(--ink-2)}
+.mail .cnt{font:400 15px/1 var(--f-led);color:var(--amber);font-weight:400}
+.accts{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:0 4px 8px}.acct{display:inline-flex;gap:6px;align-items:center;font:600 11px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line);border-radius:2px;padding:3px 8px}
+.acct i{width:7px;height:7px;border-radius:50%;background:var(--ink-3)}.acct.on{color:#fff;border-color:var(--c)}.acct.on i{background:var(--lime);box-shadow:0 0 6px var(--lime)}
+.accts .upd{font-size:11.5px;color:var(--ink-3)}
+.mini li span small{display:block;font-size:11.5px;color:var(--ink-3)}.mini a{color:var(--ink)}
 .mail .sub{font-size:14px;margin-top:2px}
 .mail .why{font-size:12.5px;color:var(--ink-2);margin-top:4px}
 .idea{border-radius:2px;background:rgba(255,225,77,.04);padding:12px 12px 10px;margin-bottom:10px;border:1px solid var(--line);border-left:2px solid var(--c-idea)}
@@ -365,6 +376,73 @@ ul{list-style:none;margin:0;padding:0}
 .tr.me{background:linear-gradient(90deg,rgba(0,77,152,.35),rgba(165,0,68,.25));color:#fff}
 .tr.me .tn{font-weight:700}
 .src{margin:14px 6px 0;font-size:11.5px;color:var(--ink-3);line-height:1.45}
+/* ---------- v0.8 panels ---------- */
+.frm{display:grid;gap:8px;margin-top:6px}
+.frm input,.frm select{font:500 14.5px var(--f-body);padding:9px 11px;border-radius:2px;border:1px solid var(--wire);background:#07061a;color:var(--ink);min-width:0;width:100%}
+.frm input:focus,.frm select:focus{outline:none;border-color:var(--c,var(--cyan))}
+.frm .btn{justify-self:start}
+.frow{display:flex;gap:8px;align-items:center}.frow>*{flex:1}.frow .btn{flex:none}
+.frm.inline{display:flex;gap:6px;margin-top:8px}.frm.inline input{padding:6px 9px;font-size:13.5px}
+.btn.sm{padding:5px 9px;font-size:11px;letter-spacing:.12em}
+.icon-btn.sm{width:28px;height:28px}.icon-btn.sm svg{width:14px;height:14px}
+.more{margin-top:8px}.more summary{cursor:pointer;font:600 11.5px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}.more[open] summary{margin-bottom:6px}
+.hint-row.tight{margin:2px 6px}
+.hab{border:1px solid var(--line);border-left:2px solid var(--c);border-radius:2px;padding:12px;margin-bottom:12px;background:color-mix(in srgb,var(--c) 4%,transparent)}
+.hab-h{display:flex;align-items:center;gap:8px}.hab-h .dot{width:9px;height:9px;rotate:45deg;background:var(--c);box-shadow:0 0 8px var(--c)}
+.hab-h b{font:600 16px var(--f-body)}.hab-h .per{font:400 16px/1 var(--f-led);color:var(--ink-3)}
+.hab-do{display:flex;gap:8px;align-items:center;justify-content:center;width:100%;margin:10px 0 8px;padding:11px;border-radius:2px;border:1.5px solid var(--c);background:transparent;color:var(--c);font:700 13px var(--f-display);letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+.hab-do.on{background:var(--c);color:#06121a;box-shadow:0 0 16px color-mix(in srgb,var(--c) 55%,transparent)}
+.hab-week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.hd{height:30px;border-radius:2px;border:1px solid var(--line);background:transparent;color:var(--ink-3);font:600 11px var(--f-display);cursor:pointer}
+.hd.on{background:color-mix(in srgb,var(--c) 70%,transparent);border-color:var(--c);color:#06121a}.hd.now{outline:1px solid var(--ink-3);outline-offset:1px}.hd:disabled{opacity:.35;cursor:default}
+.hab-stats{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:9px;font-size:12.5px;color:var(--ink-2)}.hab-stats b{font:400 19px/1 var(--f-led);color:#fff;margin-right:2px}
+.hab-grow{margin-top:6px;font-size:12.5px;color:var(--c)}
+.heat{display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(7,7px);gap:2px;margin-top:9px}
+.heat i{background:rgba(255,255,255,.06);border-radius:1px}.heat i.on{background:var(--c);box-shadow:0 0 4px var(--c)}.heat i.fut{background:transparent}
+.cwl{list-style:none;margin:0;padding:0}
+.cw{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:start;padding:10px 6px;border-bottom:1px solid var(--line)}
+.cw-d{display:grid;justify-items:center;border:1px solid var(--line);border-radius:2px;padding:4px 0}.cw-d b{font:400 22px/1 var(--f-led);color:#fff}.cw-d span{font:600 10px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.cw-t{font:600 14.5px/1.3 var(--f-body)}.cw .acts{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;align-items:center}.cw .acts .icon-btn{margin-left:auto}
+.cw .cnt{font:400 16px/1 var(--f-led);color:var(--ink-2)}
+.cw.warm .cnt{color:var(--amber)}.cw.hot .cnt,.cw.late .cnt{color:var(--alert);text-shadow:0 0 6px rgba(255,106,134,.6)}.cw.hot .cw-d,.cw.late .cw-d{border-color:var(--alert)}
+.cw-s{font:600 10px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding:3px 6px;border:1px solid var(--line);border-radius:2px;white-space:nowrap}.cw-s.s-doing{color:var(--cyan);border-color:var(--cyan)}
+.cw.done .cw-t{color:var(--ink-3);text-decoration:line-through}.cw.done .cw-d{color:var(--lime);border:0}
+.proj{border:1px solid var(--line);border-left:2px solid var(--c);border-radius:2px;padding:12px;margin-bottom:12px}.proj.s-paused{opacity:.7}.proj.s-done{border-left-color:var(--lime)}
+.proj-h{display:flex;gap:8px;align-items:center;justify-content:space-between}.proj-h b{font:600 16px var(--f-body)}
+.pill{border:1px solid var(--c);color:var(--c);background:transparent;border-radius:2px;padding:3px 8px;font:600 10.5px var(--f-display);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.proj-next{margin:8px 0 0;font-size:14px;color:var(--ink-2)}.proj-next span{font:700 10.5px var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--c);margin-right:4px}
+.bar1{height:5px;background:rgba(255,255,255,.07);border-radius:3px;margin:10px 0 6px;overflow:hidden}.bar1 i{display:block;height:100%;width:0;background:var(--c);box-shadow:0 0 8px var(--c);transition:width .6s}
+.ms{list-style:none;margin:0;padding:0;display:grid;gap:6px}.ms li{display:flex;gap:9px;align-items:center;font-size:14px}.ms .ck{width:19px;height:19px}.ms .ck[aria-pressed=true]{background:var(--c);color:#120a04}.ms .ck[aria-pressed=true] svg{opacity:1}.ms .done{color:var(--ink-3);text-decoration:line-through}
+.links{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:9px;font-size:13px}.links a{color:var(--cyan)}
+.posts{list-style:none;margin:0;padding:0}.post{display:grid;grid-template-columns:42px minmax(0,1fr);gap:10px;padding:9px 6px;border-bottom:1px solid var(--line)}
+.plat{font:700 10.5px var(--f-display);letter-spacing:.08em;color:var(--c);border:1px solid var(--c);border-radius:2px;text-align:center;padding:4px 0;height:fit-content}
+.pt{font:600 14px/1.35 var(--f-body)}.post .acts{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.cap{margin:7px 0 0;padding:8px 10px;background:rgba(255,255,255,.035);border-left:2px solid var(--c);font-size:13px;line-height:1.5;color:var(--ink-2);white-space:pre-line;user-select:text}
+.fx-run{display:grid;justify-items:center;gap:4px;padding:18px 10px 14px;border:1px solid var(--c);border-radius:2px;box-shadow:inset 0 0 26px color-mix(in srgb,var(--c) 18%,transparent)}
+.fx-run small{font:600 11px var(--f-display);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}.fx-l{font:600 16px var(--f-body);text-align:center}
+.fx-t{font:400 76px/1 var(--f-led);color:#fff;text-shadow:0 0 14px var(--c)}.fx-run .bar1{width:100%}
+.fx-set .filters{padding:0}.fx-go{justify-self:stretch!important;padding:11px!important}
+.fbars{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;height:120px;align-items:end;padding:0 4px}
+.fb{display:grid;grid-template-rows:16px 1fr 16px;height:100%;text-align:center}.fb i{align-self:end;display:block;background:color-mix(in srgb,var(--c) 75%,transparent);border-radius:2px 2px 0 0;min-height:2px}
+.fb .v{font:400 14px/1 var(--f-led);color:var(--ink-2)}.fb small{font:600 10.5px var(--f-display);color:var(--ink-3);padding-top:3px}.fb.now small{color:#fff}.fb.now i{background:var(--c);box-shadow:0 0 10px var(--c)}
+.fareas{display:grid;gap:6px;margin:12px 4px 0}.fa{display:grid;grid-template-columns:100px 1fr 54px;gap:8px;align-items:center;font-size:12.5px;color:var(--ink-2)}.fa i{height:6px;border-radius:3px;background:var(--c)}.fa b{font:400 16px/1 var(--f-led);color:#fff;text-align:right}
+.summ{margin:0 6px 10px;font-size:14px;line-height:1.55;color:var(--ink)}
+.flog{list-style:none;margin:0;padding:0}.flog li{display:grid;grid-template-columns:86px minmax(0,1fr) auto 28px;gap:8px;align-items:center;padding:6px;border-bottom:1px solid var(--line);font-size:13.5px}.flog time{font:400 15px/1 var(--f-led);color:var(--ink-3)}.flog span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.flog b{font:400 17px/1 var(--f-led)}
+.news{list-style:none;margin:6px 0 0;padding:0;counter-reset:n}.news li{padding:11px 6px 11px 34px;border-bottom:1px solid var(--line);position:relative;counter-increment:n}
+.news li::before{content:counter(n);position:absolute;left:6px;top:10px;font:400 20px/1 var(--f-led);color:var(--c)}
+.news a{color:#fff;font:600 14.5px/1.35 var(--f-body);text-decoration:none}.news a:hover{text-decoration:underline;text-decoration-color:var(--c)}
+.news p{margin:4px 0 0;font-size:13px;line-height:1.45;color:var(--ink-2)}.news small{display:block;margin-top:4px;font:600 10.5px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.news li.lead a{font-size:16px}.news.compact li{padding:7px 6px 7px 30px}.news.compact a{font-size:13.5px;font-weight:500}
+.dp-date{font:400 26px/1.1 var(--f-neon);color:#fff;text-shadow:0 0 8px var(--c);margin:2px 6px 6px}
+.dp-brief{margin:0 6px 6px;font-size:14.5px;line-height:1.55;color:var(--ink)}
+.mini{list-style:none;margin:0;padding:0}.mini li{display:flex;justify-content:space-between;gap:10px;padding:7px 6px;border-bottom:1px solid var(--line);font-size:13.5px}.mini b{font:400 16px/1 var(--f-led);color:var(--amber);white-space:nowrap}
+.mini-row{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:0 6px;font-size:13.5px;color:var(--ink-2)}
+.hchips{display:flex;flex-wrap:wrap;gap:6px;padding:0 4px}.hchip{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--c);color:var(--c);background:transparent;border-radius:2px;padding:6px 10px;font:600 12px var(--f-display);letter-spacing:.08em;cursor:pointer}
+.hchip i{width:10px;height:10px;border:1.5px solid var(--c);border-radius:2px}.hchip.on{background:var(--c);color:#06121a}.hchip svg{width:12px;height:12px}
+#focusPill{position:fixed;z-index:21;left:50%;translate:-50% 0;top:calc(env(safe-area-inset-top,0px) + 14px);display:flex;gap:9px;align-items:center;max-width:min(360px,calc(100vw - 32px));padding:6px 12px;border:1px solid var(--cyan);border-radius:2px;background:rgba(8,6,20,.9);color:var(--ink);cursor:pointer;box-shadow:0 0 16px rgba(53,230,255,.35)}
+#focusPill[hidden]{display:none}#focusPill i{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:pls 2s ease-in-out infinite}
+#focusPill b{font:400 22px/1 var(--f-led);color:#fff}#focusPill span{font-size:13px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:720px){#focusPill{top:auto;bottom:calc(var(--qh) + 12px)}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
@@ -389,6 +467,8 @@ ul{list-style:none;margin:0;padding:0}
       <button id="vIsland" aria-pressed="true">Island</button><i></i><button id="vList" aria-pressed="false">List</button>
     </div></div>
   </header>
+
+  <button id="focusPill" hidden type="button" aria-label="Open focus timer"><i></i><b>25:00</b><span></span></button>
 
   <div class="mapctl" aria-label="Map controls">
     <button id="zIn" aria-label="Zoom in"><svg width="16" height="16" viewBox="0 0 16 16" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M8 3v10M3 8h10"/></svg></button>
@@ -503,6 +583,7 @@ const N = 11;
 const clockHands = [];
 const LABELS = [];
 const SB = {};
+let gardenSlot = null;
 let defsEl;
 const gradCache = {};
 function cg(col) { // horizontal shading for round surfaces and rock layers
@@ -636,6 +717,34 @@ function islet(p, x, y, z, k, lit) {
 }
 
 // A football ground: striped bowl, stands, sunken pitch, floodlights and an LED scoreboard fed by the match data.
+// NEWS TOWER: a lattice broadcast mast with holo screens, drawn on its own islet
+function drawNewsTower(g, X, Y) {
+  hlRect(g, X - 1.4, Y - 1.4, 2.8, 2.8, "#ff4fa8");
+  box(g, X - 1.1, Y - 1.1, 0, 2.2, 2.2, 1.0, "#2c3052");
+  const fL = faceG(g, "L", X - 1.1, Y - 1.1, 0, 2.2, 2.2, 1.0), fR = faceG(g, "R", X - 1.1, Y - 1.1, 0, 2.2, 2.2, 1.0);
+  windows(fR, 2.2, 1.0, "#ff8fc8", .8, .38); neonD(fL, "M0 .07H2.2", "#ff4fa8", 1.1); neonD(fR, "M0 .07H2.2", "#ff4fa8", 1.1);
+  neonText(fL, 1.1, .7, .36, "NEWS", "#ffb3d9");
+  const b0 = P(X, Y, 1.0), top = P(X, Y, 6.6), hb = 13;
+  line(g, [b0[0] - hb, b0[1]], [top[0] - 2, top[1]], "#0b0818", 2.4); line(g, [b0[0] + hb, b0[1]], [top[0] + 2, top[1]], "#0b0818", 2.4);
+  let br = "", N2 = 9; for (let i = 0; i < N2; i++) { const t0 = i / N2, t1 = (i + 1) / N2, w0 = hb - (hb - 2) * t0, w1 = hb - (hb - 2) * t1, ya = b0[1] + (top[1] - b0[1]) * t0, yb = b0[1] + (top[1] - b0[1]) * t1;
+    br += i % 2 ? `M${r1(b0[0] + w0)},${r1(ya)}L${r1(b0[0] - w1)},${r1(yb)}` : `M${r1(b0[0] - w0)},${r1(ya)}L${r1(b0[0] + w1)},${r1(yb)}`; }
+  el("path", { d: br, stroke: "#0b0818", "stroke-width": 1.3, fill: "none" }, g);
+  neonD(g, `M${r1(b0[0] - hb)},${r1(b0[1])}L${r1(top[0] - 2)},${r1(top[1])}M${r1(b0[0] + hb)},${r1(b0[1])}L${r1(top[0] + 2)},${r1(top[1])}`, "#ff4fa8", .9, false);
+  // holo screens on the mast
+  [[3.0, "L", "WORLD", "#35e6ff"], [4.3, "R", "LIVE", "#ff4fa8"]].forEach(([z, s, txt, c]) => {
+    const f = s === "L" ? faceG(g, "L", X - .75, Y, z, 1.5, 0, .7) : faceG(g, "R", X, Y - .75, z, 0, 1.5, .7);
+    el("rect", { x: 0, y: 0, width: 1.5, height: .7, fill: "#07061a", opacity: .85 }, f);
+    el("rect", { x: 0, y: 0, width: 1.5, height: .7, fill: c, opacity: .14, class: "lit" }, f);
+    neonD(f, "M.03 .03H1.47V.67H.03Z", c, 1);
+    neonText(f, .75, .47, .3, txt, shade(c, .5));
+  });
+  // satellite dish on the roof
+  const dc = P(X - .6, Y - .5, 1.5);
+  line(g, P(X - .6, Y - .5, 1.0), dc, "#0b0818", 2);
+  el("ellipse", { cx: r1(dc[0]), cy: r1(dc[1]), rx: 11, ry: 6, fill: "#d8dcf5", class: "o", transform: `rotate(-28 ${r1(dc[0])} ${r1(dc[1])})` }, g);
+  antennaBall(g, top, 12, "#ff3b5c");
+  const lp = P(X, Y, 7.4); LABELS.push({ b: "news", x: lp[0], y: lp[1], px: lp[0] + 40, py: lp[1] + 40 });
+}
 function hlRect(g, x, y, w, d, col) { const hl = el("g", { class: "hl" }, g); neonD(faceG(hl, "T", x, y, .02), `M0 0H${w}V${d}H0Z`, col, 2.6); }
 function spainExtras(g, x0, y0, W) {
   const x = x0 - .55, y = y0 + W + .55, h = 3.1;
@@ -715,6 +824,7 @@ function drawScene() {
     <linearGradient id="beamG" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffe14d" stop-opacity=".45"/><stop offset="1" stop-color="#ffe14d" stop-opacity="0"/></linearGradient>
     <radialGradient id="bulbG" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#fff6b0" stop-opacity=".5"/><stop offset="1" stop-color="#ffe14d" stop-opacity=".08"/></radialGradient>
     <radialGradient id="pondG" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#f0b8ff"/><stop offset=".6" stop-color="#b46cff"/><stop offset="1" stop-color="#5a2a9a"/></radialGradient>
+    <linearGradient id="lhG" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#fff3b0" stop-opacity=".55"/><stop offset="1" stop-color="#fff3b0" stop-opacity="0"/></linearGradient><linearGradient id="lhG2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff3b0" stop-opacity=".45"/><stop offset="1" stop-color="#fff3b0" stop-opacity="0"/></linearGradient>
     <clipPath id="bulbClip"><circle cx="0" cy="0" r="46"/></clipPath>`;
 
   /* ---- sky, far clouds, ships ---- */
@@ -999,20 +1109,167 @@ function drawScene() {
     [[.25, .25], [w - .25, .25], [.25, d - .25], [w - .25, d - .25]].forEach(([u, v]) => { const p = P(x0 + u, y0 + v); el("path", { d: `M${r1(p[0] - 3.5)},${r1(p[1])} L${r1(p[0])},${r1(p[1] - 13)} L${r1(p[0] + 3.5)},${r1(p[1])}z`, fill: "#ff8a3d", class: "o" }, g); el("path", { d: `M${r1(p[0] - 2)},${r1(p[1] - 5)}h4`, stroke: "#fff", "stroke-width": 1.4 }, g); });
     el("title", {}, g).textContent = "Empty plot";
   });
-  plot(5.0, 1.4, 3.4, 3.0); plot(1.4, 5.0, 3.0, 3.4); plot(-4.4, -8.4, 3.0, 3.4); plot(5.0, -4.4, 3.4, 3.0);
+  // ===== COURSEWORK OBSERVATORY: a drum tower with a big telescope aimed at upcoming deadlines
+  building("cw", 9.4, g => {
+    hlRect(g, 5.0, 1.4, 3.4, 3.0, "#7dff6a");
+    box(g, 5.3, 1.6, 0, 2.8, 2.6, .45, "#2d3254");
+    [["L", 2.8], ["R", 2.6]].forEach(([s, w]) => { const f = faceG(g, s, 5.3, 1.6, 0, 2.8, 2.6, .45); panelLines(f, w, .45, .7); neonD(f, `M0 .1H${w}`, "#7dff6a", 1.1); });
+    neonText(faceG(g, "L", 5.3, 1.6, 0, 2.8, 2.6, .45), 1.4, .36, .26, "DEADLINES", "#c9ffb8");
+    cyl(g, 6.7, 2.9, .45, .95, 2.2, cg("#3a3f6a"), "#4b5184");
+    const wb = P(6.7, 2.9, 1.5);
+    el("path", { d: arcD(6.7, 2.9, 1.5, .96, .08, .92), fill: "none", stroke: "#0a0b16", "stroke-width": 7, "stroke-dasharray": "5 4" }, g);
+    el("path", { d: arcD(6.7, 2.9, 1.5, .96, .08, .92), fill: "none", stroke: "#c9ffb8", "stroke-width": 4, "stroke-dasharray": "5 4", class: "lit", opacity: .8 }, g);
+    neonD(g, arcD(6.7, 2.9, 2.62, .96, 0, 1), "#7dff6a", 1.2, false);
+    box(g, 6.45, 2.65, 2.65, .5, .5, .4, "#2a2f54");
+    // the telescope
+    const a = P(6.55, 3.05, 3.0), b = P(7.9, 1.55, 4.85), dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L, r = 7.5;
+    poly(g, [[a[0] + nx * r * .7, a[1] + ny * r * .7], [b[0] + nx * r, b[1] + ny * r], [b[0] - nx * r, b[1] - ny * r], [a[0] - nx * r * .7, a[1] - ny * r * .7]], "#cfd3f2");
+    poly(g, [[a[0], a[1]], [b[0], b[1]], [b[0] - nx * r, b[1] - ny * r], [a[0] - nx * r * .7, a[1] - ny * r * .7]], "#8d92bd", "");
+    [.35, .7].forEach(t => { const q = [a[0] + dx * t, a[1] + dy * t], rr = r * (.7 + .3 * t); line(g, [q[0] + nx * rr, q[1] + ny * rr], [q[0] - nx * rr, q[1] - ny * rr], "#2a2f54", 2.2); });
+    const ang = Math.atan2(dy, dx) * 180 / Math.PI;
+    el("ellipse", { cx: r1(b[0]), cy: r1(b[1]), rx: 3.4, ry: r1(r), fill: "#1a2a20", class: "o", transform: `rotate(${r1(ang)} ${r1(b[0])} ${r1(b[1])})` }, g);
+    const lg = el("g", { class: "lit" }, g);
+    el("circle", { cx: r1(b[0]), cy: r1(b[1]), r: 18, fill: "#7dff6a", opacity: .16 }, lg);
+    el("ellipse", { cx: r1(b[0]), cy: r1(b[1]), rx: 2.2, ry: r1(r * .7), fill: "#c9ffb8", transform: `rotate(${r1(ang)} ${r1(b[0])} ${r1(b[1])})` }, lg);
+    // orbit ring around the drum
+    const c = P(6.7, 2.9, 3.4);
+    el("ellipse", { cx: r1(c[0]), cy: r1(c[1]), rx: 52, ry: 13, fill: "none", stroke: "#b46cff", "stroke-width": 1.4, class: "lit", opacity: .9, transform: `rotate(-14 ${r1(c[0])} ${r1(c[1])})` }, g);
+    el("circle", { cx: r1(c[0] - 46), cy: r1(c[1] + 18), r: 3, fill: "#e2c4ff", class: "lit" }, g);
+    const lp = P(6.7, 2.9, 5.6); LABELS.push({ b: "cw", x: lp[0], y: lp[1], px: lp[0] + 44, py: lp[1] + 40 });
+  });
+
+  // ===== MORNING DISPATCH: a newsstand-and-press with a sunrise sign
+  building("dispatch", 9.3, g => {
+    hlRect(g, 1.4, 5.0, 3.0, 3.4, "#ffc83d");
+    box(g, 1.7, 5.3, 0, 2.4, 2.6, 1.55, "#30355a");
+    const fL = faceG(g, "L", 1.7, 5.3, 0, 2.4, 2.6, 1.55), fR = faceG(g, "R", 1.7, 5.3, 0, 2.4, 2.6, 1.55);
+    el("rect", { x: .25, y: .55, width: 1.9, height: .75, fill: "#120f22" }, fL);
+    el("rect", { x: .25, y: .55, width: 1.9, height: .75, fill: "#ffcf6a", opacity: .5, class: "lit" }, fL);
+    let racks = ""; for (let u = .45; u < 2.1; u += .3) racks += `M${r3(u)} .95h.18v.3h-.18z`; el("path", { d: racks, fill: "#f4ead0" }, fL);
+    el("rect", { x: .25, y: 1.3, width: 1.9, height: .12, fill: "#2a2f54" }, fL);
+    el("rect", { x: .9, y: .35, width: .7, height: 1.2, fill: "#16132a" }, fR);
+    el("rect", { x: .9, y: .35, width: .7, height: 1.2, fill: "#ffcf6a", opacity: .25, class: "lit" }, fR);
+    [[.2, .4], [1.85, .4]].forEach(([u, v]) => { el("rect", { x: u, y: v, width: .5, height: .7, fill: "#efe6ff" }, fR); el("path", { d: `M${u + .08} ${v + .15}h.34M${u + .08} ${v + .3}h.3M${u + .08} ${v + .45}h.34`, stroke: "#4a4f7a", "stroke-width": .05 }, fR); });
+    neonD(fL, "M0 .08H2.4", "#ffc83d", 1.1); neonD(fR, "M0 .08H2.6", "#ffc83d", 1.1);
+    // striped awning over the shop window
+    const aw = [P(1.75, 7.9, 1.42), P(4.05, 7.9, 1.42), P(4.05, 8.45, 1.12), P(1.75, 8.45, 1.12)];
+    poly(g, aw, "#ffc83d");
+    for (let k = 0; k < 6; k++) { const u0 = 1.75 + k * .383, u1 = u0 + .19; poly(g, [P(u0, 7.9, 1.42), P(u1, 7.9, 1.42), P(u1, 8.45, 1.12), P(u0, 8.45, 1.12)], "#e0466e", ""); }
+    // newspaper bundles out front
+    [[2.0, 8.15], [3.3, 8.15]].forEach(([x, y]) => { box(g, x, y, 0, .4, .25, .22, "#efe6ff"); line(g, P(x + .2, y + .25, 0), P(x + .2, y + .25, .22), "#e0466e", 1.4); });
+    // rooftop sign with a rising sun
+    line(g, P(2.1, 6.3, 1.55), P(2.1, 6.3, 1.9), "#0b0818", 2.2); line(g, P(3.7, 6.3, 1.55), P(3.7, 6.3, 1.9), "#0b0818", 2.2);
+    const sg = faceG(g, "L", 1.9, 6.3, 1.9, 2.0, 0, .6);
+    el("rect", { x: 0, y: 0, width: 2.0, height: .6, fill: "#0b0918", class: "on" }, sg);
+    neonD(sg, "M.04 .04H1.96V.56H.04Z", "#ffc83d", 1);
+    neonText(sg, 1.0, .42, .3, "DISPATCH", "#ffe08a");
+    const sun = P(2.9, 6.3, 2.75);
+    neonD(g, `M${r1(sun[0] - 13)},${r1(sun[1])} A13,13 0 0 1 ${r1(sun[0] + 13)},${r1(sun[1])}`, "#ff8a3d", 1.3, false);
+    let rays = ""; for (let i = 1; i < 6; i++) { const t = Math.PI * i / 6, c = Math.cos(t), s = Math.sin(t); rays += `M${r1(sun[0] - c * 17)},${r1(sun[1] - s * 17)}L${r1(sun[0] - c * 23)},${r1(sun[1] - s * 23)}`; }
+    neonD(g, rays, "#ffc83d", 1, false);
+    const lp = P(2.9, 6.6, 3.55); LABELS.push({ b: "dispatch", x: lp[0], y: lp[1], px: lp[0] + 40, py: lp[1] + 36 });
+  });
+
+  // ===== STUDIO WORKSHOP: a sawtooth-roof maker space with a roll-up door and a little crane
+  building("studio", 0.9, g => {
+    hlRect(g, -9.1, 6.8, 3.0, 3.4, "#ff8a3d");
+    const x0 = -8.8, x1 = -6.4, y0 = 7.1, y1 = 9.9, H = 1.35;
+    box(g, x0, y0, 0, x1 - x0, y1 - y0, H, "#2c3052");
+    const fL = faceG(g, "L", x0, y0, 0, x1 - x0, y1 - y0, H), fR = faceG(g, "R", x0, y0, 0, x1 - x0, y1 - y0, H);
+    el("rect", { x: .35, y: .3, width: 1.7, height: 1.05, fill: "#1b1d33" }, fL);
+    let sl = ""; for (let v = .38; v < 1.3; v += .12) sl += `M.35 ${r3(v)}H2.05`; el("path", { d: sl, stroke: "#3a3e66", "stroke-width": .04 }, fL);
+    el("rect", { x: .35, y: 1.18, width: 1.7, height: .17, fill: "#ff8a3d", opacity: .7, class: "lit" }, fL);
+    neonText(fL, 1.2, .23, .2, "STUDIO", "#ffc49a");
+    windows(fR, y1 - y0, H, "#35e6ff", .8, .4);
+    neonD(fL, `M0 .06H${x1 - x0}`, "#ff8a3d", 1.1); neonD(fR, `M0 .06H${y1 - y0}`, "#ff8a3d", 1.1);
+    // sawtooth roof: three glazed teeth facing the front
+    const n = 3, t = (y1 - y0) / n, hz = .55;
+    for (let k = 0; k < n; k++) {
+      const ya = y0 + k * t, yb = ya + t;
+      poly(g, [P(x0, ya, H), P(x1, ya, H), P(x1, yb, H + hz), P(x0, yb, H + hz)], "#3a3f6a");
+      poly(g, [P(x1, ya, H), P(x1, yb, H), P(x1, yb, H + hz)], "#22264a");
+      poly(g, [P(x0, yb, H), P(x1, yb, H), P(x1, yb, H + hz), P(x0, yb, H + hz)], "#1d2a40");
+      const gl = faceG(g, "L", x0, yb, H, x1 - x0, 0, hz);
+      el("rect", { x: .1, y: .08, width: x1 - x0 - .2, height: hz - .14, fill: "#35e6ff", opacity: .45, class: "lit" }, gl);
+    }
+    // jib crane on the roof
+    const cb = P(x1 - .3, y0 + .3, H + hz), ct = P(x1 - .3, y0 + .3, H + hz + 1.5), ce = P(x1 + .9, y0 + .3, H + hz + 1.5);
+    line(g, cb, ct, "#0b0818", 2.6); line(g, ct, ce, "#0b0818", 2.2); line(g, ce, [ce[0], ce[1] + 16], "#0b0818", 1);
+    neonD(g, `M${r1(ct[0])},${r1(ct[1])}L${r1(ce[0])},${r1(ce[1])}`, "#ff8a3d", 1, false);
+    el("rect", { x: r1(ce[0] - 4), y: r1(ce[1] + 16), width: 8, height: 6, fill: "#ffc49a", class: "o" }, g);
+    const lp = P(-7.6, 8.5, 3.4); LABELS.push({ b: "studio", x: lp[0], y: lp[1], px: lp[0] + 40, py: lp[1] + 36 });
+  });
+
+  // ===== FOCUS LIGHTHOUSE: striped tower; its beam lights up across the island while you're focusing
+  building("focus", 3.6, g => {
+    hlRect(g, 5.0, -4.4, 3.4, 3.0, "#35e6ff");
+    const X = 6.7, Y = -2.9;
+    box(g, 7.35, -4.15, 0, .85, 1.0, .75, "#30355a"); pyramid(g, 7.3, -4.2, .75, .95, 1.1, .45, "#5a2a4a");
+    windows(faceG(g, "L", 7.35, -4.15, 0, .85, 1.0, .75), .85, .75, "#ffcf6a", 1, .4);
+    cyl(g, X, Y, 0, 1.0, .3, cg("#2d3254"), "#3a3f6a");
+    [[.3, .62, 1.1, "#e8e6f5"], [1.4, .55, 1.0, "#ff4fa8"], [2.4, .49, .95, "#e8e6f5"]].forEach(([z, r, h, c]) => cyl(g, X, Y, z, r, h, cg(c), shade(c, .1)));
+    const w1 = P(X, Y, 1.9); el("rect", { x: r1(w1[0] - 2.5), y: r1(w1[1] - 6), width: 5, height: 8, fill: "#0b0918" }, g);
+    cyl(g, X, Y, 3.35, .75, .1, cg("#2a2f54"), "#353a66");
+    const lan = cyl(g, X, Y, 3.45, .42, .62, "#3c3a2a", "#2a2f54");
+    const lc = P(X, Y, 3.76);
+    const core = el("g", { class: "lit lhcore" }, g);
+    el("circle", { cx: r1(lc[0]), cy: r1(lc[1]), r: 26, fill: "#fff3b0", opacity: .2 }, core);
+    el("rect", { x: r1(lc[0] - 9), y: r1(lc[1] - 8), width: 18, height: 15, rx: 2, fill: "#fff6c8" }, core);
+    // the beam (hidden until a focus session is running)
+    const bm = el("g", { class: "lhbeam" }, g);
+    el("path", { d: `M${r1(lc[0])},${r1(lc[1] - 3)} L${r1(lc[0] - 560)},${r1(lc[1] - 120)} L${r1(lc[0] - 560)},${r1(lc[1] + 30)} Z`, fill: "url(#lhG)" }, bm);
+    el("path", { d: `M${r1(lc[0])},${r1(lc[1] - 3)} L${r1(lc[0] + 300)},${r1(lc[1] - 70)} L${r1(lc[0] + 300)},${r1(lc[1] + 10)} Z`, fill: "url(#lhG2)" }, bm);
+    const tip = P(X, Y, 4.07), apex = P(X, Y, 4.75), rx = .5 * S * 1.2247;
+    el("path", { d: `M${r1(tip[0] - rx)},${r1(tip[1])} L${r1(apex[0])},${r1(apex[1])} L${r1(tip[0] + rx)},${r1(tip[1])} Z`, fill: "#7a1f4a", class: "o" }, g);
+    antennaBall(g, apex, 10, "#ff4fa8");
+    neonD(g, arcD(X, Y, 3.45, .76, 0, 1), "#35e6ff", 1.1, false);
+    const lp = P(X, Y, 5.9); LABELS.push({ b: "focus", x: lp[0], y: lp[1], px: lp[0] + 40, py: lp[1] + 40 });
+  });
+
+  // ===== HABIT GARDEN: raised beds in the front park; plants grow very slowly with your check-ins (drawn by drawGarden)
+  add(11.2, root => { gardenSlot = el("g", { class: "bldg", "data-b": "habits" }, root); const lp = P(7.7, 7.7, 2.3); LABELS.push({ b: "habits", x: lp[0], y: lp[1], px: lp[0] + 50, py: lp[1] + 30 }); });
 
   // ===== nature + street furniture
-  [[6.4, 7.4, "#35e6ff"], [8.8, 6.0, "#ff4fa8"], [9.4, 9.2, "#35e6ff"], [6.6, 9.8, "#ff4fa8"], [4.4, 10.2, "#35e6ff"], [10.2, 4.4, "#ff4fa8"], [-9.6, 9.1, "#ff4fa8"], [-6.4, 9.7, "#35e6ff"], [-10, 3.6, "#b46cff"],
+  [[4.4, 10.2, "#35e6ff"], [10.2, 4.4, "#ff4fa8"], [10.1, 9.9, "#35e6ff"], [-10, 3.6, "#b46cff"],
    [-4.2, -10, "#35e6ff"], [-7, -9.8, "#ff4fa8"], [-1.9, -10.1, "#b46cff"], [9.8, -3.4, "#7dff6a"], [3.4, -10, "#35e6ff"], [-2.6, 10.1, "#7dff6a"]]
     .forEach(([x, y, c]) => add(x + y, root => glowTree(root, x, y, .95 + rnd() * .25, c)));
-  [[8.0, 8.4], [-8.9, 8.1], [-6.2, -9.9], [9.9, -6.6]].forEach(([x, y]) => add(x + y, root => crystal(root, x, y, .9)));
+  [[-6.2, -9.9], [9.9, -6.6], [-3.4, -6.6]].forEach(([x, y]) => add(x + y, root => crystal(root, x, y, .9)));
   [[6, 1.05], [9, 1.05], [-6, -1.05], [-9, -1.05], [1.05, 6], [1.05, 9], [-1.05, -6], [-1.05, -9], [6, -1.05], [-6, 1.05], [-1.05, 6], [1.05, -6]].forEach(([x, y], i) => add(x + y, root => lampPost(root, x, y, ["#35e6ff", "#ff4fa8", "#b46cff", "#ffc83d"][i % 4])));
   [[-9.8, -9.8, 7.2, .95], [-8.7, -10.2, 4.6, .7], [-10.2, -8.6, 3.6, .6], [-10.0, 9.9, 4.4, .8], [-9.1, 10.2, 2.6, .55], [9.9, -10.0, 5.2, .85], [10.2, -8.9, 3.0, .55], [-10.1, 1.8, 3.2, .65]]
     .forEach(([x, y, h, w], i) => add(x + y - .5, root => rockSpire(root, x, y, h, w, "#2c2f4e", i % 2 ? "#35e6ff" : "#ff4fa8")));
 
   objs.sort((a, b) => a.d - b.d);
-  const objLayer = el("g", {}, svg);
+  const objLayer = el("g", { id: "objL" }, svg);
   objs.forEach(o => o.fn(objLayer));
+
+  /* ---- News Tower islet off the east edge, joined by a skyway (in front of the island, so drawn after it) ---- */
+  { const fI = el("g", {}, svg), NX = 19.6, NY = 0, NK = 2.3, hw = .6, xA = 11, xB = NX - NK, len = xB - xA, sw = el("g", {}, fI);
+    box(sw, xA, -hw, -.3, len, 2 * hw, .3, "#262a46");
+    const dk = faceG(sw, "T", xA, -hw, .001); let seams = ""; for (let u = .5; u < len; u += .5) seams += `M${r3(u)} 0V${2 * hw}`;
+    el("path", { d: seams, stroke: "#13152a", "stroke-width": .05 }, dk);
+    el("path", { d: `M.1 ${hw}H${r3(len - .1)}`, stroke: "#ffd27a", "stroke-width": .06, "stroke-dasharray": ".3 .3", opacity: .7 }, dk);
+    el("path", { d: `M0 ${hw - .25}H${r3(len)}M0 ${hw + .25}H${r3(len)}`, stroke: "#ff4fa8", "stroke-width": .07, "stroke-dasharray": ".15 .9", class: "lit" }, dk);
+    neonD(faceG(sw, "L", xA, -hw, -.3, len, 2 * hw, .3), `M0 .06H${r3(len)}`, "#ff4fa8", 1.2);
+    for (let x = xA + .8; x < xB; x += 1.6) { const a = P(x, hw, -.3); line(sw, a, [a[0], a[1] + 14], "#0b0818", 1); const g = el("g", { class: "lit" }, sw); el("circle", { cx: r1(a[0]), cy: r1(a[1] + 16), r: 6, fill: "#ff4fa8", opacity: .25 }, g); el("circle", { cx: r1(a[0]), cy: r1(a[1] + 16), r: 2, fill: "#ffd1ea" }, g); }
+    [-hw, hw].forEach((y, i) => { for (let x = xA + .3; x < xB; x += .8) line(sw, P(x, y, 0), P(x, y, .5), "#0b0818", 1.2); neonD(sw, pathOf([P(xA, y, .5), P(xB, y, .5)]), i ? "#35e6ff" : "#ff4fa8", 1.2, false); });
+    [13.2, 15.6].forEach((x, k) => {
+      line(sw, P(x, -hw - .1, 0), P(x, -hw - .1, 1.7), "#0b0818", 2.4); line(sw, P(x, hw + .1, 0), P(x, hw + .1, 1.7), "#0b0818", 2.4);
+      const gf = faceG(sw, "R", x, -hw - .1, 1.25, 0, 2 * hw + .2, .45);
+      el("rect", { x: 0, y: 0, width: r3(2 * hw + .2), height: .45, fill: "#0b0918", class: "on" }, gf);
+      neonD(gf, `M.04 .04H${r3(2 * hw + .16)}V.41H.04Z`, k ? "#35e6ff" : "#ff4fa8", 1);
+      neonText(gf, hw + .1, .33, .26, k ? "ON AIR" : "NEWS", k ? "#b8f4ff" : "#ffb3d9");
+    });
+    const nI = el("g", {}, fI);
+    [[.3, -4.4, "#1b1c30"], [.55, -3.3, "#202238"], [.78, -2.2, "#25273f"], [.97, -1.1, "#2a2c47"]].forEach(([kk, zz, c]) => poly(nI, rockRing(NX, NY, NK * kk, zz, .12, 40), cg(c)));
+    for (let c = 0; c < 3; c++) { const a = P(NX - NK + rnd() * NK * 2, NY + NK, -1.1 - rnd() * .4); neonD(nI, zigzag(a, [a[0] + (rnd() - .5) * 14, a[1] + 20 + rnd() * 24], 4, 5), c % 2 ? "#35e6ff" : "#ff4fa8", 1.2, false); }
+    box(nI, NX - NK, NY - NK, -.6, 2 * NK, 2 * NK, .6, "#2b2f4e");
+    ["L", "R"].forEach((s, i) => { const f = faceG(nI, s, NX - NK, NY - NK, -.6, 2 * NK, 2 * NK, .6); panelLines(f, 2 * NK, .6, 1.1); neonD(f, `M0 .08H${2 * NK}`, i ? "#35e6ff" : "#ff4fa8", 1.4); });
+    poly(nI, [P(NX - NK, NY - NK), P(NX + NK, NY - NK), P(NX + NK, NY + NK), P(NX - NK, NY + NK)], "#1d2036");
+    neonD(faceG(nI, "T", NX - NK, NY - NK, 0), `M.25 .25H${2 * NK - .25}V${2 * NK - .25}H.25Z`, "#ff4fa8", 1.3);
+    glowTree(nI, NX + NK - .55, NY - NK + .55, .7, "#35e6ff");
+    drawNewsTower(el("g", { class: "bldg", "data-b": "news" }, nI), NX, NY);
+    glowTree(nI, NX - NK + .55, NY + NK - .55, .7, "#ff4fa8");
+  }
 
   /* ---- waterfalls of light over the front edges ---- */
   const falls = el("g", {}, svgF);
@@ -1020,14 +1277,14 @@ function drawScene() {
   waterfall(falls, "L", 6.0, 6.9, "#35e6ff", 480);
   waterfall(falls, "L", -8.6, -8.1, "#35e6ff", 420);
   waterfall(falls, "R", 2.4, 3.3, "#35e6ff", 520);
-  waterfall(falls, "R", -6.0, -5.4, "#ff4fa8", 430);
+  waterfall(falls, "L", 1.6, 2.3, "#ff4fa8", 430);
 
   /* ---- drones + foreground clouds ---- */
   const air = el("g", {}, svgF);
   const d1 = P(2.6, -.8, 7.4), d2 = P(-.6, 2.8, 8.4), d3 = P(9.6, -6.0, 5.8), d4 = P(-9.5, 1.0, 5.2);
   drone(air, r1(d1[0]), r1(d1[1]), "#35e6ff"); drone(air, r1(d2[0]), r1(d2[1]), "#ff4fa8"); drone(air, r1(d3[0]), r1(d3[1]), "#b46cff"); drone(air, r1(d4[0]), r1(d4[1]), "#7dff6a");
   const fg = el("g", {}, svgF);
-  cloudBank(fg, 620, 1170, 640, 1.3); cloudBank(fg, 1580, 1140, 700, 1.3); cloudBank(fg, 1120, 1290, 800, 1.5);
+  cloudBank(fg, 620, 1170, 640, 1.3); cloudBank(fg, 1420, 1250, 620, 1.3); cloudBank(fg, 1120, 1290, 800, 1.5);
 }
 
 /* =====================================================================
@@ -1060,8 +1317,8 @@ function tickClock() {
    CAMERA: pan, zoom, fly-to
    ===================================================================== */
 const stage = $("#stage"), labelsEl = $("#labels"), camEl = $("#cam"), LAYERS = [svgB, svg, svgF];
-const FIT = { x: 395, y: 150, w: 1375, h: 1060 };
-const LIM = { x0: 300, x1: 1900, y0: 50, y1: 1350, wMin: 320, wMax: 2300 };
+const FIT = { x: 395, y: 150, w: 1390, h: 1110 };
+const LIM = { x0: 300, x1: 1900, y0: 50, y1: 1400, wMin: 320, wMax: 2300 };
 let cam = { cx: FIT.x + FIT.w / 2, cy: FIT.y + FIT.h / 2, w: FIT.w };
 const vw = () => stage.clientWidth || 1, vh = () => stage.clientHeight || 1;
 function fitCam(box) { const r = vw() / vh(); const w = Math.max(box.w, box.h * r); return { cx: box.x + box.w / 2, cy: box.y + box.h / 2, w }; }
@@ -1118,7 +1375,7 @@ function flyTo(t, ms = 550) {
     flyRaf = k < 1 ? requestAnimationFrame(step) : 0; applyCam(); };
   flyRaf = requestAnimationFrame(step);
 }
-const FOCUS = { todo: [P(0, 0, 3.8), 720], cal: [P(-8.5, -3.5, 4.8), 680], mail: [P(6.9, -6.9, 2.4), 700], ideas: [P(-8, 5.5, 2.6), 640], barca: [P(0, -20, 1.6), 700], spain: [P(-20.8, 0, 1.6), 620] };
+const FOCUS = { todo: [P(0, 0, 3.8), 720], cal: [P(-8.5, -3.5, 4.8), 680], mail: [P(6.9, -6.9, 2.4), 700], ideas: [P(-8, 5.5, 2.6), 640], barca: [P(0, -20, 1.6), 700], spain: [P(-20.8, 0, 1.6), 620], cw: [P(6.7, 2.9, 2.6), 560], dispatch: [P(2.9, 6.7, 1.6), 540], studio: [P(-7.6, 8.5, 1.6), 560], focus: [P(6.7, -2.9, 2.8), 600], news: [P(19.6, 0, 3.2), 640], habits: [P(7.6, 7.6, .8), 560] };
 function flyToBuilding(b) {
   const [[x, y], w] = FOCUS[b]; let cy = y;
   if (innerWidth <= 720) { const sheetTop = innerHeight * .34, want = (sheetTop + 92) / 2 + 10, h = w * vh() / vw(); cy = y + (vh() / 2 - want) * h / vh(); }
@@ -1140,12 +1397,20 @@ function buildLabels() {
     const p = document.createElement("span"); p.className = "pip"; p.hidden = true; labelsEl.appendChild(p); pipEls[L.b] = p; L.pip = p;
   });
   // a generous invisible hit-pad under each building, so hover/click don't fall through the gaps between its shapes
-  svg.querySelectorAll(".bldg").forEach(g => {
-    if (g.querySelector(":scope > .hit")) return;
-    const bb = g.getBBox(), ix = bb.width * .14, iy = bb.height * .1;
+  buildHitPads();
+}
+// Hit-pads live in one layer UNDER every building, so a real shape always wins and the pad only fills the gaps.
+function buildHitPads() {
+  const hitL = svg.querySelector("#hitL") || (() => { const l = document.createElementNS(NS, "g"); l.id = "hitL"; svg.insertBefore(l, svg.querySelector("#objL")); return l; })();
+  hitL.innerHTML = "";
+  svg.querySelectorAll("g.bldg").forEach(g => {
+    const skip = [...g.querySelectorAll(":scope > .hl, :scope > .lhbeam")]; skip.forEach(c => c.style.display = "none");
+    let bb = null; try { bb = g.getBBox(); } catch (e) {} skip.forEach(c => c.style.display = "");
+    if (!bb || !bb.width) return; const x0 = bb.x, y0 = bb.y, x1 = bb.x + bb.width, y1 = bb.y + bb.height;
+    if (x1 <= x0) return; const ix = (x1 - x0) * .12, iy = (y1 - y0) * .08;
     const r = document.createElementNS(NS, "rect");
-    [["x", bb.x + ix], ["y", bb.y + iy], ["width", bb.width - 2 * ix], ["height", bb.height - 2 * iy], ["class", "hit"]].forEach(([k, v]) => r.setAttribute(k, typeof v === "number" ? r1(v) : v));
-    g.insertBefore(r, g.firstChild);
+    [["x", x0 + ix], ["y", y0 + iy], ["width", x1 - x0 - 2 * ix], ["height", y1 - y0 - 2 * iy]].forEach(([k, v]) => r.setAttribute(k, r1(v)));
+    r.setAttribute("class", "bldg hit"); r.dataset.b = g.dataset.b; hitL.appendChild(r);
   });
 }
 function placeLabels() {
@@ -1160,12 +1425,12 @@ function scheduleHide() { // a short grace period lets the pointer travel from a
 }
 function showTag(b, on) {
   const l = labelEls[b]; if (!l) return; l.classList.toggle("show", on);
-  const g = svg.querySelector(`.bldg[data-b="${b}"]`); if (g) g.classList.toggle("hot", on || st.panel === b);
+  const g = svg.querySelector(`g.bldg[data-b="${b}"]`); if (g) g.classList.toggle("hot", on || st.panel === b);
   if (pipEls[b]) pipEls[b].style.opacity = on || st.panel === b ? 0 : "";
 }
 function selectB(b) {
   Object.keys(labelEls).forEach(k => { const on = k === b; labelEls[k].classList.toggle("sel", on);
-    const g = svg.querySelector(`.bldg[data-b="${k}"]`); if (g) g.classList.toggle("hot", on || k === hotB);
+    const g = svg.querySelector(`g.bldg[data-b="${k}"]`); if (g) g.classList.toggle("hot", on || k === hotB);
     if (pipEls[k]) pipEls[k].style.opacity = on || k === hotB ? 0 : ""; });
 }
 // The name tags are display-only (they never block a click). A click on empty space inside a visible tag still opens
@@ -1249,6 +1514,7 @@ stage.addEventListener("dblclick", e => { if (e.target.closest(".bldg, .plot") |
 $("#zIn").onclick = () => zoomAt(vw() / 2, vh() / 2, .75);
 $("#zOut").onclick = () => zoomAt(vw() / 2, vh() / 2, 1.33);
 $("#zFit").onclick = () => flyTo(fitCam(FIT));
+$("#focusPill").onclick = () => openPanel("focus");
 new ResizeObserver(() => applyCam(true)).observe(stage);
 
 /* =====================================================================
@@ -1310,7 +1576,7 @@ function parseQuick(raw) {
    STATE + STORE
    ===================================================================== */
 const st = { barca: null, spain: null, bTab: "matches", bSub: "upcoming", bLead: "rating", items: new Map(), mode: "loading", panel: null, wide: false, filter: "all", edit: null, showDone: false, chip: "auto", aiOff: false, busy: new Set() };
-let col = null, sample = null;
+let col = null, sample = null, dbRef = null, uidRef = null;
 const queues = {};
 function onDbErr(e) {
   const c = e && e.code;
@@ -1343,7 +1609,8 @@ async function initData() {
   sample = smp;
   const uid = user ? await user.id() : null;
   if (!db || !uid) { st.mode = "demo"; demoData(); render(); return; }
-  col = db.doc(`data/users/${uid}/island`).collection("items");
+  col = db.doc(`data/users/${uid}/island`).collection("items"); dbRef = db; uidRef = uid;
+  [["dispatch", "dispatch"], ["news", "news"], ["review", "review"], ["mail", "mail"], ["mailState", "mailState"]].forEach(([k, path]) => db.doc(`data/users/${uid}/${path}`).onSnapshot(s => { st[k] = s.exists ? s.data() : null; render(); }, () => {}));
   db.doc(`data/users/${uid}/barca`).onSnapshot(s => { st.barca = s.exists ? s.data() : null; render(); }, () => {});
   db.doc(`data/users/${uid}/spain`).onSnapshot(s => { st.spain = s.exists ? s.data() : null; render(); }, () => {});
   col.onSnapshot(snap => { st.items = new Map(snap.docs.map(d => [d.id, d.data()])); st.mode = "live"; render(); },
@@ -1400,6 +1667,12 @@ const ICON = {
   todo: '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 10.5h18v1.5H3z"/><path d="M5 10.5c0-4 3-7 7-7s7 3 7 7z" opacity=".55"/><rect x="11.2" y="1" width="1.6" height="3" rx=".8"/><rect x="4.5" y="13" width="2.4" height="6" rx=".5"/><rect x="10.8" y="13" width="2.4" height="6" rx=".5"/><rect x="17.1" y="13" width="2.4" height="6" rx=".5"/><rect x="2.5" y="19.5" width="19" height="2.2" rx=".6"/></svg>',
   cal: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5.5" stroke-width="1" opacity=".6"/><path d="M12 7.5V12l3 2"/></svg>',
   mail: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="1.5"/><path d="m3.5 7 8.5 6.5L20.5 7"/></svg>',
+  dispatch: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M3 18h18M7 18a5 5 0 0 1 10 0M12 7v3M5.5 10.5 7.3 12M18.5 10.5 16.7 12M5 21h14"/></svg>',
+  news: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="10" r="1.6"/><path d="M12 12v9M9 21l3-9 3 9M6.3 5.3a8 8 0 0 0 0 9.4M17.7 5.3a8 8 0 0 1 0 9.4M8.9 7.6a4.4 4.4 0 0 0 0 4.8M15.1 7.6a4.4 4.4 0 0 1 0 4.8"/></svg>',
+  studio: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 21V11l5 3v-3l5 3v-3l8 4.5V21z"/><path d="M7 17.5h2M12 17.5h2M17 17.5h1.5M2 21h20"/></svg>',
+  habits: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21v-9M12 12c0-4 3-6.5 7.5-6.5 0 4.2-3 6.5-7.5 6.5zM12 15.5c0-3.2-2.4-5.3-6.2-5.3 0 3.3 2.5 5.3 6.2 5.3zM7 21h10"/></svg>',
+  cw: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3.5 13.5 11-6.4 2 3.4-11 6.4z"/><path d="m14.5 7.1 3.4-2 2 3.5-3.4 2M9 15.5l-2 5.5M10.2 14.8l2.3 6.2"/></svg>',
+  focus: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 21 1.2-11h3.6L15 21M7.5 21h9M10 10V7h4v3M12 3v1.5M3.5 6.5l4 1.3M20.5 6.5l-4 1.3"/></svg>',
   spain: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4.5a2.5 2.5 0 0 0 2.6 3.4M17 6h2.5a2.5 2.5 0 0 1-2.6 3.4M12 14v3M8.5 20.5h7l-1-3.5h-5z"/></svg>',
   barca: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m12 7.2 4 2.9-1.5 4.7h-5L8 10.1z"/><path d="M12 3v4.2M16 10.1l4.2-1.4M14.5 14.8l2.6 3.6M9.5 14.8l-2.6 3.6M8 10.1 3.8 8.7"/></svg>',
   ideas: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2.5a7 7 0 0 0-4.2 12.6c.7.5 1.2 1.3 1.2 2.2V18h6v-.7c0-.9.5-1.7 1.2-2.2A7 7 0 0 0 12 2.5z"/><path d="M9.5 21h5M10 11l1-2 1 2 1-2 1 2" stroke-width="1.4"/></svg>',
@@ -1410,12 +1683,18 @@ const SPARK = '<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true
 const BINFO = {
   todo: { t: "To-dos", s: "Task HQ", c: "var(--b-todo)" },
   cal: { t: "Calendar", s: "Chrono Spire", c: "var(--b-cal)" },
-  mail: { t: "Mail", s: "Data Post", c: "var(--b-mail)" },
+  mail: { t: "Data Post", s: "Gmail + Outlook triage", c: "var(--b-mail)" },
   ideas: { t: "Ideas", s: "Idea Beacon", c: "var(--b-ideas)" },
   barca: { t: "FC Barcelona", s: "Blaugrana Stadium", c: "#edbb00" },
-  spain: { t: "La Roja", s: "Spain national team", c: "#ff3a4c" }
+  spain: { t: "La Roja", s: "Spain national team", c: "#ff3a4c" },
+  dispatch: { t: "Morning Dispatch", s: "Your day, ready at 7:30", c: "#ffc83d" },
+  news: { t: "News Tower", s: "World · UK · US · tech · design", c: "#ff4fa8" },
+  studio: { t: "Studio", s: "Projects + post queue", c: "#ff8a3d" },
+  habits: { t: "Habit Garden", s: "Grows slowly with you", c: "#5dffb0" },
+  cw: { t: "Coursework", s: "Deadline observatory", c: "#7dff6a" },
+  focus: { t: "Focus Lighthouse", s: "Deep-work timer", c: "#35e6ff" }
 };
-const todos = () => [...st.items].filter(([, it]) => it.kind !== "idea");
+const todos = () => [...st.items].filter(([, it]) => it.kind === "todo" || !it.kind);
 const ideas = () => [...st.items].filter(([, it]) => it.kind === "idea").sort((a, b) => b[1].createdAt - a[1].createdAt);
 const sortT = (a, b) => (a[1].due || "9999").localeCompare(b[1].due || "9999") || (a[1].time || "99").localeCompare(b[1].time || "99") || a[1].createdAt - b[1].createdAt;
 const dueNowCount = () => todos().filter(([, it]) => !it.done && it.due && dayDiff(it.due) <= 0).length;
@@ -1476,12 +1755,25 @@ function calBody() {
   return h;
 }
 function mailBody() {
-  return `<div class="soon" style="margin-top:4px"><h4>Opening soon</h4><p>The Data Post will read Gmail and Outlook each morning, pull out what needs you, and sum up everything else in a few lines. Below is how it will look.</p></div>
-  <h3 class="sec-h">Needs you <span class="tag ex">Example</span></h3>
-  <div class="mail ghost"><div class="from">Module leader</div><div class="sub">Coursework brief updated</div><div class="why">Deadline moved a week later. Worth checking the new marking scheme.</div></div>
-  <div class="mail ghost"><div class="from">Project group</div><div class="sub">Can we meet Thursday?</div><div class="why">Asks for your availability. Needs a reply.</div></div>
-  <h3 class="sec-h">Everything else <span class="tag ex">Example</span></h3>
-  <p class="ghost" style="margin:0 6px;line-height:1.55;color:var(--ink-2)">6 newsletters, 2 delivery updates and a society event invite. Nothing urgent.</p>`;
+  const m = st.mail, done = new Set(st.mailDone || []);
+  if (!m) return `<div class="empty"><b>The Data Post is sorting</b>Your inbox summary arrives with the next triage, at about 7:10 and 16:50.</div>`;
+  const acc = (m.accounts || []).map(a => `<span class="acct ${a.status === "connected" ? "on" : ""}" title="${a.status === "connected" ? "Connected" : "Not connected yet"}"><i></i>${esc(a.label)}</span>`).join("");
+  const upd = m.updatedAt ? new Date(m.updatedAt).toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit" }) : "";
+  const card = (x, needs) => { const d = x.date ? new Date(x.date) : null, n = x.due ? daysTo(x.due) : null;
+    return `<article class="mail${needs ? " need" : ""}${done.has(x.id) ? " dn" : ""}" data-mid="${esc(x.id)}">
+      <div class="mh"><span class="from">${esc(x.from)}</span>${d ? `<time>${d.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</time>` : ""}</div>
+      <div class="sub">${esc(x.subject)}</div><div class="why">${esc(x.why || "")}${n != null ? ` <b class="cnt">${dueWord(n)}</b>` : ""}</div>
+      <div class="acts">${x.url ? `<a class="btn sm" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">Open ↗</a>` : ""}${needs ? `<button class="btn sm" data-act="m2todo">+ To-do</button><button class="btn sm ghost" data-act="mdone">${done.has(x.id) ? "Undo" : "Dealt with"}</button>` : ""}</div></article>`; };
+  const needs = (m.needs || []), open = needs.filter(x => !done.has(x.id));
+  let h = `<div class="accts">${acc}<span class="upd">Sorted ${esc(upd)} · ${esc(m.window || "")}</span></div>`;
+  if (m.summary) h += `<p class="dp-brief">${esc(m.summary)}</p>`;
+  h += `<h3 class="sec-h">Needs you <span class="sub">${open.length ? open.length + " open" : "all handled"}</span></h3>`;
+  h += needs.length ? needs.map(x => card(x, true)).join("") : `<div class="empty sm">Nothing needs you right now.</div>`;
+  if ((m.fyi || []).length) h += `<h3 class="sec-h">Worth knowing</h3>` + m.fyi.map(x => card(x, false)).join("");
+  if ((m.deliveries || []).length) h += `<h3 class="sec-h">On the way</h3><ul class="mini">${m.deliveries.map(d => `<li><span>${d.url ? `<a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer">${esc(d.what)}</a>` : esc(d.what)}<small>${esc(d.status || "")}</small></span><b>${esc(d.eta || "")}</b></li>`).join("")}</ul>`;
+  if (m.noise && m.noise.count) h += `<h3 class="sec-h">Skipped <span class="sub">${m.noise.count}</span></h3><p class="hint-row">${esc((m.noise.senders || []).join(", "))}. Newsletters, promos and receipts, nothing to act on.</p>`;
+  if ((m.accounts || []).some(a => a.status !== "connected")) h += `<div class="soon"><h4>Imperial Outlook is next</h4><p>Once the Microsoft 365 connector is signed in, your school inbox joins this list and your timetable lands in the Chrono Spire.</p></div>`;
+  return h + `<p class="src">Read-only: the Data Post never sends, moves or deletes email. "Dealt with" only hides an item here.</p>`;
 }
 function ideasBody() {
   const list = ideas();
@@ -1655,16 +1947,370 @@ function updateStadium() {
   });
   FB = keep;
 }
-window.islandDebug = { setBarca: d => { st.barca = d; render(); }, setSpain: d => { st.spain = d; render(); } };
+window.islandDebug = { setBarca: d => { st.barca = d; render(); }, setSpain: d => { st.spain = d; render(); }, setNews: d => { st.news = d; render(); }, setDispatch: d => { st.dispatch = d; render(); }, setReview: d => { st.review = d; render(); }, setMail: d => { st.mail = d; render(); }, seed: list => { if (st.mode !== "demo") return; list.forEach(o => newItem(o)); } };
+
+/* =====================================================================
+   v0.8 BUILDINGS: Morning Dispatch, News Tower, Studio, Habit Garden, Coursework, Focus Lighthouse
+   All personal data lives in the same items collection (kind: habit | cw | project | post | focus | note);
+   the Dispatch, News and weekly Review documents are written by scheduled Claude runs (and the review on demand).
+   ===================================================================== */
+const ofKind = k => [...st.items].filter(([, it]) => it.kind === k);
+const byCreated = (a, b) => (a[1].createdAt || 0) - (b[1].createdAt || 0);
+const habits = () => ofKind("habit").sort(byCreated);
+const cws = () => ofKind("cw").sort((a, b) => (a[1].due || "9") < (b[1].due || "9") ? -1 : 1);
+const projects = () => ofKind("project").sort(byCreated);
+const posts = () => ofKind("post").sort(byCreated);
+const focusLogs = () => ofKind("focus").sort((a, b) => (b[1].start || 0) - (a[1].start || 0));
+const monday = (d = new Date()) => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
+const todayK = () => isoD(new Date());
+const fmtMins = m => m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? " " + (m % 60) + "m" : ""}` : `${m}m`;
+const daysTo = iso => Math.round((fromISO(iso) - midnight()) / 864e5);
+const dueWord = n => n < 0 ? `${-n}d overdue` : n === 0 ? "today" : n === 1 ? "tomorrow" : `in ${n}d`;
+const HABIT_COLS = ["#7dff6a", "#35e6ff", "#ff4fa8", "#ffc83d", "#b46cff"];
+function newItem(obj) { const id = store.newId(); store.set(id, { createdAt: Date.now(), ...obj }); return id; }
+function blurInput() { const a = document.activeElement; if (a && a.blur && sheet.contains(a)) a.blur(); }
+
+/* ---------- Habit Garden ---------- */
+function habitWeek(h, mon = monday()) { const s = new Set(h.log || []); return Array.from({ length: 7 }, (_, i) => { const k = isoD(addDays(mon, i)); return { k, on: s.has(k) }; }); }
+function habitStreak(h) {
+  const s = new Set(h.log || []);
+  if (h.per === "week") { let n = 0, m = monday(); const cnt = mm => habitWeek(h, mm).filter(d => d.on).length;
+    if (cnt(m) >= (h.target || 1)) n++; m = addDays(m, -7);
+    while (cnt(m) >= (h.target || 1) && n < 200) { n++; m = addDays(m, -7); } return { n, unit: n === 1 ? "week" : "weeks" }; }
+  let d = midnight(); if (!s.has(isoD(d))) d = addDays(d, -1); let n = 0;
+  while (s.has(isoD(d)) && n < 999) { n++; d = addDays(d, -1); } return { n, unit: n === 1 ? "day" : "days" };
+}
+const growthOf = total => total >= 40 ? { full: true } : { plant: Math.floor(total / 8) + 1, left: 8 - total % 8 };
+function plantAt(g, x, y, total, i, col) {
+  const p = total - i * 8, b = P(x, y, .32), stage = p <= 0 ? -1 : p < 2 ? 0 : p < 4 ? 1 : p < 6 ? 2 : p < 8 ? 3 : 4;
+  el("ellipse", { cx: r1(b[0]), cy: r1(b[1]), rx: 6, ry: 2.4, fill: "#3a2a20" }, g);
+  if (stage < 0) return;
+  const lg = el("g", { class: "lit" }, g), dk = shade(col, -.55);
+  if (stage === 0) { el("circle", { cx: r1(b[0]), cy: r1(b[1] - 2), r: 1.6, fill: col }, lg); return; }
+  const hgt = [0, 10, 17, 21, 25][stage];
+  line(g, b, [b[0], b[1] - hgt], "#2f5a2a", stage > 2 ? 2 : 1.4);
+  const leaf = (dx, dy, rot, s = 1.4) => el("ellipse", { cx: r1(b[0] + dx), cy: r1(b[1] + dy), rx: r1(4 * s), ry: r1(1.8 * s), fill: col, opacity: .9, transform: `rotate(${rot} ${r1(b[0] + dx)} ${r1(b[1] + dy)})` }, lg);
+  if (stage <= 2) { leaf(-3.5, -hgt + 1, -30); leaf(3.5, -hgt + 1, 30); if (stage === 2) { leaf(-3.5, -hgt + 6, -20, .8); leaf(3.5, -hgt + 6, 20, .8); } return; }
+  const cy = b[1] - hgt - (stage === 4 ? 7 : 4), R = stage === 4 ? 14 : 10;
+  if (stage === 4) el("ellipse", { cx: r1(b[0]), cy: r1(cy), rx: 18, ry: 15, fill: col, opacity: .16 }, lg);
+  for (let k = 0; k < 9; k++) { const a = k / 9 * TAU, rr = k % 2 ? R * .55 : R * .85; el("circle", { cx: r1(b[0] + Math.cos(a) * rr), cy: r1(cy + Math.sin(a) * rr * .8), r: r1(R * .45), fill: dk }, g); }
+  for (let k = 0; k < 9; k++) { const a = k / 9 * TAU + .3, rr = k % 2 ? R * .5 : R * .8; el("circle", { cx: r1(b[0] + Math.cos(a) * rr), cy: r1(cy + Math.sin(a) * rr * .8 - 1), r: r1(R * (k % 3 ? .2 : .28)), fill: k % 4 ? col : shade(col, .6) }, lg); }
+  if (stage === 4) [[-5, -4], [4, -6], [6, 3], [-3, 5]].forEach(([dx, dy]) => el("circle", { cx: r1(b[0] + dx), cy: r1(cy + dy), r: 1.6, fill: "#fff" }, lg));
+}
+let gardenSig = "";
+function drawGarden() {
+  if (!gardenSlot) return;
+  const hs = habits().slice(0, 4), sig = hs.map(([id, h]) => `${id}:${h.color}:${Math.min(41, (h.log || []).length)}`).join("|");
+  if (sig === gardenSig && gardenSlot.childNodes.length) return; gardenSig = sig;
+  gardenSlot.innerHTML = ""; const g = gardenSlot; setTimeout(buildHitPads, 0);
+  hlRect(g, 5.2, 5.2, 4.9, 4.9, "#5dffb0");
+  const beds = hs.length ? hs : [[null, { color: "#5dffb0", log: [] }], [null, { color: "#35e6ff", log: [] }]];
+  beds.forEach(([, h], k) => {
+    const x = 5.6, y = 5.6 + k * 1.12, w = 3.9, d = .55, col = h.color || "#5dffb0", total = (h.log || []).length;
+    box(g, x, y, 0, w, d, .3, "#4a3a44");
+    poly(g, [P(x + .06, y + .06, .3), P(x + w - .06, y + .06, .3), P(x + w - .06, y + d - .06, .3), P(x + .06, y + d - .06, .3)], "#24180f", "");
+    neonD(faceG(g, "L", x, y, 0, w, d, .3), `M0 .07H${w}`, col, 1);
+    for (let i = 0; i < 5; i++) plantAt(g, x + .42 + i * .77, y + d / 2, total, i, col);
+  });
+  // signpost
+  line(g, P(5.45, 10.05, 0), P(5.45, 10.05, 1.05), "#0b0818", 2); line(g, P(6.55, 10.05, 0), P(6.55, 10.05, 1.05), "#0b0818", 2);
+  const sg = faceG(g, "L", 5.35, 10.05, .62, 1.3, 0, .42);
+  el("rect", { x: 0, y: 0, width: 1.3, height: .42, fill: "#0b0918", class: "on" }, sg);
+  neonD(sg, "M.03 .03H1.27V.39H.03Z", "#5dffb0", .9); neonText(sg, .65, .31, .24, "HABITS", "#c8ffe4");
+}
+function habitToggle(id, k) {
+  const h = st.items.get(id); if (!h) return; const s = new Set(h.log || []);
+  s.has(k) ? s.delete(k) : s.add(k); store.update(id, { log: [...s].sort() });
+  if (s.has(k)) { const t = s.size; if (t % 8 === 0 && t <= 40) toast(t === 40 ? `${h.name}: this bed is in full bloom.` : `${h.name}: a plant just reached full bloom.`); pulse("habits"); }
+}
+function habitsBody() {
+  const hs = habits(); let h = "";
+  if (!hs.length) h += `<div class="empty"><b>Plant your first habit</b>Each check-in waters a bed in the garden. Plants grow slowly: 8 check-ins bring one to full bloom, and a whole bed takes about 2 months.</div>
+    <div class="acts" style="justify-content:center;display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" data-act="hseed" data-k="gym">Add Gym (4× a week)</button><button class="btn" data-act="hseed" data-k="sleep">Add Sleep before midnight</button></div>`;
+  hs.forEach(([id, x]) => {
+    const wk = habitWeek(x), n = wk.filter(d => d.on).length, tgt = x.per === "week" ? (x.target || 3) : 7, today = (x.log || []).includes(todayK());
+    const sk = habitStreak(x), gr = growthOf((x.log || []).length), total = (x.log || []).length;
+    h += `<article class="hab" data-id="${id}" style="--c:${x.color}">
+      <div class="hab-h"><i class="dot"></i><b>${esc(x.name)}</b><span class="per">${x.per === "week" ? `${tgt}× a week` : "Daily"}</span><button class="icon-btn sm" data-act="hdel" aria-label="Delete ${esc(x.name)}">${ICON.x}</button></div>
+      <button class="hab-do${today ? " on" : ""}" data-act="hcheck" aria-pressed="${today}">${today ? TICK + " Done today" : "Mark done today"}</button>
+      <div class="hab-week" role="group" aria-label="This week">${wk.map((d, i) => { const fut = d.k > todayK(); return `<button class="hd${d.on ? " on" : ""}${d.k === todayK() ? " now" : ""}" data-act="hday" data-d="${d.k}" ${fut ? "disabled" : ""} aria-label="${d.k}${d.on ? " done" : ""}">${"MTWTFSS"[i]}</button>`; }).join("")}</div>
+      <div class="hab-stats"><span><b>${n}</b>/${tgt} this week</span><span><b>${sk.n}</b> ${sk.unit} streak</span><span><b>${total}</b> total</span></div>
+      <div class="hab-grow">${gr.full ? "This bed is in full bloom." : `Plant ${gr.plant} of 5 · ${gr.left} more check-in${gr.left === 1 ? "" : "s"} to full bloom`}</div>
+      ${heatmap(x)}
+    </article>`;
+  });
+  h += `<form class="frm" data-form="habit"><h3 class="sec-h">Plant a new habit</h3><div class="frow"><input name="name" placeholder="e.g. Read 20 minutes" maxlength="40" required aria-label="Habit name"><select name="per" aria-label="How often"><option value="day">Daily</option><option value="w2">2× a week</option><option value="w3">3× a week</option><option value="w4">4× a week</option><option value="w5">5× a week</option></select><button class="btn primary">Plant</button></div><p class="hint-row">The garden has room for four beds.</p></form>`;
+  return h;
+}
+function heatmap(x) {
+  const s = new Set(x.log || []), start = addDays(monday(), -7 * 11); let cells = "";
+  for (let w = 0; w < 12; w++) for (let d = 0; d < 7; d++) { const k = isoD(addDays(start, w * 7 + d)); cells += `<i class="${s.has(k) ? "on" : ""}${k > todayK() ? " fut" : ""}" style="grid-column:${w + 1};grid-row:${d + 1}" title="${k}"></i>`; }
+  return `<div class="heat" aria-label="Last 12 weeks">${cells}</div>`;
+}
+
+/* ---------- Coursework observatory ---------- */
+const CW_STATUS = { todo: "To do", doing: "In progress", done: "Submitted" };
+function cwBody() {
+  const all = cws(), open = all.filter(([, c]) => c.status !== "done"), done = all.filter(([, c]) => c.status === "done");
+  const nx = open.find(([, c]) => c.due && daysTo(c.due) >= 0), fort = open.filter(([, c]) => c.due && daysTo(c.due) >= 0 && daysTo(c.due) <= 14);
+  const wt = open.reduce((s, [, c]) => s + (+c.weight || 0), 0);
+  let h = `<div class="tiles">${tile("Next deadline", nx ? (daysTo(nx[1].due) === 0 ? "Today" : `${daysTo(nx[1].due)}<sup>d</sup>`) : "–", nx ? esc(nx[1].title) : "Nothing coming up")}${tile("Next 14 days", fort.length, fort.length === 1 ? "deadline" : "deadlines")}${tile("Still open", open.length, wt ? `${wt}% of marks in play` : "pieces of work")}${tile("Submitted", done.length, "this year")}</div>`;
+  if (!all.length) h += `<div class="empty"><b>Map your deadlines</b>Add each coursework piece with its module, due date and weight. The observatory counts down to it, the Dispatch flags it a week out, and one tap turns it into a to-do.</div>`;
+  if (open.length) {
+    h += `<h3 class="sec-h">Coming up</h3><ul class="cwl">`;
+    open.forEach(([id, c]) => {
+      const n = c.due ? daysTo(c.due) : null, urg = n == null ? "" : n < 0 ? " late" : n <= 3 ? " hot" : n <= 7 ? " warm" : "", d = c.due ? fromISO(c.due) : null;
+      h += `<li class="cw${urg}" data-id="${id}"><div class="cw-d">${d ? `<b>${d.getDate()}</b><span>${d.toLocaleDateString("en-GB", { month: "short" })}</span>` : "<span>TBC</span>"}</div>
+        <div class="cw-m"><div class="cw-t">${esc(c.title)}</div><div class="meta">${n != null ? `<span class="cnt">${dueWord(n)}</span>` : ""}${c.module ? `<span class="tag">${esc(c.module)}</span>` : ""}${c.weight ? `<span class="tag">${esc(c.weight)}%</span>` : ""}<span class="cw-s s-${c.status || "todo"}">${CW_STATUS[c.status || "todo"]}</span></div>
+        <div class="acts"><button class="btn sm" data-act="cwstat">${c.status === "doing" ? "Submitted" : "Start it"}</button><button class="btn sm" data-act="cwfocus">Focus</button><button class="btn sm" data-act="cwtodo">+ To-do</button><button class="icon-btn sm" data-act="cwdel" aria-label="Delete ${esc(c.title)}">${ICON.x}</button></div></div></li>`;
+    });
+    h += `</ul>`;
+  }
+  if (done.length) h += `<h3 class="sec-h">Submitted <span class="sub">${done.length}</span></h3><ul class="cwl">${done.slice(-6).reverse().map(([id, c]) => `<li class="cw done" data-id="${id}"><div class="cw-d"><span>${TICK}</span></div><div class="cw-m"><div class="cw-t">${esc(c.title)}</div><div class="meta">${c.module ? `<span class="tag">${esc(c.module)}</span>` : ""}<button class="btn sm ghost" data-act="cwundo">Reopen</button></div></div></li>`).join("")}</ul>`;
+  h += `<form class="frm" data-form="cw"><h3 class="sec-h">Add coursework</h3>
+    <input name="title" placeholder="e.g. Design report 2" maxlength="80" required aria-label="Title">
+    <div class="frow"><input name="module" placeholder="Module, e.g. Mechanics" maxlength="40" aria-label="Module"><input name="due" type="date" required aria-label="Due date"><input name="weight" type="number" min="0" max="100" placeholder="% weight" aria-label="Weight in percent"></div>
+    <button class="btn primary">Add deadline</button></form>`;
+  return h;
+}
+
+/* ---------- Studio ---------- */
+const POST_FLOW = ["idea", "draft", "ready", "posted"], POST_L = { idea: "Ideas", draft: "Drafting", ready: "Ready to post", posted: "Posted" };
+const PLAT = { instagram: "IG", github: "GH", both: "IG+GH" };
+function studioBody() {
+  const tab = st.stTab || "projects";
+  let h = `<div class="btabs" role="tablist">${[["projects", "Projects"], ["posts", "Post queue"]].map(([k, v]) => `<button role="tab" data-act="sttab" data-t="${k}" aria-selected="${tab === k}">${v}</button>`).join("")}</div>`;
+  if (tab === "projects") {
+    const ps = projects();
+    if (!ps.length) h += `<div class="empty"><b>Your workbench</b>Add a design project to track its next step, milestones and links.</div>`;
+    ps.forEach(([id, p]) => {
+      const ms = p.milestones || [], dn = ms.filter(m => m.done).length;
+      h += `<article class="proj s-${p.status || "active"}" data-id="${id}">
+        <div class="proj-h"><b>${esc(p.title)}</b><button class="pill" data-act="pstat" title="Change status">${{ active: "Active", paused: "Paused", done: "Done" }[p.status || "active"]}</button></div>
+        ${p.next ? `<p class="proj-next"><span>Next</span> ${esc(p.next)}</p>` : ""}
+        ${ms.length ? `<div class="bar1"><i style="width:${r1(dn / ms.length * 100)}%"></i></div><ul class="ms">${ms.map((m, i) => `<li><button class="ck" data-act="msTog" data-i="${i}" aria-pressed="${!!m.done}" style="--c:var(--b-studio)">${TICK}</button><span class="${m.done ? "done" : ""}">${esc(m.t)}</span></li>`).join("")}</ul>` : ""}
+        ${(p.links || []).length ? `<div class="links">${p.links.map(l => `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label || l.url)} ↗</a>`).join("")}</div>` : ""}
+        <form class="frm inline" data-form="ms"><input name="t" placeholder="Add a milestone" maxlength="80" aria-label="New milestone"><button class="btn sm">Add</button></form>
+        <details class="more"><summary>Edit</summary><form class="frm" data-form="pedit"><input name="title" value="${esc(p.title)}" maxlength="60" aria-label="Project name"><input name="next" value="${esc(p.next || "")}" placeholder="Next step" maxlength="120" aria-label="Next step"><div class="frow"><input name="label" placeholder="Link label" maxlength="30" aria-label="Link label"><input name="url" type="url" placeholder="https://…" aria-label="Link URL"></div><div class="acts"><button class="btn primary sm">Save</button><button type="button" class="btn sm ghost danger" data-act="pdel">Delete project</button></div></form></details>
+      </article>`;
+    });
+    h += `<form class="frm" data-form="project"><h3 class="sec-h">New project</h3><div class="frow"><input name="title" placeholder="Project name" maxlength="60" required aria-label="Project name"><input name="next" placeholder="First next step" maxlength="120" aria-label="Next step"></div><button class="btn primary">Add project</button></form>`;
+  } else {
+    const all = posts(), pj = Object.fromEntries(projects().map(([id, p]) => [id, p.title]));
+    if (!all.length) h += `<div class="empty"><b>Plan your posts</b>Queue Instagram and GitHub updates, move each one along as you make it, and let Claude draft the caption.</div>`;
+    POST_FLOW.forEach(s => {
+      const rows = all.filter(([, p]) => (p.status || "idea") === s); if (!rows.length) return;
+      h += `<h3 class="sec-h">${POST_L[s]} <span class="sub">${rows.length}</span></h3><ul class="posts">`;
+      rows.forEach(([id, p]) => {
+        h += `<li class="post" data-id="${id}"><span class="plat">${PLAT[p.platform || "instagram"]}</span><div class="pm"><div class="pt">${esc(p.title)}</div>${pj[p.projectId] ? `<div class="meta">${esc(pj[p.projectId])}</div>` : ""}
+          ${p.caption ? `<p class="cap">${esc(p.caption)}</p>` : ""}
+          <div class="acts">${s !== "posted" ? `<button class="btn sm" data-act="padv">${s === "ready" ? "Mark posted" : "Move on →"}</button>` : ""}${s !== "posted" && sample && !st.aiOff ? `<button class="btn sm ghost" data-act="caption" ${st.busy.has(id) ? "disabled" : ""}>${st.busy.has(id) ? "Writing…" : p.caption ? "New caption" : "Draft caption"}</button>` : ""}<button class="btn sm ghost danger" data-act="postdel">Delete</button></div></div></li>`;
+      });
+      h += `</ul>`;
+    });
+    h += `<form class="frm" data-form="post"><h3 class="sec-h">Queue a post</h3><input name="title" placeholder="e.g. Devlog #011: six new buildings" maxlength="90" required aria-label="Post title"><div class="frow"><select name="platform" aria-label="Platform"><option value="instagram">Instagram</option><option value="github">GitHub</option><option value="both">Both</option></select><select name="projectId" aria-label="Project"><option value="">No project</option>${projects().map(([id, p]) => `<option value="${id}">${esc(p.title)}</option>`).join("")}</select></div><button class="btn primary">Queue it</button></form>`;
+  }
+  return h;
+}
+async function draftCaption(id) {
+  const p = st.items.get(id); if (!p || !sample) return; st.busy.add(id); renderPanel();
+  const proj = p.projectId && st.items.get(p.projectId);
+  try {
+    const r = await sample(`Write a short ${p.platform === "github" ? "GitHub README/changelog paragraph" : "Instagram caption"} for a first-year Design Engineering student documenting his build process.
+Post: """${p.title.slice(0, 200)}"""${proj ? `\nProject: """${String(proj.title).slice(0, 80)}""" (next step: ${String(proj.next || "").slice(0, 120)})` : ""}
+Style: first person, plain and specific, no hype words, no emojis, max 60 words${p.platform === "github" ? "" : ", then 4 relevant hashtags on a new line"}. Reply with only the text.`, { modelTier: "quick" });
+    if (r && r.text) store.update(id, { caption: r.text.trim().slice(0, 600) });
+  } catch (e) { aiFail(e); }
+  st.busy.delete(id); renderPanel();
+}
+
+/* ---------- Focus Lighthouse ---------- */
+let focusRun = null, focusTick = 0;
+try { focusRun = JSON.parse(localStorage.getItem("island.focus") || "null"); } catch (e) {}
+const FAREAS = { ...CATS };
+function focusAreas() { const m = new Set(cws().map(([, c]) => c.module).filter(Boolean)); return [...Object.entries(FAREAS), ...[...m].map(x => [x, x])]; }
+function saveRun() { try { focusRun ? localStorage.setItem("island.focus", JSON.stringify(focusRun)) : localStorage.removeItem("island.focus"); } catch (e) {} }
+function startFocus(label, area, mins) {
+  focusRun = { start: Date.now(), mins: Math.max(5, Math.min(180, +mins || 25)), label: (label || "Focus").slice(0, 80), area: area || "academic" }; saveRun();
+  svg.classList.add("focusing"); runFocusTicker(); renderPanel(); toast(`Focus on: ${focusRun.label} · ${focusRun.mins} min. The lighthouse is on.`);
+}
+function endFocus(save) {
+  if (!focusRun) return; const r = focusRun, mins = Math.round((Math.min(Date.now(), r.start + r.mins * 6e4) - r.start) / 6e4);
+  focusRun = null; saveRun(); svg.classList.remove("focusing"); clearInterval(focusTick); updateFocusHUD();
+  if (save && mins >= 1) { newItem({ kind: "focus", label: r.label, area: r.area, mins, start: r.start }); toast(`Logged ${fmtMins(mins)} on ${r.label}.`); }
+  renderPanel();
+}
+function runFocusTicker() { clearInterval(focusTick); updateFocusHUD(); if (focusRun) focusTick = setInterval(updateFocusHUD, 1000); }
+function updateFocusHUD() {
+  const pill = $("#focusPill"), pip = pipEls.focus;
+  if (!focusRun) { if (pill) pill.hidden = true; if (pip) pip.hidden = true; return; }
+  const left = focusRun.start + focusRun.mins * 6e4 - Date.now();
+  if (left <= 0) { endFocus(true); toast("Focus session complete. Nice work.", "Another 25", () => startFocus(focusRun?.label || "Focus", "academic", 25)); return; }
+  const mm = String(Math.floor(left / 6e4)).padStart(2, "0"), ss = String(Math.floor(left / 1000) % 60).padStart(2, "0");
+  if (pill) { pill.hidden = false; pill.querySelector("b").textContent = `${mm}:${ss}`; pill.querySelector("span").textContent = focusRun.label; }
+  if (pip) { pip.hidden = false; pip.textContent = `${mm}:${ss}`; }
+  const t = $("#fxTime"); if (t) t.textContent = `${mm}:${ss}`;
+  const bar = $("#fxBar"); if (bar) bar.style.width = r1(100 - left / (focusRun.mins * 6e4) * 100) + "%";
+}
+function focusWeek(mon = monday()) {
+  const end = +addDays(mon, 7), logs = focusLogs().filter(([, f]) => f.start >= +mon && f.start < end).map(([, f]) => f);
+  const days = Array.from({ length: 7 }, (_, i) => logs.filter(f => new Date(f.start).getDay() === (i + 1) % 7).reduce((s, f) => s + (f.mins || 0), 0));
+  const area = {}; logs.forEach(f => { const k = CATS[f.area] || f.area || "Other"; area[k] = (area[k] || 0) + (f.mins || 0); });
+  return { logs, days, area, total: days.reduce((a, b) => a + b, 0) };
+}
+function focusBody() {
+  let h = "";
+  if (focusRun) {
+    h += `<div class="fx-run"><small>Focusing on</small><b class="fx-l">${esc(focusRun.label)}</b><div id="fxTime" class="fx-t">--:--</div><div class="bar1"><i id="fxBar"></i></div>
+      <div class="acts" style="justify-content:center"><button class="btn primary" data-act="fstop">Finish and log</button><button class="btn ghost" data-act="fcancel">Cancel</button></div></div>`;
+  } else {
+    const dur = st.fDur || 25, area = st.fArea || "academic", sugg = [...todos().filter(([, t]) => !t.done && t.category === "academic").slice(0, 6).map(([, t]) => t.title), ...cws().filter(([, c]) => c.status !== "done").map(([, c]) => c.title)];
+    h += `<form class="frm fx-set" data-form="focus"><input name="label" list="fxList" placeholder="What are you focusing on?" maxlength="80" aria-label="Focus on" value="${esc(st.fLabel || "")}"><datalist id="fxList">${[...new Set(sugg)].map(s => `<option value="${esc(s)}">`).join("")}</datalist>
+      <div class="filters" role="radiogroup" aria-label="Length">${[25, 50, 90].map(m => `<button type="button" class="chip" role="radio" data-act="fdur" data-k="${m}" aria-checked="${dur === m}" style="--c:var(--cyan)">${m} min</button>`).join("")}</div>
+      <div class="filters" role="radiogroup" aria-label="Area">${focusAreas().map(([k, v]) => `<button type="button" class="chip sm" role="radio" data-act="farea" data-k="${esc(k)}" aria-checked="${area === k}" style="--c:var(--cyan)">${esc(v)}</button>`).join("")}</div>
+      <button class="btn primary fx-go">Start ${dur}-minute session</button></form>`;
+  }
+  const W = focusWeek(), max = Math.max(60, ...W.days), today = (new Date().getDay() + 6) % 7;
+  h += `<h3 class="sec-h">This week <span class="sub">${fmtMins(W.total)} · ${W.logs.length} session${W.logs.length === 1 ? "" : "s"}</span></h3>
+    <div class="fbars">${W.days.map((m, i) => `<div class="fb${i === today ? " now" : ""}"><span class="v">${m ? fmtMins(m) : ""}</span><i style="height:${r1(m / max * 100)}%"></i><small>${"MTWTFSS"[i]}</small></div>`).join("")}</div>`;
+  const ar = Object.entries(W.area).sort((a, b) => b[1] - a[1]);
+  if (ar.length) h += `<div class="fareas">${ar.map(([k, m]) => `<div class="fa"><span>${esc(k)}</span><i style="width:${r1(m / W.total * 100)}%"></i><b>${fmtMins(m)}</b></div>`).join("")}</div>`;
+  // weekly summary: Sunday review writes one; you can also ask now
+  const wk = isoD(monday()), note = st.items.get("fs-" + wk), rv = st.review && st.review.focus && st.review.weekOf === wk ? st.review.focus.summary : null;
+  h += `<h3 class="sec-h">Weekly focus summary</h3>`;
+  const txt = (note && note.text) || rv;
+  h += txt ? `<p class="summ">${esc(txt)}</p>` : `<p class="hint-row">Every Sunday evening the review sums up your week of focus. You can also ask for one now.</p>`;
+  if (sample && !st.aiOff && W.logs.length) h += `<button class="btn sm" data-act="fsum" ${st.busy.has("fsum") ? "disabled" : ""}>${st.busy.has("fsum") ? "Thinking…" : txt ? "Refresh summary" : "Summarise my week"}</button>`;
+  const recent = focusLogs().slice(0, 8);
+  if (recent.length) h += `<h3 class="sec-h">Recent sessions</h3><ul class="flog">${recent.map(([id, f]) => { const d = new Date(f.start); return `<li data-id="${id}"><time>${d.toLocaleDateString("en-GB", { weekday: "short" })} ${d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</time><span>${esc(f.label)}</span><b>${fmtMins(f.mins)}</b><button class="icon-btn sm" data-act="fdel" aria-label="Delete session">${ICON.x}</button></li>`; }).join("")}</ul>`;
+  h += `<details class="more"><summary>Log a session you forgot to time</summary><form class="frm" data-form="flog"><div class="frow"><input name="label" placeholder="What" maxlength="80" required aria-label="What"><input name="mins" type="number" min="5" max="300" placeholder="Minutes" required aria-label="Minutes"></div><button class="btn sm">Log it</button></form></details>`;
+  return h;
+}
+async function focusSummary() {
+  if (!sample || st.busy.has("fsum")) return; st.busy.add("fsum"); renderPanel();
+  const W = focusWeek(), prev = focusWeek(addDays(monday(), -7));
+  const data = { thisWeekMinutesByDay_MonToSun: W.days, byArea: W.area, sessions: W.logs.map(f => ({ what: f.label, mins: f.mins, day: new Date(f.start).toLocaleDateString("en-GB", { weekday: "short" }) })), lastWeekTotal: prev.total };
+  try {
+    const r = await sample(`You're a calm study coach. Summarise this university student's week of focus sessions in 3 short sentences: how much and when he focused, what took most time, and one specific, kind suggestion for next week. No praise inflation, no emojis.
+Data: ${JSON.stringify(data).slice(0, 4000)}
+Reply with only the summary.`, { modelTier: "quick" });
+    if (r && r.text) store.set("fs-" + isoD(monday()), { kind: "note", type: "focusSummary", week: isoD(monday()), text: r.text.trim().slice(0, 800), createdAt: Date.now() });
+  } catch (e) { aiFail(e); }
+  st.busy.delete("fsum"); renderPanel();
+}
+
+/* ---------- News Tower ---------- */
+function newsBody() {
+  const n = st.news; if (!n || !Array.isArray(n.sections)) return `<div class="empty"><b>The presses are warming up</b>World, UK and US politics, tech and design headlines arrive with the 7:30 Dispatch.</div>`;
+  const keys = n.sections.map(s => s.key), cur = keys.includes(st.nTab) ? st.nTab : keys[0], sec = n.sections.find(s => s.key === cur);
+  let h = `<div class="filters" role="radiogroup" aria-label="Section">${n.sections.map(s => `<button class="chip" role="radio" data-act="ntab" data-k="${esc(s.key)}" aria-checked="${s.key === cur}" style="--c:var(--b-news)">${esc(s.title)} <span class="n">${(s.items || []).length}</span></button>`).join("")}</div>`;
+  h += `<ol class="news">${(sec.items || []).map((it, i) => `<li${i === 0 ? ' class="lead"' : ""}><a href="${esc(it.url)}" target="_blank" rel="noopener noreferrer">${esc(it.t)}</a>${it.s ? `<p>${esc(it.s)}</p>` : ""}<small>${esc(it.src || "")}</small></li>`).join("")}</ol>`;
+  const upd = n.updatedAt ? new Date(n.updatedAt).toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit" }) : "";
+  return h + `<p class="src">Updated ${esc(upd)} · ${esc((n.sources || []).join(" · "))}. Headlines are picked and summarised by Claude, so open the article to read it in full.</p>`;
+}
+
+/* ---------- Morning Dispatch (+ Sunday review) ---------- */
+function dispatchBody() {
+  const tab = st.dTab || "today";
+  let h = `<div class="btabs" role="tablist">${[["today", "Today"], ["review", "Week review"]].map(([k, v]) => `<button role="tab" data-act="dtab" data-t="${k}" aria-selected="${tab === k}">${v}</button>`).join("")}</div>`;
+  return h + (tab === "today" ? dispatchToday() : reviewBody());
+}
+function dispatchToday() {
+  const d = st.dispatch, fresh = d && d.date === todayK(), now = new Date();
+  let h = `<div class="dp-date">${now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}</div>`;
+  h += fresh && d.brief ? `<p class="dp-brief">${esc(d.brief)}</p>` : `<p class="hint-row">Your brief is written at 7:30 each morning. Here's today so far.</p>`;
+  const due = todos().filter(([, t]) => !t.done && t.due && dayDiff(t.due) <= 0).sort(sortT);
+  h += `<h3 class="sec-h">Due today <span class="sub">${due.length ? due.length + " open" : "all clear"}</span></h3>`;
+  h += due.length ? `<ul>${due.slice(0, 6).map(([id, it]) => itemHTML(id, it)).join("")}</ul>` + (due.length > 6 ? `<button class="btn sm ghost" data-act="go" data-b="todo">See all ${due.length}</button>` : "") : `<div class="empty sm">Nothing due. A good day to get ahead.</div>`;
+  const soon = cws().filter(([, c]) => c.status !== "done" && c.due && daysTo(c.due) >= 0 && daysTo(c.due) <= 7);
+  if (soon.length) h += `<h3 class="sec-h">Deadlines this week</h3><ul class="mini">${soon.map(([, c]) => `<li><span>${esc(c.title)}${c.module ? ` · ${esc(c.module)}` : ""}</span><b>${dueWord(daysTo(c.due))}</b></li>`).join("")}</ul>`;
+  if (st.mail) { const nd = (st.mail.needs || []).filter(x => !(st.mailDone || []).includes(x.id));
+    h += `<h3 class="sec-h">Inbox</h3><div class="mini-row"><span>${nd.length ? esc(nd.slice(0, 2).map(x => x.from).join(" and ")) + (nd.length > 2 ? ` +${nd.length - 2} more` : "") + ` need${nd.length === 1 ? "s" : ""} you.` : "Nothing in your inbox needs you."}</span><button class="btn sm" data-act="go" data-b="mail">Open Data Post</button></div>`; }
+  const hs = habits();
+  if (hs.length) h += `<h3 class="sec-h">Habits today</h3><div class="hchips">${hs.map(([id, x]) => { const on = (x.log || []).includes(todayK()); return `<button class="hchip${on ? " on" : ""}" data-id="${id}" data-act="hcheck" style="--c:${x.color}" aria-pressed="${on}">${on ? TICK : "<i></i>"} ${esc(x.name)}</button>`; }).join("")}</div>`;
+  const W = focusWeek();
+  h += `<h3 class="sec-h">Focus</h3><div class="mini-row"><span>${W.total ? `${fmtMins(W.total)} this week across ${W.logs.length} session${W.logs.length === 1 ? "" : "s"}.` : "No focus sessions yet this week."}</span><button class="btn sm" data-act="go" data-b="focus">${focusRun ? "Open timer" : "Start one"}</button></div>`;
+  const keep = FB, games = [];
+  ["barca", "spain"].forEach(k => { FB = k; const m = upcoming()[0]; if (m && mTs(m) - Date.now() < 3 * 864e5) games.push([k, m]); }); FB = keep;
+  if (games.length) h += `<h3 class="sec-h">Matches</h3><ul class="mini">${games.map(([k, m]) => { const w = whenOf(m); return `<li><span>${esc(m.home)} v ${esc(m.away)}</span><b>${esc(w.wd)} ${esc(w.time || "")}</b></li>`; }).join("")}</ul>`;
+  const world = st.news && (st.news.sections || []).find(s => s.key === "world");
+  if (world && world.items && world.items.length) h += `<h3 class="sec-h">Headlines</h3><ol class="news compact">${world.items.slice(0, 3).map(it => `<li><a href="${esc(it.url)}" target="_blank" rel="noopener noreferrer">${esc(it.t)}</a></li>`).join("")}</ol><button class="btn sm ghost" data-act="go" data-b="news">More in the News Tower</button>`;
+  if (!st.mail || (st.mail.accounts || []).some(a => a.status !== "connected")) h += `<div class="soon"><h4>Imperial Outlook is next</h4><p>Once the Microsoft 365 connector is signed in, today's lectures and your school inbox appear here too.</p></div>`;
+  return h;
+}
+function reviewBody() {
+  const r = st.review, wk = isoD(monday());
+  let h = "";
+  if (r && r.summary) {
+    const wd = fromISO(r.weekOf), we = addDays(wd, 6);
+    h += `<div class="dp-date">Week of ${wd.toLocaleDateString("en-GB", { day: "numeric", month: "short" })} – ${we.toLocaleDateString("en-GB", { day: "numeric", month: "short" })}</div><p class="dp-brief">${esc(r.summary)}</p>`;
+    if ((r.wins || []).length) h += `<h3 class="sec-h">Done</h3><ul class="facts">${r.wins.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+    if ((r.slipped || []).length) h += `<h3 class="sec-h">Slipped</h3><ul class="facts">${r.slipped.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+    if ((r.next3 || []).length) h += `<h3 class="sec-h">Top 3 for next week</h3><ol class="facts">${r.next3.map(x => `<li>${esc(x)}</li>`).join("")}</ol>`;
+    if (r.focus) h += `<h3 class="sec-h">Focus <span class="sub">${fmtMins(r.focus.mins || 0)}</span></h3>${r.focus.summary ? `<p class="summ">${esc(r.focus.summary)}</p>` : ""}`;
+    if ((r.habits || []).length) h += `<h3 class="sec-h">Habits</h3><ul class="mini">${r.habits.map(x => `<li><span>${esc(x.name)}</span><b>${esc(x.count)}/${esc(x.target)}</b></li>`).join("")}</ul>`;
+  } else h += `<div class="empty"><b>Sunday review</b>Every Sunday at about 18:45, Claude looks back at your week: what got done, what slipped, how your focus and habits went, and your top three for next week.</div>`;
+  if (sample && !st.aiOff && dbRef) h += `<button class="btn sm" data-act="review" ${st.busy.has("review") ? "disabled" : ""}>${st.busy.has("review") ? "Writing…" : r && r.weekOf === wk ? "Rewrite this week's review" : "Write this week's review now"}</button>`;
+  return h;
+}
+async function writeReview() {
+  if (!sample || !dbRef || st.busy.has("review")) return; st.busy.add("review"); renderPanel();
+  const mon = monday(), wk = isoD(mon), end = isoD(addDays(mon, 7)), inWeek = ms => ms >= +mon && ms < +addDays(mon, 7);
+  const done = todos().filter(([, t]) => t.done && inWeek(t.doneAt || 0)).map(([, t]) => t.title);
+  const slipped = todos().filter(([, t]) => !t.done && t.due && t.due < todayK()).map(([, t]) => `${t.title} (was due ${t.due})`);
+  const upcomingT = todos().filter(([, t]) => !t.done && t.due && t.due >= todayK() && t.due < isoD(addDays(mon, 14))).map(([, t]) => `${t.title} (${t.due})`);
+  const cw = cws().filter(([, c]) => c.status !== "done").map(([, c]) => `${c.title}${c.module ? " [" + c.module + "]" : ""} due ${c.due}${c.weight ? ", " + c.weight + "%" : ""}`);
+  const W = focusWeek(mon), hb = habits().map(([, h]) => ({ name: h.name, count: habitWeek(h, mon).filter(d => d.on).length, target: h.per === "week" ? (h.target || 3) : 7 }));
+  try {
+    const out = await sample.json(`You write a short, honest weekly review for a first-year Design Engineering student's organiser. Week starting ${wk}.
+Done: ${JSON.stringify(done).slice(0, 2500)}
+Overdue / slipped: ${JSON.stringify(slipped).slice(0, 1500)}
+Coming up: ${JSON.stringify(upcomingT).slice(0, 1500)}
+Open coursework: ${JSON.stringify(cw).slice(0, 1500)}
+Focus minutes Mon-Sun: ${JSON.stringify(W.days)}; by area: ${JSON.stringify(W.area)}; sessions: ${W.logs.length}
+Habits: ${JSON.stringify(hb)}
+Reply with only JSON: {"summary": 2-3 sentences, plain and kind, "wins": up to 5 short strings, "slipped": up to 4 short strings, "next3": exactly 3 concrete priorities for next week (deadlines first), "focusSummary": 2-3 sentences on his focus with one specific suggestion}. No emojis, no hype.`, { modelTier: "default" });
+    if (out && typeof out === "object") {
+      const doc = { weekOf: wk, generatedAt: new Date().toISOString(), by: "page", summary: String(out.summary || "").slice(0, 800), wins: (out.wins || []).slice(0, 5).map(String), slipped: (out.slipped || []).slice(0, 4).map(String), next3: (out.next3 || []).slice(0, 3).map(String),
+        focus: { mins: W.total, sessions: W.logs.length, byArea: W.area, summary: String(out.focusSummary || "").slice(0, 800) }, habits: hb };
+      st.review = doc; await dbRef.doc(`data/users/${uidRef}/review`).set(doc);
+    }
+  } catch (e) { if (e && e.code) aiFail(e); else onDbErr(e); }
+  st.busy.delete("review"); renderPanel();
+}
+
+/* ---------- building tags + pips ---------- */
+function setPip(b, txt) { const p = pipEls[b]; if (!p) return; if (txt) { p.textContent = txt; p.hidden = false; } else p.hidden = true; }
+function setSub(b, txt) { const l = labelEls[b]; if (l) l.querySelector("small").textContent = txt; }
+function updateNewBuildings() {
+  const open = cws().filter(([, c]) => c.status !== "done" && c.due), wk = open.filter(([, c]) => daysTo(c.due) <= 7);
+  setPip("cw", wk.length ? String(wk.length) : null);
+  const nx = open.find(([, c]) => daysTo(c.due) >= 0); setSub("cw", nx ? `Next: ${nx[1].title.slice(0, 22)} ${dueWord(daysTo(nx[1].due))}` : BINFO.cw.s);
+  const hs = habits(), dn = hs.filter(([, h]) => (h.log || []).includes(todayK())).length; setSub("habits", hs.length ? `${dn} of ${hs.length} done today` : BINFO.habits.s);
+  let seen = ""; try { seen = localStorage.getItem("dispatch.seen") || ""; } catch (e) {}
+  const fresh = st.dispatch && st.dispatch.date === todayK(); setPip("dispatch", fresh && seen !== todayK() ? "NEW" : null); setSub("dispatch", fresh ? "Today's brief is in" : BINFO.dispatch.s);
+  const rd = posts().filter(([, p]) => p.status === "ready").length; setPip("studio", rd ? String(rd) : null); setSub("studio", `${projects().filter(([, p]) => (p.status || "active") === "active").length} active · ${posts().filter(([, p]) => p.status !== "posted").length} posts queued`);
+  if (!focusRun) { const W = focusWeek(); setSub("focus", W.total ? `${fmtMins(W.total)} this week` : BINFO.focus.s); } else setSub("focus", "Focusing now");
+  if (st.news && st.news.updatedAt) setSub("news", "Updated " + new Date(st.news.updatedAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }));
+  if (st.mailState && Array.isArray(st.mailState.done) && !st.mailDone) st.mailDone = st.mailState.done;
+  if (st.mail) { const n = (st.mail.needs || []).filter(x => !(st.mailDone || []).includes(x.id)).length; setPip("mail", n ? String(n) : null); setSub("mail", n ? `${n} need${n === 1 ? "s" : ""} you` : "Inbox handled"); }
+  drawGarden();
+}
 
 function sheetSub(b) {
   if (b === "barca") { const me = st.barca && (st.barca.table || []).find(r => TEAMS.barca.me(r.team)); return `Blaugrana Stadium${me ? ` · LaLiga ${ord(me.pos)}, ${me.pts} pts` : ""}`; }
   if (b === "spain") { const me = st.spain && (st.spain.table || []).find(r => TEAMS.spain.me(r.team)); return `World champions${me ? ` · Nations League ${ord(me.pos)}, ${me.pts} pts` : ""}`; }
+  if (b === "mail") { const n = st.mail ? (st.mail.needs || []).filter(x => !(st.mailDone || []).includes(x.id)).length : 0; return st.mail ? `${n ? n + " need" + (n === 1 ? "s" : "") + " you" : "Inbox handled"} · Gmail` : BINFO.mail.s; }
+  if (b === "habits") { const hs = habits(); return hs.length ? `${hs.filter(([, h]) => (h.log || []).includes(todayK())).length} of ${hs.length} done today` : BINFO.habits.s; }
+  if (b === "cw") { const o = cws().filter(([, c]) => c.status !== "done").length; return `${o} open deadline${o === 1 ? "" : "s"}`; }
+  if (b === "focus") { const W = focusWeek(); return `${fmtMins(W.total)} focused this week`; }
+  if (b === "news") return st.news && st.news.date === todayK() ? "Today's edition" : BINFO.news.s;
   if (b === "todo") { const n = dueNowCount(), o = todos().filter(([, it]) => !it.done).length; return `${BINFO.todo.s} · ${o} open${n ? ` · ${n} due now` : ""}`; }
   if (b === "ideas") { const n = ideas().length; return `${BINFO.ideas.s} · ${n} idea${n === 1 ? "" : "s"}`; }
   return BINFO[b].s;
 }
 function openPanel(b, wide = false) {
+  if (b === "dispatch") try { localStorage.setItem("dispatch.seen", todayK()); } catch (e) {}
   st.panel = b; st.wide = wide; st.edit = null;
   sheet.hidden = false; sheet.classList.toggle("wide", wide); sheet.classList.toggle("barca", b === "barca"); sheet.classList.toggle("spain", b === "spain"); if (b !== st.lastFb && TEAMS[b]) { st.lastFb = b; st.bTab = "matches"; st.bSub = "upcoming"; st.bComp = "all"; }
   sheet.style.setProperty("--c", BINFO[b].c);
@@ -1692,7 +2338,8 @@ function renderPanel() {
   $("#shSub").textContent = st.mode === "loading" ? BINFO[st.panel].s : sheetSub(st.panel);
   if (st.mode === "loading" && (st.panel === "todo" || st.panel === "ideas")) { body.innerHTML = `<div class="loading">Opening your island…</div>`; return; }
   const top = body.scrollTop;
-  body.innerHTML = st.panel === "todo" ? todoBody() : st.panel === "cal" ? calBody() : st.panel === "mail" ? mailBody() : TEAMS[st.panel] ? fbBody(st.panel) : ideasBody();
+  const PB = { dispatch: dispatchBody, news: newsBody, studio: studioBody, habits: habitsBody, cw: cwBody, focus: focusBody };
+  body.innerHTML = PB[st.panel] ? PB[st.panel]() : st.panel === "todo" ? todoBody() : st.panel === "cal" ? calBody() : st.panel === "mail" ? mailBody() : TEAMS[st.panel] ? fbBody(st.panel) : ideasBody();
   body.scrollTop = top;
 }
 function setBubble(b, n) { const p = pipEls[b]; if (p && b === "todo") { p.textContent = n > 99 ? "99+" : String(n); p.hidden = !(n > 0); } const l = labelEls[b]; if (l) l.querySelector("small").textContent = BINFO[b].s + (n > 0 ? (b === "todo" ? ` · ${n} due now` : ` · ${n} idea${n === 1 ? "" : "s"}`) : ""); }
@@ -1701,7 +2348,7 @@ function render() {
   const loading = st.mode === "loading", ni = ideas().length, dn = dueNowCount();
   setBubble("todo", loading ? 0 : dn); setBubble("ideas", loading ? 0 : ni);
   const halo = $("#halo"); if (halo) halo.setAttribute("opacity", r1(Math.min(1, .2 + ni * .15)));
-  updateStadium();
+  updateStadium(); updateNewBuildings();
   if (labelEls.todo) labelEls.todo.setAttribute("aria-label", `Open To-dos. ${dn} due now.`);
   renderPanel();
 }
@@ -1761,6 +2408,36 @@ sheet.addEventListener("click", e => {
   if (act === "slead") { st.sLead = a.dataset.k; return renderPanel(); }
   if (act === "bstat") { st.bStat = a.dataset.k; return renderPanel(); }
   if (act === "bcomp") { st.bComp = a.dataset.k; return renderPanel(); }
+  if (act === "go") return openPanel(a.dataset.b);
+  if (act === "mdone" || act === "m2todo") { const card = a.closest("[data-mid]"), mid = card && card.dataset.mid, x = st.mail && [...(st.mail.needs || [])].find(n => n.id === mid); if (!x) return;
+    if (act === "m2todo") { newItem({ kind: "todo", title: x.subject.slice(0, 110), category: "misc", due: x.due || null, time: null, done: false, doneAt: null, raw: x.subject, manual: true, edited: true }); toast("Added to your to-dos"); pulse("todo"); }
+    const set = new Set(st.mailDone || []); if (act === "mdone" && set.has(mid)) set.delete(mid); else set.add(mid); st.mailDone = [...set].slice(-200);
+    if (dbRef) dbRef.doc(`data/users/${uidRef}/mailState`).set({ done: st.mailDone }).catch(onDbErr); return render(); }
+  if (act === "dtab") { st.dTab = a.dataset.t; return renderPanel(); }
+  if (act === "sttab") { st.stTab = a.dataset.t; return renderPanel(); }
+  if (act === "ntab") { st.nTab = a.dataset.k; $("#shBody").scrollTop = 0; return renderPanel(); }
+  if (act === "hseed") { const k = a.dataset.k; newItem(k === "gym" ? { kind: "habit", name: "Gym / training", per: "week", target: 4, color: "#ff4fa8", log: [] } : { kind: "habit", name: "Sleep before midnight", per: "day", target: 7, color: "#b46cff", log: [] }); return; }
+  if (act === "hcheck" && id) return habitToggle(id, todayK());
+  if (act === "hday" && id) return habitToggle(id, a.dataset.d);
+  if (act === "hdel" && it) { store.remove(id); return toast(`Removed ${it.name}.`, "Undo", () => store.set(id, it)); }
+  if (act === "cwstat" && it) { store.update(id, { status: it.status === "doing" ? "done" : "doing", doneAt: it.status === "doing" ? Date.now() : null }); if (it.status === "doing") toast(`Submitted: ${it.title}`); return; }
+  if (act === "cwundo" && it) return store.update(id, { status: "doing" });
+  if (act === "cwtodo" && it) { newItem({ kind: "todo", title: it.title + (it.module ? ` (${it.module})` : ""), category: "academic", due: it.due || null, time: null, done: false, doneAt: null, raw: it.title, manual: true, edited: true }); toast("Added to your to-dos"); return pulse("todo"); }
+  if (act === "cwfocus" && it) { st.fLabel = it.title; st.fArea = it.module || "academic"; return openPanel("focus"); }
+  if (act === "cwdel" && it) { store.remove(id); return toast("Deadline deleted.", "Undo", () => store.set(id, it)); }
+  if (act === "pstat" && it) return store.update(id, { status: { active: "paused", paused: "done", done: "active" }[it.status || "active"] });
+  if (act === "msTog" && it) { const ms = (it.milestones || []).map((m, i) => i === +a.dataset.i ? { ...m, done: !m.done } : m); return store.update(id, { milestones: ms }); }
+  if (act === "pdel" && it) { store.remove(id); return toast(`Deleted ${it.title}.`, "Undo", () => store.set(id, it)); }
+  if (act === "padv" && it) { const i = POST_FLOW.indexOf(it.status || "idea"); return store.update(id, { status: POST_FLOW[Math.min(3, i + 1)], postedAt: i + 1 === 3 ? Date.now() : null }); }
+  if (act === "caption" && it) return draftCaption(id);
+  if (act === "postdel" && it) { store.remove(id); return toast("Post removed.", "Undo", () => store.set(id, it)); }
+  if (act === "fdur") { st.fDur = +a.dataset.k; const l = sheet.querySelector('[data-form=focus] input[name=label]'); if (l) st.fLabel = l.value; return renderPanel(); }
+  if (act === "farea") { st.fArea = a.dataset.k; const l = sheet.querySelector('[data-form=focus] input[name=label]'); if (l) st.fLabel = l.value; return renderPanel(); }
+  if (act === "fstop") return endFocus(true);
+  if (act === "fcancel") return endFocus(false);
+  if (act === "fsum") return focusSummary();
+  if (act === "fdel" && it) { store.remove(id); return toast("Session deleted.", "Undo", () => store.set(id, it)); }
+  if (act === "review") return writeReview();
   if (!it) return;
   if (act === "toggle") { const done = !it.done; store.update(id, { done, doneAt: done ? Date.now() : null }); if (done) { pulse("todo"); toast("Done: " + it.title, "Undo", () => store.update(id, { done: false, doneAt: null })); } }
   else if (act === "edit") { st.edit = st.edit === id ? null : id; renderPanel(); const t = $("#ed-title"); if (t) t.focus(); }
@@ -1775,6 +2452,21 @@ sheet.addEventListener("click", e => {
   else if (act === "toidea") { st.edit = null; a.blur(); store.update(id, { kind: "idea", due: null, time: null, edited: true }); toast("Moved to Ideas"); pulse("ideas"); }
   else if (act === "totodo") { store.update(id, { kind: "todo", category: it.category || "misc", edited: true }); toast("Now a to-do in Task HQ"); pulse("todo"); }
   else if (act === "steps") ideaSteps(id);
+});
+sheet.addEventListener("submit", e => {
+  const f = e.target.closest("form.frm"); if (!f) return; e.preventDefault();
+  const v = Object.fromEntries(new FormData(f)), k = f.dataset.form, row = f.closest("[data-id]"), id = row && row.dataset.id, it = id && st.items.get(id);
+  const clean = x => String(x || "").trim();
+  if (k === "habit" && clean(v.name)) { const per = v.per === "day" ? "day" : "week"; if (habits().length >= 4) return toast("The garden has four beds. Remove a habit to plant a new one."); newItem({ kind: "habit", name: clean(v.name).slice(0, 40), per, target: per === "day" ? 7 : +String(v.per).slice(1) || 3, color: HABIT_COLS[habits().length % HABIT_COLS.length], log: [] }); pulse("habits"); }
+  else if (k === "cw" && clean(v.title) && v.due) { newItem({ kind: "cw", title: clean(v.title).slice(0, 80), module: clean(v.module).slice(0, 40), due: v.due, weight: v.weight ? Math.max(0, Math.min(100, +v.weight)) : null, status: "todo" }); pulse("cw"); }
+  else if (k === "project" && clean(v.title)) newItem({ kind: "project", title: clean(v.title).slice(0, 60), next: clean(v.next).slice(0, 120), status: "active", milestones: [], links: [] });
+  else if (k === "ms" && it && clean(v.t)) store.update(id, { milestones: [...(it.milestones || []), { t: clean(v.t).slice(0, 80), done: false }] });
+  else if (k === "pedit" && it) { const patch = { title: clean(v.title).slice(0, 60) || it.title, next: clean(v.next).slice(0, 120) }; if (/^https?:\/\//i.test(clean(v.url))) patch.links = [...(it.links || []), { label: clean(v.label).slice(0, 30), url: clean(v.url).slice(0, 300) }]; store.update(id, patch); }
+  else if (k === "post" && clean(v.title)) newItem({ kind: "post", title: clean(v.title).slice(0, 90), platform: ["instagram", "github", "both"].includes(v.platform) ? v.platform : "instagram", projectId: v.projectId || null, status: "idea" });
+  else if (k === "focus") { blurInput(); st.fLabel = ""; return startFocus(clean(v.label) || "Deep work", st.fArea || "academic", st.fDur || 25); }
+  else if (k === "flog" && clean(v.label) && +v.mins > 0) newItem({ kind: "focus", label: clean(v.label).slice(0, 80), area: "academic", mins: Math.min(300, Math.round(+v.mins)), start: Date.now() - (+v.mins) * 6e4 });
+  else return;
+  f.reset(); blurInput(); renderPanel();
 });
 sheet.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.closest(".edit input")) { e.preventDefault(); const s = sheet.querySelector("[data-act=save]"); s && s.click(); } });
 document.addEventListener("keydown", e => {
@@ -1794,6 +2486,7 @@ new ResizeObserver(() => document.documentElement.style.setProperty("--qh", $("#
 drawScene(); buildLabels();
 cam = fitCam(FIT); applyCam(true);
 tickClock(); updateHint(); render();
+if (focusRun) { if (focusRun.start + focusRun.mins * 6e4 < Date.now()) endFocus(true); else { svg.classList.add("focusing"); runFocusTicker(); } }
 setInterval(tickClock, 30000);
 let startView = "island"; try { startView = localStorage.getItem("island.view") || "island"; } catch (e) {}
 if (startView === "list") openPanel("todo", true);
