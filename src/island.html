@@ -13,6 +13,7 @@
   --pink:#ff4fa8; --cyan:#35e6ff; --violet:#b46cff; --amber:#ffc83d; --lime:#7dff6a;
   --accent:#ff4fa8; --accent-ink:#1d0414; --alert:#ff6a86; --focus:#35e6ff;
   --c-academic:#5aa8ff; --c-fitness:#ff4f9a; --c-daily:#ffc83d; --c-misc:#3fffc8; --c-idea:#ffe14d;
+  --g-barca:#edbb00; --g-spain:#ff4f5e;
   --b-todo:#35e6ff; --b-cal:#ff4fa8; --b-mail:#b46cff; --b-ideas:#ffe14d;
   --g-todo:#35e6ff; --g-cal:#ff4fa8; --g-mail:#b46cff; --g-ideas:#ffe14d;
   --bg:#0a0820;
@@ -26,13 +27,14 @@
 }
 [hidden]{display:none!important} /* the host page may not ship this rule; without it the empty panel covered the map */
 html,body{height:100%}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;overflow:hidden;-webkit-tap-highlight-color:transparent}
+body{-webkit-user-select:none;user-select:none;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;overflow:hidden;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit}
+input,textarea,#sheet .inner{-webkit-user-select:text;user-select:text}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .cham{clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))}
 
 /* ---------- scene ---------- */
-#world{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
+#world{position:fixed;inset:0;overflow:hidden;background:linear-gradient(180deg,var(--sk0,#0a0820),var(--sk1,#1c1442) 55%,var(--sk2,#36245e))}
 #stage{position:absolute;inset:0;touch-action:none;cursor:grab;overflow:hidden;transition:filter .35s ease;-webkit-user-select:none;user-select:none}
 #stage.dragging{cursor:grabbing}
 #cam{position:absolute;inset:0;transform-origin:0 0;will-change:transform}
@@ -81,7 +83,7 @@ button{font:inherit;color:inherit}
   box-shadow:0 0 0 1px rgba(0,0,0,.5),0 0 14px color-mix(in srgb,var(--glow) 55%,transparent),inset 0 0 10px color-mix(in srgb,var(--glow) 25%,transparent);
   opacity:0;scale:.85;pointer-events:none;transition:opacity .16s,scale .2s cubic-bezier(.3,1.6,.5,1);will-change:transform}
 .lbl small{display:block;margin-top:3px;font:400 16px/1 var(--f-led);letter-spacing:.04em;text-shadow:0 0 6px var(--glow);color:var(--glow)}
-.lbl.show,.lbl.sel,.lbl:focus-visible{opacity:1;scale:1;pointer-events:auto}
+.lbl.show,.lbl.sel,.lbl:focus-visible{opacity:1;scale:1}
 .lbl::after{content:"";position:absolute;left:50%;bottom:-12px;width:1.5px;height:10px;margin-left:-.75px;background:var(--glow);box-shadow:0 0 6px var(--glow)}
 .pip{position:absolute;left:0;top:0;min-width:24px;height:24px;padding:0 6px;display:grid;place-items:center;font:400 20px/1 var(--f-led);color:#fff;
   background:#e8235f;border:1.5px solid #ffd1e0;border-radius:3px;box-shadow:0 0 14px rgba(255,40,100,.9);pointer-events:none;transition:opacity .2s}
@@ -288,11 +290,11 @@ ul{list-style:none;margin:0;padding:0}
 .st-ns{font:400 17px/1 var(--f-led);color:var(--amber)}
 .sb-note{margin:12px 0 0;text-align:center;font-size:12.5px;color:var(--ink-2)}
 .evs{margin-top:12px;border-top:1px dashed var(--line);padding-top:8px;display:grid;gap:5px}
-.evs li{display:grid;grid-template-columns:44px 14px minmax(0,1fr);gap:8px;align-items:center;font-size:13px}
-.evs li.home{grid-template-columns:minmax(0,1fr) 14px 44px;direction:rtl;text-align:right}
-.evs li.home>*{direction:ltr}
+.evs li{display:grid;grid-template-columns:minmax(0,1fr) 50px minmax(0,1fr);gap:8px;align-items:center;font-size:13px}
+.evs .ev{display:flex;align-items:center;gap:7px;min-width:0}.evs li.home .ev{grid-column:1;justify-content:flex-end;text-align:right}.evs li.away .ev{grid-column:3}
+.evs .emin{grid-column:2;grid-row:1;text-align:center}
 .emin{font:400 16px/1 var(--f-led);color:var(--amber)}
-.eico{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#bbb 60%,#777);box-shadow:0 0 0 1px #0a0820}
+.eico{flex:none;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#bbb 60%,#777);box-shadow:0 0 0 1px #0a0820}
 .eico.yellow{border-radius:2px;width:9px;height:12px;background:#ffd400}.eico.red{border-radius:2px;width:9px;height:12px;background:#e0234a}
 .ename small{display:block;font-size:11.5px;color:var(--ink-3)}
 .hint-row{margin:4px 6px 10px;font-size:13.5px;color:var(--ink-2);line-height:1.45}
@@ -313,10 +315,38 @@ ul{list-style:none;margin:0;padding:0}
 .tile b sup{font-size:16px;color:var(--ink-2)}
 .tile span{font-size:12px;color:var(--ink-2)}
 .tile:first-child{border-color:#edbb00;box-shadow:inset 0 0 14px rgba(237,187,0,.15)}
-.facts{margin:10px 6px 0;padding-left:18px;font-size:13px;line-height:1.5;color:var(--ink-2)}
+.facts li+li{margin-top:5px}
+.facts{list-style:disc;margin:10px 6px 0;padding-left:18px;font-size:13px;line-height:1.5;color:var(--ink-2)}
 .facts li::marker{color:#edbb00}
 .sec-h .sub{font:400 11px var(--f-body);letter-spacing:0;text-transform:none;color:var(--ink-3)}
 .filters.lead{flex-wrap:nowrap}
+/* ---------- La Roja (Spain): red + gold ---------- */
+#sheet.spain{filter:drop-shadow(0 0 10px rgba(198,11,30,.55)) drop-shadow(0 0 18px rgba(255,196,0,.3))}
+#sheet.spain .frame{background:linear-gradient(160deg,#ffc400,#c60b1e 30%,#7a0716 55%,#2f2752 75%,#ffc400)}
+#sheet.spain .inner{background:linear-gradient(180deg,#1a0a1e,#0a0820 40%)}
+#sheet.spain .sh-head{background:linear-gradient(180deg,rgba(198,11,30,.32) 0 25%,rgba(255,196,0,.18) 25% 75%,rgba(198,11,30,.32) 75%);border-bottom:2px solid #ffc400}
+#sheet.spain .sh-title{color:#fff3d0;text-shadow:0 0 2px #fff,0 0 8px #ffc400,0 0 20px #c60b1e}
+#sheet.spain .sh-icon{--c:#ffc400}
+#sheet.spain .btabs button[aria-selected="true"]{border-bottom-color:#ffc400}
+#sheet.spain .sb{background:linear-gradient(180deg,rgba(198,11,30,.26),rgba(255,196,0,.1))}
+#sheet.spain .sb::before{background:linear-gradient(90deg,#c60b1e 0 25%,#ffc400 25% 75%,#c60b1e 75%)}
+#sheet.spain .tr.me{background:linear-gradient(90deg,rgba(198,11,30,.4),rgba(255,196,0,.18))}
+#sheet.spain .leaders .av{background:linear-gradient(135deg,#c60b1e,#7a0716);box-shadow:inset 0 0 0 1.5px rgba(255,196,0,.8)}
+#sheet.spain .facts li::marker{color:#ffc400}
+.crest.esp{background:linear-gradient(180deg,#c60b1e 0 25%,#ffc400 25% 75%,#c60b1e 75%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35)}
+.filters.comps{padding-top:0;margin-top:-2px}
+.chip.sm{font-size:11px;padding:5px 9px 4px;letter-spacing:.1em}
+.seg{display:flex;margin:0 2px 12px;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.seg button{flex:1;border:0;background:none;padding:8px 6px;font:600 12px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-checked="true"]{color:#fff;background:color-mix(in srgb,var(--c) 20%,transparent);text-shadow:0 0 8px var(--c)}
+.tr.po::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 2px 2px 0;background:#f0a020}
+.zones{margin:8px 6px 0;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;font-size:11.5px;color:var(--ink-3)}
+.zones .z{display:inline-block;width:3px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.z.ucl{background:#2f7dff}.z.po{background:#f0a020}.z.rel{background:#e0354b}
+.tile.gold{border-color:#ffc400;box-shadow:inset 0 0 16px rgba(255,196,0,.18)}
+.tile .star{display:block;filter:drop-shadow(0 0 6px rgba(255,196,0,.8))}
+.leaders .pn small{display:block;font-weight:400;font-size:12px;color:var(--ink-3)}
 .leaders{list-style:none;margin:6px 0 0;padding:0}
 .leaders li{display:grid;grid-template-columns:20px 34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 6px;border-bottom:1px solid var(--line)}
 .leaders .rk{font:400 18px/1 var(--f-led);color:var(--ink-3);text-align:center}
@@ -605,6 +635,77 @@ function islet(p, x, y, z, k, lit) {
   return g;
 }
 
+// A football ground: striped bowl, stands, sunken pitch, floodlights and an LED scoreboard fed by the match data.
+function hlRect(g, x, y, w, d, col) { const hl = el("g", { class: "hl" }, g); neonD(faceG(hl, "T", x, y, .02), `M0 0H${w}V${d}H0Z`, col, 2.6); }
+function spainExtras(g, x0, y0, W) {
+  const x = x0 - .55, y = y0 + W + .55, h = 3.1;
+  box(g, x - .14, y - .14, 0, .28, .28, h, "#2a2f54");
+  [["L", "#ff2a3c"], ["R", "#ffc400"]].forEach(([s, c]) => neonD(faceG(g, s, x - .14, y - .14, 0, .28, .28, h), `M.14 .2V${h - .1}`, c, 1));
+  const c = P(x, y, h + .62), R = 15, pts5 = [];
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? R * .45 : R; pts5.push([c[0] + Math.cos(a) * r, c[1] + Math.sin(a) * r]); }
+  const lg = el("g", { class: "lit" }, g);
+  el("circle", { cx: r1(c[0]), cy: r1(c[1]), r: 30, fill: "#ffc400", opacity: .14 }, lg);
+  poly(g, pts5, "#ffd84a", "");
+  neonD(g, pathOf(pts5) + "Z", "#ffc400", 1.3, false);
+}
+function arena(g, o) {
+  const { key, x0, y0, W } = o, H = 1.5, I = W * .2, PZ = .35, A = o.A || ["#0b3a78", "#2f7dff"], B = o.B || ["#6e0a3a", "#ff2f7d"];
+  const ringA = o.ringA || "#004d98", ringB = o.ringB || "#a50044", rim = o.rim || "#edbb00", inA = o.inA || "#2a64c8", inB = o.inB || "#c8306e", sbA = o.sbA || "#004d98", sbB = o.sbB || "#a50044";
+  hlRect(g, x0 - .3, y0 - .3, W + .6, W + .6, rim);
+  box(g, x0, y0, 0, W, W, H, "#1d1f3a");
+  ["L", "R"].forEach(s => {
+    const f = faceG(g, s, x0, y0, 0, W, W, H); let bl = "", gr = "";
+    for (let u = 0, i = 0; u < W - .01; u += .4, i++) { const seg = `M${r3(u)} .22h.4V${H}h-.4z`; if (i % 2) gr += seg; else bl += seg; }
+    el("path", { d: bl, fill: A[0] }, f); el("path", { d: gr, fill: B[0] }, f);
+    el("path", { d: bl, fill: A[1], opacity: .2, class: "lit" }, f); el("path", { d: gr, fill: B[1], opacity: .16, class: "lit" }, f);
+    let ar = ""; for (let u = .5; u < W - .3; u += 1.2) ar += `M${r3(u)} ${H}V1.05A.2 .2 0 0 1 ${r3(u + .4)} 1.05V${H}Z`;
+    el("path", { d: ar, fill: "#07061a" }, f);
+    neonD(f, `M0 .1H${W}`, rim, 1.4);
+  });
+  // stands (top), then the pit: pitch floor, back inner walls, then the front stand tops on top
+  poly(g, [P(x0, y0, H), P(x0 + W, y0, H), P(x0 + W, y0 + W, H), P(x0, y0 + W, H)], "#262849");
+  const rings = (draw) => [.2, .4, .6, .8].forEach((k, i) => draw(k, i % 2 ? ringB : ringA));
+  rings((k, c) => el("path", { d: pathOf([P(x0 + k, y0 + W - k, H), P(x0 + k, y0 + k, H), P(x0 + W - k, y0 + k, H)]), fill: "none", stroke: c, "stroke-width": 3.2, opacity: .9 }, g));
+  poly(g, [P(x0 + I, y0 + I, PZ), P(x0 + W - I, y0 + I, PZ), P(x0 + W - I, y0 + W - I, PZ), P(x0 + I, y0 + W - I, PZ)], "#1f7a3a", "");
+  const pf = faceG(g, "T", x0 + I, y0 + I, PZ), pw = W - 2 * I;
+  let mow = ""; for (let u = 0; u < pw; u += .52) mow += `M${r3(u)} 0h.26v${r3(pw)}h-.26z`; el("path", { d: mow, fill: "#2a9047" }, pf);
+  el("path", { d: `M.12 .12H${r3(pw - .12)}V${r3(pw - .12)}H.12ZM${r3(pw / 2)} .12V${r3(pw - .12)}` + circleD(pw / 2, pw / 2, .32) + `M.12 ${r3(pw / 2 - .5)}h.42v1h-.42M${r3(pw - .12)} ${r3(pw / 2 - .5)}h-.42v1h.42`, fill: "none", stroke: "#e8fff0", "stroke-width": 1, opacity: .85, "vector-effect": "non-scaling-stroke" }, pf);
+  el("circle", { cx: r3(pw * .62), cy: r3(pw * .45), r: .07, fill: "#fff" }, pf);
+  const wallR = [P(x0 + I, y0 + I, PZ), P(x0 + I, y0 + W - I, PZ), P(x0 + I, y0 + W - I, H), P(x0 + I, y0 + I, H)];
+  const wallL = [P(x0 + I, y0 + I, PZ), P(x0 + W - I, y0 + I, PZ), P(x0 + W - I, y0 + I, H), P(x0 + I, y0 + I, H)];
+  poly(g, wallR, "#232548"); poly(g, wallL, "#2b2e55");
+  [["R", x0 + I, y0 + I, 0, W - 2 * I], ["L", x0 + I, y0 + I, W - 2 * I, 0]].forEach(([s, x, y, w, d]) => {
+    const f = faceG(g, s, x, y, PZ, w, d, H - PZ), len = w || d; let b = "", r = "";
+    for (let v = .08, i = 0; v < H - PZ - .05; v += .2, i++) { const seg = `M0 ${r3(v)}H${r3(len)}`; if (i % 2) r += seg; else b += seg; }
+    el("path", { d: b, stroke: inA, "stroke-width": .07, "stroke-dasharray": ".05 .06" }, f);
+    el("path", { d: r, stroke: inB, "stroke-width": .07, "stroke-dasharray": ".05 .06" }, f);
+  });
+  poly(g, [P(x0, y0 + W, H), P(x0 + W, y0 + W, H), P(x0 + W - I, y0 + W - I, H), P(x0 + I, y0 + W - I, H)], "#262849", "");
+  poly(g, [P(x0 + W, y0, H), P(x0 + W, y0 + W, H), P(x0 + W - I, y0 + W - I, H), P(x0 + W - I, y0 + I, H)], "#262849", "");
+  rings((k, c) => el("path", { d: pathOf([P(x0 + k, y0 + W - k, H), P(x0 + W - k, y0 + W - k, H), P(x0 + W - k, y0 + k, H)]), fill: "none", stroke: c, "stroke-width": 3.2, opacity: .9 }, g));
+  neonD(g, pathOf([P(x0, y0 + W, H), P(x0 + W, y0 + W, H), P(x0 + W, y0, H)]), rim, 1.2, false);
+  // floodlight masts on the four corners
+  [[x0, y0], [x0 + W, y0], [x0, y0 + W], [x0 + W, y0 + W]].forEach(([x, y]) => {
+    const b = P(x, y, H), t = P(x, y, H + 2.5);
+    line(g, b, t, "#0b0818", 2.6);
+    el("rect", { x: r1(t[0] - 8), y: r1(t[1] - 6), width: 16, height: 7, rx: 1, fill: "#2a2f54", class: "o" }, g);
+    const lg = el("g", { class: "lit" }, g);
+    el("ellipse", { cx: r1(t[0]), cy: r1(t[1] - 2.5), rx: 13, ry: 6, fill: "#fff6d8", opacity: .22 }, lg);
+    el("rect", { x: r1(t[0] - 6), y: r1(t[1] - 4), width: 12, height: 3, fill: "#fffbe8" }, lg);
+  });
+  // scoreboard over the back stand (text is filled from the match data)
+  const sx = x0 + (W - 2.2) / 2, sb = faceG(g, "L", sx, y0 + .35, H + .2, 2.2, 0, 1.2);
+  line(g, P(sx + .3, y0 + .35, H), P(sx + .3, y0 + .35, H + .2), "#0b0818", 2.4); line(g, P(sx + 1.9, y0 + .35, H), P(sx + 1.9, y0 + .35, H + .2), "#0b0818", 2.4);
+  el("rect", { x: 0, y: 0, width: 2.2, height: 1.2, fill: "#07061a", class: "on" }, sb);
+  el("rect", { x: .06, y: .06, width: 2.08, height: .16, fill: sbA }, sb); el("rect", { x: .06, y: .06, width: 1.04, height: .16, fill: sbB }, sb);
+  neonD(sb, "M.03 .03H2.17V1.17H.03Z", rim, 1);
+  const mk = (v, size, fill) => { const t = el("text", { x: 0, y: 0, "font-size": 100, "font-family": "VT323, monospace", "text-anchor": "middle", fill, class: "lit", transform: `translate(1.1 ${v}) scale(${size / 100})` }, sb); return t; };
+  SB[key] = { l1: mk(.68, .42, "#ffe14d"), l2: mk(1.05, .28, "#9fe8ff") };
+  const lp = P(x0 + W / 2, y0 + .35, H + 1.4);
+  LABELS.push({ b: key, x: lp[0], y: lp[1] - 16, px: lp[0] + 50, py: lp[1] + 8 });
+  if (o.extra) o.extra(g, x0, y0, W, H);
+}
+
 function drawScene() {
   svg.innerHTML = ""; svgB.innerHTML = ""; svgF.innerHTML = "";
   defsEl = el("defs", {}, svg);
@@ -617,7 +718,6 @@ function drawScene() {
     <clipPath id="bulbClip"><circle cx="0" cy="0" r="46"/></clipPath>`;
 
   /* ---- sky, far clouds, ships ---- */
-  el("rect", { x: -3000, y: -3000, width: 9000, height: 9000, fill: "url(#skyG)" }, svgB);
   const stars = el("g", { id: "stars", opacity: 0 }, svgB);
   for (let i = 0; i < 90; i++) el("circle", { cx: r1(200 + rnd() * 1800), cy: r1(-200 + rnd() * 800), r: r1(.6 + rnd() * 1.3), fill: "#fff", class: i % 3 ? "" : "twinkle", style: `animation-delay:${r1(rnd() * 3)}s` }, stars);
   const moon = el("g", { id: "moon", opacity: 0 }, svgB);
@@ -630,8 +730,35 @@ function drawScene() {
 
   /* ---- expansion islets behind, linked by light beams ---- */
   const back = el("g", {}, svg);
-  const isB = [-19.5, -2.5, .4, 2.3];
-  islet(back, ...isB, "#ff4fa8");
+  // La Roja islet (Spain): a square deck off the west edge, joined by its own skyway
+  const EX = -20.8, EY = 0, EK = 2.9, eIs = el("g", {}, back);
+  [[.3, -4.8, "#1b1c30"], [.55, -3.6, "#202238"], [.78, -2.4, "#25273f"], [.97, -1.2, "#2a2c47"]].forEach(([kk, zz, c]) => poly(eIs, rockRing(EX, EY, EK * kk, zz, .12, 40), cg(c)));
+  for (let c = 0; c < 4; c++) { const a = P(EX - EK + rnd() * EK * 2, EY + EK, -1.2 - rnd() * .4); neonD(eIs, zigzag(a, [a[0] + (rnd() - .5) * 14, a[1] + 22 + rnd() * 26], 4, 5), c % 2 ? "#ffc400" : "#ff2a3c", 1.2, false); }
+  box(eIs, EX - EK, EY - EK, -.6, 2 * EK, 2 * EK, .6, "#2b2f4e");
+  ["L", "R"].forEach((s, i) => { const f = faceG(eIs, s, EX - EK, EY - EK, -.6, 2 * EK, 2 * EK, .6); panelLines(f, 2 * EK, .6, 1.1); neonD(f, `M0 .08H${2 * EK}`, i ? "#ffc400" : "#ff2a3c", 1.4); });
+  poly(eIs, [P(EX - EK, EY - EK), P(EX + EK, EY - EK), P(EX + EK, EY + EK), P(EX - EK, EY + EK)], "#1d2036");
+  neonD(faceG(eIs, "T", EX - EK, EY - EK, 0), `M.25 .25H${2 * EK - .25}V${2 * EK - .25}H.25Z`, "#ffc400", 1.3);
+  glowTree(eIs, EX - EK + .6, EY - EK + .6, .75, "#ff2a3c"); glowTree(eIs, EX + EK - .6, EY - EK + .6, .75, "#ffc400");
+  const espSlot = el("g", {}, eIs);
+  // west skyway: the west spoke road carries on over the gap to La Roja
+  { const sw = el("g", {}, back), xA = EX + EK, xB = -11, hw = .6, len = xB - xA;
+    box(sw, xA, -hw, -.3, len, 2 * hw, .3, "#262a46");
+    const dk = faceG(sw, "T", xA, -hw, .001);
+    let seams = ""; for (let u = .5; u < len; u += .5) seams += `M${r3(u)} 0V${2 * hw}`;
+    el("path", { d: seams, stroke: "#13152a", "stroke-width": .05 }, dk);
+    el("path", { d: `M.1 ${hw}H${r3(len - .1)}`, stroke: "#ffd27a", "stroke-width": .06, "stroke-dasharray": ".3 .3", opacity: .7 }, dk);
+    el("path", { d: `M0 ${hw - .25}H${r3(len)}M0 ${hw + .25}H${r3(len)}`, stroke: "#ffc400", "stroke-width": .07, "stroke-dasharray": ".15 .9", class: "lit" }, dk);
+    neonD(faceG(sw, "L", xA, -hw, -.3, len, 2 * hw, .3), `M0 .06H${r3(len)}`, "#ff2a3c", 1.2);
+    [-hw, hw].forEach((y, i) => { for (let x = xA + .3; x < xB; x += .8) line(sw, P(x, y, 0), P(x, y, .5), "#0b0818", 1.2); neonD(sw, pathOf([P(xA, y, .5), P(xB, y, .5)]), i ? "#ffc400" : "#ff2a3c", 1.2, false); });
+    [-15.4, -12.9].forEach((x, k) => {
+      line(sw, P(x, -hw - .1, 0), P(x, -hw - .1, 1.7), "#0b0818", 2.4); line(sw, P(x, hw + .1, 0), P(x, hw + .1, 1.7), "#0b0818", 2.4);
+      const gf = faceG(sw, "R", x, -hw - .1, 1.25, 0, 2 * hw + .2, .45);
+      el("rect", { x: 0, y: 0, width: r3(2 * hw + .2), height: .45, fill: "#0b0918", class: "on" }, gf);
+      neonD(gf, `M.04 .04H${r3(2 * hw + .16)}V.41H.04Z`, k ? "#ff2a3c" : "#ffc400", 1);
+      neonText(gf, hw + .1, .33, .26, k ? "LA ROJA" : "ESP", k ? "#ffb0b8" : "#ffe14d");
+    });
+    for (let x = xA + .8; x < xB; x += 1.6) { const a = P(x, 0, -.3); line(sw, a, [a[0], a[1] + 14], "#0b0818", 1); const g = el("g", { class: "lit" }, sw); el("circle", { cx: r1(a[0]), cy: r1(a[1] + 16), r: 6, fill: "#ffc400", opacity: .25 }, g); el("circle", { cx: r1(a[0]), cy: r1(a[1] + 16), r: 2, fill: "#fff1c0" }, g); }
+  }
   // stadium islet: a bigger floating deck behind the right edge
   const SX = 0, SY = -21, SK = 3.4, sIs = el("g", {}, back);
   [[.3, -5.6, "#1b1c30"], [.55, -4.2, "#202238"], [.78, -2.8, "#25273f"], [.97, -1.3, "#2a2c47"]].forEach(([kk, zz, c]) => poly(sIs, rockRing(SX, SY, SK * kk, zz, .12, 44), cg(c)));
@@ -666,8 +793,6 @@ function drawScene() {
   // hanging under-lights
   for (let y = yA + 1; y < yB; y += 1.6) { const a = P(0, y, -.3); line(sky, a, [a[0], a[1] + 14], "#0b0818", 1); const g = el("g", { class: "lit" }, sky); el("circle", { cx: r1(a[0]), cy: r1(a[1] + 16), r: 6, fill: "#ff4fa8", opacity: .25 }, g); el("circle", { cx: r1(a[0]), cy: r1(a[1] + 16), r: 2, fill: "#ffd1ea" }, g); }
   const beam = (a, b, col) => { const g = el("g", { class: "lit" }, back); [[10, .1], [4, .35], [1.6, 1]].forEach(([w, o]) => el("line", { x1: r1(a[0]), y1: r1(a[1]), x2: r1(b[0]), y2: r1(b[1]), stroke: o === 1 ? shade(col, .6) : col, "stroke-width": w, opacity: o, "stroke-linecap": "round" }, g)); };
-  beam(P(-11, -3.2, 0), P(-17.2, -2.5, .4), "#ff4fa8");
-  [[isB, -1]].forEach(([[x, y, z], s]) => { glowTree(back, x + .9 * s, y + .3, .9, s > 0 ? "#35e6ff" : "#ff4fa8"); crystal(back, x - .9, y + .9, .8); });
 
   /* ---- island underside: stepped rock with neon cracks ---- */
   const under = el("g", {}, svg);
@@ -746,7 +871,6 @@ function drawScene() {
   const objs = [];
   const add = (d, fn) => objs.push({ d, fn });
   const building = (id, d, fn) => add(d, root => { const g = el("g", { class: "bldg", "data-b": id }, root); fn(g); });
-  const hlRect = (g, x, y, w, d, col) => { const hl = el("g", { class: "hl" }, g); neonD(faceG(hl, "T", x, y, .02), `M0 0H${w}V${d}H0Z`, col, 2.6); };
 
   // ===== TASK HQ (to-dos): a stepped tower with a glowing core, like a reactor
   building("todo", 0, g => {
@@ -860,62 +984,9 @@ function drawScene() {
     LABELS.push({ b: "ideas", x: bx, y: by - 54 });
   });
 
-  // ===== BLAUGRANA STADIUM (FC Barcelona): striped bowl, floodlights, live scoreboard
-  (g => {
-    const x0 = -2.2, y0 = -23.2, W = 4.4, H = 1.5, I = .9, PZ = .35;
-    hlRect(g, x0 - .3, y0 - .3, W + .6, W + .6, "#edbb00");
-    box(g, x0, y0, 0, W, W, H, "#1d1f3a");
-    ["L", "R"].forEach(s => {
-      const f = faceG(g, s, x0, y0, 0, W, W, H); let bl = "", gr = "";
-      for (let u = 0, i = 0; u < W - .01; u += .4, i++) { const seg = `M${r3(u)} .22h.4V${H}h-.4z`; if (i % 2) gr += seg; else bl += seg; }
-      el("path", { d: bl, fill: "#0b3a78" }, f); el("path", { d: gr, fill: "#6e0a3a" }, f);
-      el("path", { d: bl, fill: "#2f7dff", opacity: .2, class: "lit" }, f); el("path", { d: gr, fill: "#ff2f7d", opacity: .16, class: "lit" }, f);
-      let ar = ""; for (let u = .5; u < W - .3; u += 1.2) ar += `M${r3(u)} ${H}V1.05A.2 .2 0 0 1 ${r3(u + .4)} 1.05V${H}Z`;
-      el("path", { d: ar, fill: "#07061a" }, f);
-      neonD(f, `M0 .1H${W}`, "#edbb00", 1.4);
-    });
-    // stands (top), then the pit: pitch floor, back inner walls, then the front stand tops on top
-    poly(g, [P(x0, y0, H), P(x0 + W, y0, H), P(x0 + W, y0 + W, H), P(x0, y0 + W, H)], "#262849");
-    const rings = (draw) => [.2, .4, .6, .8].forEach((k, i) => draw(k, i % 2 ? "#a50044" : "#004d98"));
-    rings((k, c) => el("path", { d: pathOf([P(x0 + k, y0 + W - k, H), P(x0 + k, y0 + k, H), P(x0 + W - k, y0 + k, H)]), fill: "none", stroke: c, "stroke-width": 3.2, opacity: .9 }, g));
-    poly(g, [P(x0 + I, y0 + I, PZ), P(x0 + W - I, y0 + I, PZ), P(x0 + W - I, y0 + W - I, PZ), P(x0 + I, y0 + W - I, PZ)], "#1f7a3a", "");
-    const pf = faceG(g, "T", x0 + I, y0 + I, PZ), pw = W - 2 * I;
-    let mow = ""; for (let u = 0; u < pw; u += .52) mow += `M${r3(u)} 0h.26v${r3(pw)}h-.26z`; el("path", { d: mow, fill: "#2a9047" }, pf);
-    el("path", { d: `M.12 .12H${r3(pw - .12)}V${r3(pw - .12)}H.12ZM${r3(pw / 2)} .12V${r3(pw - .12)}` + circleD(pw / 2, pw / 2, .32) + `M.12 ${r3(pw / 2 - .5)}h.42v1h-.42M${r3(pw - .12)} ${r3(pw / 2 - .5)}h-.42v1h.42`, fill: "none", stroke: "#e8fff0", "stroke-width": 1, opacity: .85, "vector-effect": "non-scaling-stroke" }, pf);
-    el("circle", { cx: r3(pw * .62), cy: r3(pw * .45), r: .07, fill: "#fff" }, pf);
-    const wallR = [P(x0 + I, y0 + I, PZ), P(x0 + I, y0 + W - I, PZ), P(x0 + I, y0 + W - I, H), P(x0 + I, y0 + I, H)];
-    const wallL = [P(x0 + I, y0 + I, PZ), P(x0 + W - I, y0 + I, PZ), P(x0 + W - I, y0 + I, H), P(x0 + I, y0 + I, H)];
-    poly(g, wallR, "#232548"); poly(g, wallL, "#2b2e55");
-    [["R", x0 + I, y0 + I, 0, W - 2 * I], ["L", x0 + I, y0 + I, W - 2 * I, 0]].forEach(([s, x, y, w, d]) => {
-      const f = faceG(g, s, x, y, PZ, w, d, H - PZ), len = w || d; let b = "", r = "";
-      for (let v = .08, i = 0; v < H - PZ - .05; v += .2, i++) { const seg = `M0 ${r3(v)}H${r3(len)}`; if (i % 2) r += seg; else b += seg; }
-      el("path", { d: b, stroke: "#2a64c8", "stroke-width": .07, "stroke-dasharray": ".05 .06" }, f);
-      el("path", { d: r, stroke: "#c8306e", "stroke-width": .07, "stroke-dasharray": ".05 .06" }, f);
-    });
-    poly(g, [P(x0, y0 + W, H), P(x0 + W, y0 + W, H), P(x0 + W - I, y0 + W - I, H), P(x0 + I, y0 + W - I, H)], "#262849", "");
-    poly(g, [P(x0 + W, y0, H), P(x0 + W, y0 + W, H), P(x0 + W - I, y0 + W - I, H), P(x0 + W - I, y0 + I, H)], "#262849", "");
-    rings((k, c) => el("path", { d: pathOf([P(x0 + k, y0 + W - k, H), P(x0 + W - k, y0 + W - k, H), P(x0 + W - k, y0 + k, H)]), fill: "none", stroke: c, "stroke-width": 3.2, opacity: .9 }, g));
-    neonD(g, pathOf([P(x0, y0 + W, H), P(x0 + W, y0 + W, H), P(x0 + W, y0, H)]), "#edbb00", 1.2, false);
-    // floodlight masts on the four corners
-    [[x0, y0], [x0 + W, y0], [x0, y0 + W], [x0 + W, y0 + W]].forEach(([x, y]) => {
-      const b = P(x, y, H), t = P(x, y, H + 2.5);
-      line(g, b, t, "#0b0818", 2.6);
-      el("rect", { x: r1(t[0] - 8), y: r1(t[1] - 6), width: 16, height: 7, rx: 1, fill: "#2a2f54", class: "o" }, g);
-      const lg = el("g", { class: "lit" }, g);
-      el("ellipse", { cx: r1(t[0]), cy: r1(t[1] - 2.5), rx: 13, ry: 6, fill: "#fff6d8", opacity: .22 }, lg);
-      el("rect", { x: r1(t[0] - 6), y: r1(t[1] - 4), width: 12, height: 3, fill: "#fffbe8" }, lg);
-    });
-    // scoreboard over the back stand (text is filled from the match data)
-    const sb = faceG(g, "L", x0 + 1.1, y0 + .35, H + .2, 2.2, 0, 1.2);
-    line(g, P(x0 + 1.4, y0 + .35, H), P(x0 + 1.4, y0 + .35, H + .2), "#0b0818", 2.4); line(g, P(x0 + 3.0, y0 + .35, H), P(x0 + 3.0, y0 + .35, H + .2), "#0b0818", 2.4);
-    el("rect", { x: 0, y: 0, width: 2.2, height: 1.2, fill: "#07061a", class: "on" }, sb);
-    el("rect", { x: .06, y: .06, width: 2.08, height: .16, fill: "#004d98" }, sb); el("rect", { x: .06, y: .06, width: 1.04, height: .16, fill: "#a50044" }, sb);
-    neonD(sb, "M.03 .03H2.17V1.17H.03Z", "#edbb00", 1);
-    const mk = (v, size, fill) => { const t = el("text", { x: 0, y: 0, "font-size": 100, "font-family": "VT323, monospace", "text-anchor": "middle", fill, class: "lit", transform: `translate(1.1 ${v}) scale(${size / 100})` }, sb); return t; };
-    SB.l1 = mk(.68, .42, "#ffe14d"); SB.l2 = mk(1.05, .28, "#9fe8ff");
-    const lp = P(x0 + 2.2, y0 + .35, H + 1.4);
-    LABELS.push({ b: "barca", x: lp[0], y: lp[1] - 16, px: lp[0] + 50, py: lp[1] + 8 });
-  })(el("g", { class: "bldg", "data-b": "barca" }, stadSlot));
+  // ===== BLAUGRANA STADIUM (FC Barcelona) on the far islet; LA ROJA ARENA (Spain) on the left islet
+  arena(el("g", { class: "bldg", "data-b": "barca" }, stadSlot), { key: "barca", x0: -2.2, y0: -23.2, W: 4.4 });
+  arena(el("g", { class: "bldg", "data-b": "spain" }, espSlot), { key: "spain", x0: EX - 1.85, y0: EY - 1.85, W: 3.7, A: ["#7a0716", "#ff2a3c"], B: ["#8a6400", "#ffc400"], ringA: "#c60b1e", ringB: "#ffc400", rim: "#ffc400", inA: "#e0303e", inB: "#e8b400", sbA: "#c60b1e", sbB: "#ffc400", extra: spainExtras });
 
   // ===== empty build plots (room to grow)
   const plot = (x0, y0, w, d) => add(x0 + y0 + w + d - 7, root => {
@@ -974,8 +1045,8 @@ function applyPhase() {
   const d = new Date(), h = d.getHours() + d.getMinutes() / 60;
   const ph = forcedPhase || (h < 5.5 ? "night" : h < 7.5 ? "dawn" : h < 17.5 ? "day" : h < 19.5 ? "dusk" : "night");
   if (ph === curPhase) return; curPhase = ph; const p = PH[ph];
-  ["sk0", "sk1", "sk2"].forEach((id, i) => $("#" + id).setAttribute("stop-color", p.sky[i]));
-  svg.style.setProperty("--lights", p.lights); svg.style.setProperty("--cloud", p.cloud); svg.style.setProperty("--cloudHi", p.hi);
+  const W = $("#world"); ["--sk0", "--sk1", "--sk2"].forEach((v, i) => W.style.setProperty(v, p.sky[i]));
+  W.style.setProperty("--lights", p.lights); W.style.setProperty("--cloud", p.cloud); W.style.setProperty("--cloudHi", p.hi);
   $("#stars").setAttribute("opacity", p.stars); $("#moon").setAttribute("opacity", p.moon);
 }
 function tickClock() {
@@ -989,7 +1060,7 @@ function tickClock() {
    CAMERA: pan, zoom, fly-to
    ===================================================================== */
 const stage = $("#stage"), labelsEl = $("#labels"), camEl = $("#cam"), LAYERS = [svgB, svg, svgF];
-const FIT = { x: 430, y: 150, w: 1340, h: 1060 };
+const FIT = { x: 395, y: 150, w: 1375, h: 1060 };
 const LIM = { x0: 300, x1: 1900, y0: 50, y1: 1350, wMin: 320, wMax: 2300 };
 let cam = { cx: FIT.x + FIT.w / 2, cy: FIT.y + FIT.h / 2, w: FIT.w };
 const vw = () => stage.clientWidth || 1, vh = () => stage.clientHeight || 1;
@@ -1020,7 +1091,7 @@ function applyCam(now) {
 let settleT = 0, isMoving = false;
 function moving() {
   if (!isMoving) { isMoving = true; stage.classList.add("moving"); try { svgB.pauseAnimations(); svgF.pauseAnimations(); } catch (e) {} }
-  clearTimeout(settleT); settleT = setTimeout(settle, 170);
+  clearTimeout(settleT); settleT = setTimeout(settle, 260);
 }
 function settle() {
   if (flyRaf) { settleT = setTimeout(settle, 120); return; }
@@ -1047,7 +1118,7 @@ function flyTo(t, ms = 550) {
     flyRaf = k < 1 ? requestAnimationFrame(step) : 0; applyCam(); };
   flyRaf = requestAnimationFrame(step);
 }
-const FOCUS = { todo: [P(0, 0, 3.8), 720], cal: [P(-8.5, -3.5, 4.8), 680], mail: [P(6.9, -6.9, 2.4), 700], ideas: [P(-8, 5.5, 2.6), 640], barca: [P(0, -20, 1.6), 700] };
+const FOCUS = { todo: [P(0, 0, 3.8), 720], cal: [P(-8.5, -3.5, 4.8), 680], mail: [P(6.9, -6.9, 2.4), 700], ideas: [P(-8, 5.5, 2.6), 640], barca: [P(0, -20, 1.6), 700], spain: [P(-20.8, 0, 1.6), 620] };
 function flyToBuilding(b) {
   const [[x, y], w] = FOCUS[b]; let cy = y;
   if (innerWidth <= 720) { const sheetTop = innerHeight * .34, want = (sheetTop + 92) / 2 + 10, h = w * vh() / vw(); cy = y + (vh() / 2 - want) * h / vh(); }
@@ -1097,58 +1168,71 @@ function selectB(b) {
     const g = svg.querySelector(`.bldg[data-b="${k}"]`); if (g) g.classList.toggle("hot", on || k === hotB);
     if (pipEls[k]) pipEls[k].style.opacity = on || k === hotB ? 0 : ""; });
 }
-function hoverAt(target) {
-  if (target.closest && target.closest(".lbl")) { clearTimeout(hideT); hideT = 0; return; } // hovering the tag keeps it open
+// The name tags are display-only (they never block a click). A click on empty space inside a visible tag still opens
+// that tag's building, so "move up to the tag and click it" keeps working.
+function tagAt(x, y) {
+  for (const L of LABELS) { const l = L.el; if (!l || !(l.classList.contains("show") || l.classList.contains("sel"))) continue;
+    const r = l.getBoundingClientRect(); if (x >= r.left - 4 && x <= r.right + 4 && y >= r.top - 4 && y <= r.bottom + 14) return L.b; }
+  return null;
+}
+let quietUntil = 0; // no hover effects while (and just after) the map is moving under a still cursor
+function hoverOff() { clearTimeout(hideT); hideT = 0; if (hotB) { showTag(hotB, false); hotB = null; } }
+function hoverAt(target, x, y) {
+  if (isMoving || performance.now() < quietUntil) return;
   const bl = target.closest && target.closest(".bldg"), b = bl ? bl.dataset.b : null;
   if (b) { clearTimeout(hideT); hideT = 0; if (b !== hotB) { if (hotB) showTag(hotB, false); hotB = b; showTag(b, true); } }
+  else if (hotB && tagAt(x, y) === hotB) { clearTimeout(hideT); hideT = 0; } // resting on the tag keeps it open
   else if (hotB) scheduleHide();
 }
 /* Input. Mouse/finger: drag to pan, tap a building to open it, two fingers to pinch-zoom.
    Trackpad: two-finger scroll pans, pinch zooms (Chrome/Edge/Firefox send ctrl+wheel, Safari sends gesture events). */
 const ptrs = new Map(); let drag = null, pinchD = 0;
+const TAP = 9; // px of wobble a click/tap may have and still count as a click
+function resetPtrs() { ptrs.clear(); drag = null; pinchD = 0; stage.classList.remove("dragging"); }
 stage.addEventListener("pointerdown", e => {
-  if (e.target.closest(".lbl") || (e.pointerType === "mouse" && e.button !== 0)) return;
+  if (e.pointerType === "mouse" && e.button !== 0) return;
+  if (e.pointerType === "mouse") { e.preventDefault(); if (document.activeElement && document.activeElement !== document.body && !document.activeElement.closest("#sheet")) document.activeElement.blur(); }
   stopFly(); ptrs.set(e.pointerId, [e.clientX, e.clientY]);
-  if (ptrs.size === 1) { const bl = e.target.closest(".bldg, .plot"); drag = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false, hit: bl ? (bl.dataset.b || "plot") : null }; }
-  else { if (drag) drag.moved = true; const [a, b] = [...ptrs.values()]; pinchD = Math.hypot(a[0] - b[0], a[1] - b[1]);
-    ptrs.forEach((_, id) => { try { stage.setPointerCapture(id); } catch (er) {} }); }
+  try { stage.setPointerCapture(e.pointerId); } catch (er) {} // every press is guaranteed its release, even off the map
+  if (ptrs.size === 1) {
+    const bl = e.target.closest(".bldg, .plot");
+    drag = { x: e.clientX, y: e.clientY, moved: false, hit: bl ? (bl.dataset.b || "plot") : tagAt(e.clientX, e.clientY) };
+  } else { if (drag) drag.moved = true; const [a, b] = [...ptrs.values()]; pinchD = Math.hypot(a[0] - b[0], a[1] - b[1]); }
 });
 stage.addEventListener("pointermove", e => {
-  if (!ptrs.has(e.pointerId)) { if (e.pointerType === "mouse" && !e.buttons) hoverAt(e.target); return; }
+  if (!ptrs.has(e.pointerId)) { if (e.pointerType === "mouse" && !e.buttons) hoverAt(e.target, e.clientX, e.clientY); return; }
+  if (e.pointerType === "mouse" && !e.buttons) { resetPtrs(); return; } // the release was lost somewhere: never get stuck "dragging"
   const prev = ptrs.get(e.pointerId); ptrs.set(e.pointerId, [e.clientX, e.clientY]);
   if (ptrs.size === 1 && drag) {
-    if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 6) {
-      drag.moved = true; stage.classList.add("dragging"); try { stage.setPointerCapture(e.pointerId); } catch (er) {}
-      if (hotB) { showTag(hotB, false); hotB = null; }
+    if (!drag.moved && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > TAP) {
+      drag.moved = true; stage.classList.add("dragging"); hoverOff();
+      panBy(drag.x - e.clientX, drag.y - e.clientY); return; // include the wobble so the map stays glued to the cursor
     }
     if (drag.moved) panBy(prev[0] - e.clientX, prev[1] - e.clientY);
   } else if (ptrs.size === 2) {
     const [a, b] = [...ptrs.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]), r = stage.getBoundingClientRect();
-    const mx = (a[0] + b[0]) / 2 - r.left, my = (a[1] + b[1]) / 2 - r.top;
-    if (pinchD > 0 && d > 0) zoomAt(mx, my, pinchD / d);
-    // the midpoint moving also pans
-    panBy((prev[0] - e.clientX) / 2, (prev[1] - e.clientY) / 2);
-    pinchD = d;
+    if (pinchD > 0 && d > 0) zoomAt((a[0] + b[0]) / 2 - r.left, (a[1] + b[1]) / 2 - r.top, pinchD / d);
+    panBy((prev[0] - e.clientX) / 2, (prev[1] - e.clientY) / 2); pinchD = d;
   }
 });
 stage.addEventListener("pointerleave", e => { if (e.pointerType === "mouse" && hotB && !ptrs.size) scheduleHide(); });
-labelsEl.addEventListener("pointerout", e => { if (e.target.closest(".lbl") && !(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest(".lbl"))) scheduleHide(); });
 const endPtr = e => {
   if (!ptrs.has(e.pointerId)) return; ptrs.delete(e.pointerId); pinchD = 0;
-  if (ptrs.size === 1) { const [[x, y]] = [...ptrs.values()]; drag = { id: [...ptrs.keys()][0], x, y, moved: true, hit: null }; }
+  if (ptrs.size === 1) { const [[x, y]] = [...ptrs.values()]; drag = { x, y, moved: true, hit: null }; return; }
   if (ptrs.size === 0) {
-    stage.classList.remove("dragging");
-    if (drag && !drag.moved && e.type === "pointerup" && drag.hit) {
-      if (drag.hit === "plot") toast("An empty plot. There's room here for new buildings as the island grows.");
-      else (st.panel === drag.hit && !st.wide) ? closePanel() : openPanel(drag.hit);
+    const d = drag; resetPtrs();
+    if (d && !d.moved && e.type === "pointerup" && d.hit) {
+      if (d.hit === "plot") toast("An empty plot. There's room here for new buildings as the island grows.");
+      else (st.panel === d.hit && !st.wide) ? closePanel() : openPanel(d.hit);
     }
-    drag = null;
   }
 };
 stage.addEventListener("pointerup", endPtr); stage.addEventListener("pointercancel", endPtr);
+stage.addEventListener("lostpointercapture", e => { if (ptrs.has(e.pointerId)) endPtr({ pointerId: e.pointerId, type: "pointercancel" }); });
+addEventListener("blur", resetPtrs);
 let gest = null;
 stage.addEventListener("wheel", e => {
-  e.preventDefault(); stopFly();
+  e.preventDefault(); stopFly(); quietUntil = performance.now() + 450; hoverOff();
   const r = stage.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
   let dx = e.deltaX, dy = e.deltaY;
   if (e.deltaMode === 1) { dx *= 18; dy *= 18; } else if (e.deltaMode === 2) { dx *= vw(); dy *= vh(); }
@@ -1158,10 +1242,10 @@ stage.addEventListener("wheel", e => {
   panBy(dx, dy); // two-finger scroll
 }, { passive: false });
 // Safari pinch
-stage.addEventListener("gesturestart", e => { e.preventDefault(); gest = { w: cam.w }; });
-stage.addEventListener("gesturechange", e => { e.preventDefault(); if (!gest || !e.scale) return; const r = stage.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, gest.w / e.scale / cam.w); });
+stage.addEventListener("gesturestart", e => { e.preventDefault(); hoverOff(); gest = { w: cam.w }; });
+stage.addEventListener("gesturechange", e => { e.preventDefault(); quietUntil = performance.now() + 450; if (!gest || !e.scale) return; const r = stage.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, gest.w / e.scale / cam.w); });
 stage.addEventListener("gestureend", e => { e.preventDefault(); gest = null; });
-stage.addEventListener("dblclick", e => { if (e.target.closest(".bldg, .lbl")) return; const r = stage.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, .6); });
+stage.addEventListener("dblclick", e => { if (e.target.closest(".bldg, .plot") || tagAt(e.clientX, e.clientY)) return; const r = stage.getBoundingClientRect(); zoomAt(e.clientX - r.left, e.clientY - r.top, .6); });
 $("#zIn").onclick = () => zoomAt(vw() / 2, vh() / 2, .75);
 $("#zOut").onclick = () => zoomAt(vw() / 2, vh() / 2, 1.33);
 $("#zFit").onclick = () => flyTo(fitCam(FIT));
@@ -1225,7 +1309,7 @@ function parseQuick(raw) {
 /* =====================================================================
    STATE + STORE
    ===================================================================== */
-const st = { barca: null, bTab: "matches", bSub: "upcoming", bLead: "rating", items: new Map(), mode: "loading", panel: null, wide: false, filter: "all", edit: null, showDone: false, chip: "auto", aiOff: false, busy: new Set() };
+const st = { barca: null, spain: null, bTab: "matches", bSub: "upcoming", bLead: "rating", items: new Map(), mode: "loading", panel: null, wide: false, filter: "all", edit: null, showDone: false, chip: "auto", aiOff: false, busy: new Set() };
 let col = null, sample = null;
 const queues = {};
 function onDbErr(e) {
@@ -1261,6 +1345,7 @@ async function initData() {
   if (!db || !uid) { st.mode = "demo"; demoData(); render(); return; }
   col = db.doc(`data/users/${uid}/island`).collection("items");
   db.doc(`data/users/${uid}/barca`).onSnapshot(s => { st.barca = s.exists ? s.data() : null; render(); }, () => {});
+  db.doc(`data/users/${uid}/spain`).onSnapshot(s => { st.spain = s.exists ? s.data() : null; render(); }, () => {});
   col.onSnapshot(snap => { st.items = new Map(snap.docs.map(d => [d.id, d.data()])); st.mode = "live"; render(); },
     () => toast("Lost the connection to your island. Reload to reconnect."));
 }
@@ -1315,6 +1400,7 @@ const ICON = {
   todo: '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 10.5h18v1.5H3z"/><path d="M5 10.5c0-4 3-7 7-7s7 3 7 7z" opacity=".55"/><rect x="11.2" y="1" width="1.6" height="3" rx=".8"/><rect x="4.5" y="13" width="2.4" height="6" rx=".5"/><rect x="10.8" y="13" width="2.4" height="6" rx=".5"/><rect x="17.1" y="13" width="2.4" height="6" rx=".5"/><rect x="2.5" y="19.5" width="19" height="2.2" rx=".6"/></svg>',
   cal: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5.5" stroke-width="1" opacity=".6"/><path d="M12 7.5V12l3 2"/></svg>',
   mail: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="1.5"/><path d="m3.5 7 8.5 6.5L20.5 7"/></svg>',
+  spain: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4.5a2.5 2.5 0 0 0 2.6 3.4M17 6h2.5a2.5 2.5 0 0 1-2.6 3.4M12 14v3M8.5 20.5h7l-1-3.5h-5z"/></svg>',
   barca: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m12 7.2 4 2.9-1.5 4.7h-5L8 10.1z"/><path d="M12 3v4.2M16 10.1l4.2-1.4M14.5 14.8l2.6 3.6M9.5 14.8l-2.6 3.6M8 10.1 3.8 8.7"/></svg>',
   ideas: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2.5a7 7 0 0 0-4.2 12.6c.7.5 1.2 1.3 1.2 2.2V18h6v-.7c0-.9.5-1.7 1.2-2.2A7 7 0 0 0 12 2.5z"/><path d="M9.5 21h5M10 11l1-2 1 2 1-2 1 2" stroke-width="1.4"/></svg>',
   x: '<svg width="18" height="18" viewBox="0 0 18 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="m4 4 10 10M14 4 4 14"/></svg>'
@@ -1326,7 +1412,8 @@ const BINFO = {
   cal: { t: "Calendar", s: "Chrono Spire", c: "var(--b-cal)" },
   mail: { t: "Mail", s: "Data Post", c: "var(--b-mail)" },
   ideas: { t: "Ideas", s: "Idea Beacon", c: "var(--b-ideas)" },
-  barca: { t: "FC Barcelona", s: "Blaugrana Stadium", c: "#edbb00" }
+  barca: { t: "FC Barcelona", s: "Blaugrana Stadium", c: "#edbb00" },
+  spain: { t: "La Roja", s: "Spain national team", c: "#ff3a4c" }
 };
 const todos = () => [...st.items].filter(([, it]) => it.kind !== "idea");
 const ideas = () => [...st.items].filter(([, it]) => it.kind === "idea").sort((a, b) => b[1].createdAt - a[1].createdAt);
@@ -1404,35 +1491,46 @@ function ideasBody() {
     ${Array.isArray(it.steps) && it.steps.length ? `<ol>${it.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
     <div class="acts">${sample && !st.aiOff ? `<button class="btn" data-act="steps" ${st.busy.has(id) ? "disabled" : ""}>${st.busy.has(id) ? "Thinking…" : it.steps ? "New next steps" : "Next steps"}</button>` : ""}<button class="btn" data-act="totodo">Make it a to-do</button><button class="btn danger" data-act="del">Delete</button></div></article>`).join("");
 }
-/* ===== FC Barcelona: matches, live scoreboard, stats ===== */
-const ABBR = { "FC Barcelona": "BAR", "Real Betis": "BET", "Paris Saint-Germain": "PSG", "Real Madrid": "RMA", "Atlético Madrid": "ATM", "Aston Villa": "AVL", "Manchester City": "MCI", "Real Sociedad": "RSO", "Rayo Vallecano": "RAY", "Racing de Santander": "RAC", "Deportivo de La Coruña": "DEP", "Athletic Club": "ATH", "Celta de Vigo": "CEL", "Valencia CF": "VAL", "Sporting CP": "SCP", "Galatasaray": "GAL", "Feyenoord": "FEY", "Como 1907": "COM", "FC Basel": "BAS", "Al Ahly": "AHL", "Villarreal": "VIL", "Espanyol": "ESP", "Osasuna": "OSA", "Getafe": "GET", "Sevilla": "SEV", "Levante": "LEV", "Elche": "ELC", "Málaga": "MAL", "Alavés": "ALA", "Sabah": "SAB" };
+/* ===== Football: FC Barcelona (stadium) + Spain (La Roja islet). One module, two teams. ===== */
+const TEAMS = {
+  barca: { me: n => n === "FC Barcelona", short: "Barça", acc: "#edbb00", alt: "#2f7dff", idle: ["FORÇA", "BARÇA"], home: "Blaugrana Stadium" },
+  spain: { me: n => n === "Spain", short: "Spain", acc: "#ffc400", alt: "#ff2a3c", idle: ["VAMOS", "ESPAÑA"], home: "La Roja Arena" }
+};
+let FB = "barca"; // which team the helpers below are reading
+const fbData = () => st[FB];
+const ABBR = { "FC Barcelona": "BAR", "Real Betis": "BET", "Paris Saint-Germain": "PSG", "Real Madrid": "RMA", "Atlético Madrid": "ATM", "Aston Villa": "AVL", "Manchester City": "MCI", "Manchester United": "MUN", "Real Sociedad": "RSO", "Rayo Vallecano": "RAY", "Racing de Santander": "RAC", "Deportivo de La Coruña": "DEP", "Athletic Club": "ATH", "Celta de Vigo": "CEL", "Valencia CF": "VAL", "Sporting CP": "SCP", "Sporting Lisbon": "SCP", "Galatasaray": "GAL", "Feyenoord": "FEY", "Como 1907": "COM", "FC Basel": "BAS", "Al Ahly": "AHL", "Villarreal": "VIL", "Espanyol": "ESY", "Osasuna": "OSA", "Getafe": "GET", "Sevilla": "SEV", "Levante": "LEV", "Elche": "ELC", "Málaga": "MAL", "Alavés": "ALA", "Sabah": "SAB", "Bayern Munich": "BAY", "Borussia Dortmund": "BVB", "RB Leipzig": "RBL", "VfB Stuttgart": "STU", "Inter Milan": "INT", "Bodø/Glimt": "BOD", "Slovan Bratislava": "SLO", "Slavia Prague": "SLA", "Club Brugge": "BRU", "Shakhtar Donetsk": "SHA", "AEK Athens": "AEK", "Liverpool": "LIV", "Arsenal": "ARS",
+  "Spain": "ESP", "England": "ENG", "Croatia": "CRO", "Czechia": "CZE", "Argentina": "ARG", "France": "FRA", "Belgium": "BEL", "Portugal": "POR", "Austria": "AUT", "Uruguay": "URU", "Saudi Arabia": "KSA", "Cabo Verde": "CPV", "Peru": "PER", "Iraq": "IRQ" };
 const abbr = n => ABBR[n] || String(n).replace(/^(FC|CF|RC|CD|UD|SD|Real|Club)\s+/i, "").slice(0, 3).toUpperCase();
-const isBar = n => n === "FC Barcelona";
-const crest = (n, big) => `<i class="crest${isBar(n) ? " fcb" : ""}${big ? " big" : ""}" aria-hidden="true">${isBar(n) ? "" : esc(abbr(n).slice(0, 2))}</i>`;
+const isMe = n => TEAMS[FB].me(n);
+const crestCls = n => TEAMS.barca.me(n) ? " fcb" : TEAMS.spain.me(n) ? " esp" : "";
+const crest = (n, big) => `<i class="crest${crestCls(n)}${big ? " big" : ""}" aria-hidden="true">${crestCls(n) ? "" : esc(abbr(n).slice(0, 2))}</i>`;
 const mTs = m => m.kickoff ? +new Date(m.kickoff) : +fromISO(m.date) + 12 * 36e5;
-const compLabel = m => m.comp + (m.md ? ` · MD${m.md}` : m.note ? ` · ${m.note}` : "");
-const resOf = m => { const us = isBar(m.home) ? m.hs : m.as, them = isBar(m.home) ? m.as : m.hs; return us > them ? "W" : us < them ? "L" : "D"; };
+const COMP_SHORT = { "Champions League": "UCL", "FIFA World Cup": "World Cup", "UEFA Nations League": "Nations League", "Joan Gamper Trophy": "Gamper" };
+const compShort = c => COMP_SHORT[c] || c;
+const compLabel = m => m.comp + (m.round ? ` · ${m.round}` : m.md ? ` · MD${m.md}` : m.note ? ` · ${m.note}` : "");
+const resOf = m => { const us = isMe(m.home) ? m.hs : m.as, them = isMe(m.home) ? m.as : m.hs; return us > them ? "W" : us < them ? "L" : "D"; };
 const COMPETITIVE = m => !/friendly|gamper/i.test(m.comp);
+const ord = n => n + ({ 1: "st", 2: "nd", 3: "rd" }[n % 100 > 10 && n % 100 < 14 ? 0 : n % 10] || "th");
 function whenOf(m) {
   if (m.kickoff) { const d = new Date(m.kickoff); return { day: d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }), time: d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }), wd: d.toLocaleDateString("en-GB", { weekday: "short" }) }; }
   const d = fromISO(m.date); return { day: d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }), time: m.tba ? "TBA" : "", wd: d.toLocaleDateString("en-GB", { weekday: "short" }) };
 }
-function bMatches() { return (st.barca && Array.isArray(st.barca.matches)) ? st.barca.matches : []; }
+function bMatches() { const d = fbData(); return (d && Array.isArray(d.matches)) ? d.matches : []; }
 function liveNow() {
-  const b = st.barca; if (!b) return null;
+  const b = fbData(); if (!b) return null;
   const lv = b.live && b.live.matchId ? b.live : null;
   if (lv && lv.status && lv.status !== "live") return null;
   const m = lv ? bMatches().find(x => x.id === lv.matchId) : bMatches().find(x => x.status === "live");
-  return m ? { m, lv: lv || {} } : null;
+  return m && m.status !== "ft" ? { m, lv: lv || {} } : null;
 }
 const upcoming = () => bMatches().filter(m => m.status === "ns" || m.status === "live").sort((a, b) => mTs(a) - mTs(b));
 const results = () => bMatches().filter(m => m.status === "ft").sort((a, b) => mTs(b) - mTs(a));
 function mRow(m) {
-  const w = whenOf(m), ft = m.status === "ft", live = m.status === "live", lv = live ? (st.barca.live || {}) : {};
+  const w = whenOf(m), ft = m.status === "ft", live = m.status === "live", lv = live ? (fbData().live || {}) : {};
   const hs = ft ? m.hs : lv.hs, as = ft ? m.as : lv.as, has = hs != null && as != null;
-  const hw = has && hs > as, aw = has && as > hs;
+  const hw = has && (hs > as || (hs === as && m.pens && m.pens[0] > m.pens[1])), aw = has && (as > hs || (hs === as && m.pens && m.pens[1] > m.pens[0]));
   return `<li class="mrow${live ? " live" : ""}">
-    <div class="mwhen"><b>${esc(w.day)}</b><span>${live ? `<em class="lv">LIVE</em>` : ft ? "FT" : esc(w.time || w.wd)}</span></div>
+    <div class="mwhen"><b>${esc(w.day)}</b><span>${live ? `<em class="lv">LIVE</em>` : ft ? (m.aet ? "AET" : "FT") : esc(w.time || w.wd)}</span></div>
     <div class="mteams"><small>${esc(compLabel(m))}</small><div class="${aw ? "dim" : hw ? "win" : ""}">${crest(m.home)}<span>${esc(m.home)}</span></div><div class="${hw ? "dim" : aw ? "win" : ""}">${crest(m.away)}<span>${esc(m.away)}</span></div></div>
     <div class="mscore">${has ? `<b class="${hw ? "win" : ""}">${hs}</b><b class="${aw ? "win" : ""}">${as}</b>` : ""}</div>
     ${ft ? `<span class="res r${resOf(m)}" title="${{ W: "Win", D: "Draw", L: "Loss" }[resOf(m)]}">${resOf(m)}</span>` : `<span class="res rn"></span>`}
@@ -1450,11 +1548,11 @@ function countdown(ts) {
 function scoreboard(m, lv, kind) {
   const ft = kind === "ft", live = kind === "live", w = whenOf(m);
   const hs = ft ? m.hs : lv && lv.hs, as = ft ? m.as : lv && lv.as, has = hs != null && as != null;
-  const status = live ? `<span class="st-live">LIVE${lv && lv.minute ? ` · ${esc(lv.minute)}'` : ""}</span>` : ft ? `<span class="st-ft">Full time</span>` : `<span class="st-ns">${esc(w.wd)} ${esc(w.day)} · ${esc(w.time || "TBA")}</span>`;
+  const status = live ? `<span class="st-live">LIVE${lv && lv.minute ? ` · ${esc(lv.minute)}'` : ""}</span>` : ft ? `<span class="st-ft">${m.aet ? "After extra time" : "Full time"}</span>` : `<span class="st-ns">${esc(w.wd)} ${esc(w.day)} · ${esc(w.time || "TBA")}</span>`;
   const mid = has ? `<div class="sb-score">${hs}<i>:</i>${as}</div>` : live ? `<div class="sb-score dim">–<i>:</i>–</div>` : `<div class="sb-score vs">${m.kickoff ? countdown(mTs(m)) : "TBA"}</div>`;
   const ev = (ft ? m.events : lv && lv.events) || [];
-  const evH = ev.length ? `<ul class="evs">${ev.map(e => `<li class="${e.side}"><span class="emin">${e.min != null ? esc(e.min) + "'" : esc(e.note || "")}</span><span class="eico ${esc(e.type || "goal")}"></span><span class="ename">${esc(e.name)}${e.assist ? `<small>assist ${esc(e.assist)}</small>` : ""}</span></li>`).join("")}</ul>` : "";
-  return `<div class="sb"><div class="sb-comp">${esc(compLabel(m))} · ${esc(m.venue || "")}</div>
+  const evH = ev.length ? `<ul class="evs">${ev.map(e => `<li class="${e.side === "home" ? "home" : "away"}"><span class="emin">${e.min != null ? esc(e.min) + "'" : esc(e.note || "")}</span><span class="ev">${e.side === "home" ? "" : `<span class="eico ${esc(e.type || "goal")}"></span>`}<span class="ename">${esc(e.name)}${e.assist ? `<small>assist ${esc(e.assist)}</small>` : e.detail ? `<small>${esc(e.detail)}</small>` : ""}</span>${e.side === "home" ? `<span class="eico ${esc(e.type || "goal")}"></span>` : ""}</span></li>`).join("")}</ul>` : "";
+  return `<div class="sb"><div class="sb-comp">${esc(compLabel(m))}${m.venue ? " · " + esc(m.venue) : ""}</div>
     <div class="sb-main"><div class="sb-team">${crest(m.home, 1)}<b>${esc(m.home)}</b></div><div class="sb-mid">${mid}${status}</div><div class="sb-team">${crest(m.away, 1)}<b>${esc(m.away)}</b></div></div>
     ${live && lv && lv.note && !has ? `<p class="sb-note">${esc(lv.note)}</p>` : ""}${evH}</div>`;
 }
@@ -1464,70 +1562,111 @@ function statBars(stats) {
     return `<div class="bar"><div class="bl"><b class="${h > a ? "hi" : ""}">${esc(s.h)}${u}</b><span>${esc(s.label)}</span><b class="${a > h ? "hi" : ""}">${esc(s.a)}${u}</b></div><div class="bt"><i class="h" style="width:${r1(h / t * 100)}%"></i><i class="a" style="width:${r1(a / t * 100)}%"></i></div></div>`; }).join("")}</div>`;
 }
 const RATING_COL = r => r >= 9 ? "#2f6bff" : r >= 8 ? "#00a88a" : r >= 7 ? "#3cbf4a" : r >= 6.5 ? "#d9a400" : r >= 6 ? "#f08a24" : "#e5484d";
-const LEADERS = [["rating", "Rating"], ["goals", "Goals"], ["assists", "Assists"], ["ga", "G+A"], ["xg", "xG"], ["bigChances", "Big chances created"], ["dribbles", "Dribbles /90"], ["tackles", "Tackles /90"], ["interceptions", "Interceptions /90"], ["cleanSheets", "Clean sheets"], ["yellow", "Yellow cards"]];
+const LEADERS = [["rating", "Rating"], ["goals", "Goals"], ["assists", "Assists"], ["ga", "G+A"], ["xg", "xG"], ["bigChances", "Big chances created"], ["dribbles", "Dribbles /90"], ["tackles", "Tackles /90"], ["interceptions", "Interceptions /90"], ["cleanSheets", "Clean sheets"], ["yellow", "Yellow cards"], ["wcGoals", "World Cup goals"]];
 const initials = n => n.split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase();
-function barcaBody() {
-  const b = st.barca, tab = st.bTab || "matches";
+const tile = (label, big, sub, cls = "") => `<div class="tile${cls}"><small>${esc(label)}</small><b>${big}</b><span>${sub || ""}</span></div>`;
+function leadersH(src, key, act, note) {
+  src = src || {}; const keys = LEADERS.filter(([k]) => src[k]); if (!keys.length) return "";
+  if (!src[key]) key = keys[0][0];
+  const rows = src[key] || [], acc = TEAMS[FB].acc;
+  let h = keys.length > 1 ? `<div class="filters lead" role="radiogroup">${keys.map(([k, v]) => `<button class="chip" role="radio" data-act="${act}" data-k="${k}" aria-checked="${key === k}" style="--c:${acc}">${v}</button>`).join("")}</div>` : "";
+  h += `<ol class="leaders">${rows.map(([n, a, b], i) => { const v = b ?? a, team = b != null ? a : null;
+    return `<li><span class="rk">${i + 1}</span><i class="av">${esc(initials(n))}</i><span class="pn">${esc(n)}${team ? `<small>${esc(team)}</small>` : ""}</span>${key === "rating" ? `<b class="rate" style="background:${RATING_COL(+v)}">${(+v).toFixed(2)}</b>` : `<b class="val">${esc(v)}</b>`}</li>`; }).join("")}</ol>`;
+  return h + (note ? `<p class="src">${esc(note)}</p>` : "");
+}
+// zone(pos) -> "ucl" (blue bar), "po" (amber bar), "rel" (red bar) or ""
+function tableH(title, note, rows, zone, legend) {
+  if (!Array.isArray(rows) || !rows.length) return "";
+  return `<h3 class="sec-h">${esc(title)}${note ? ` <span class="sub">${esc(note)}</span>` : ""}</h3><div class="tbl"><div class="tr th"><span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>L</span><span>GD</span><span>Pts</span></div>` +
+    rows.map(r => `<div class="tr${isMe(r.team) ? " me" : ""}${zone(r.pos) ? " " + zone(r.pos) : ""}"><span>${r.pos}</span><span class="tn">${crest(r.team)}${esc(r.team)}</span><span>${r.p}</span><span>${r.w}</span><span>${r.d}</span><span>${r.l}</span><span>${r.gf - r.ga > 0 ? "+" : ""}${r.gf - r.ga}</span><b>${r.pts}</b></div>`).join("") + `</div>` +
+    (legend ? `<p class="zones">${legend}</p>` : "");
+}
+const formH = list => list.length ? `<h3 class="sec-h">Form <span class="sub">last ${list.length}, oldest first</span></h3><div class="form">${list.map(m => `<span class="res r${resOf(m)}" title="${esc(m.home)} ${m.hs}-${m.as} ${esc(m.away)}">${resOf(m)}</span>`).join("")}</div>` : "";
+const factsH = f => Array.isArray(f) && f.length ? `<ul class="facts">${f.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
+const segH = (act, cur, opts) => `<div class="seg" role="radiogroup">${opts.map(([k, v]) => `<button role="radio" data-act="${act}" data-k="${k}" aria-checked="${cur === k}">${v}</button>`).join("")}</div>`;
+
+function barcaStats(b) {
+  const which = st.bStat || "league", s = b.seasonStats || {};
+  let h = segH("bstat", which, [["league", "LaLiga"], ["ucl", "Champions League"]]);
+  if (which === "league") {
+    const ll = s.laliga || {}, me = (b.table || []).find(r => isMe(r.team));
+    h += `<div class="tiles">${tile("LaLiga position", me ? `${me.pos}<sup>${ord(me.pos).slice(-2)}</sup>` : "–", me ? me.pts + " pts" : "")}${tile("LaLiga record", `${ll.w ?? "–"}-${ll.d ?? "–"}-${ll.l ?? "–"}`, "W-D-L")}${tile("Goals", `${ll.gf ?? "–"}<i>:</i>${ll.ga ?? "–"}`, ll.p ? r1(ll.gf / ll.p) + " per game" : "")}${tile("Clean sheets", ll.cs ?? "–", "LaLiga")}</div>`;
+    h += formH(results().filter(m => m.comp === "LaLiga").slice(0, 5).reverse());
+    if (s.all) h += `<p class="hint-row">All competitions: ${s.all.w}W from ${s.all.p}, ${s.all.gf} scored, ${s.all.ga} conceded.</p>`;
+    h += factsH(b.facts);
+    h += `<h3 class="sec-h">Top players</h3>` + leadersH(b.leaders, st.bLead || "rating", "blead", b.leadersNote);
+    h += tableH("LaLiga table", b.tableNote, b.table, p => p <= 4 ? "ucl" : p >= 18 ? "rel" : "", `<i class="z ucl"></i>Champions League <i class="z rel"></i>Relegation`);
+  } else {
+    const u = b.ucl || {}, uc = s.ucl || {}, me = (u.table || []).find(r => isMe(r.team)), nx = upcoming().find(m => m.comp === "Champions League");
+    h += `<div class="tiles">${tile("League phase", me ? `${me.pos}<sup>${ord(me.pos).slice(-2)}</sup>` : "–", me ? `${me.pts} pts · of 36` : "")}${tile("UCL record", `${uc.w ?? "–"}-${uc.d ?? "–"}-${uc.l ?? "–"}`, "W-D-L")}${tile("Goals", `${uc.gf ?? "–"}<i>:</i>${uc.ga ?? "–"}`, uc.p ? r1(uc.gf / uc.p) + " per game" : "")}${tile("Next", nx ? esc(abbr(isMe(nx.home) ? nx.away : nx.home)) : "–", nx ? `${esc(whenOf(nx).day)} · MD${nx.md || ""}` : "")}</div>`;
+    h += formH(results().filter(m => m.comp === "Champions League").slice(0, 5).reverse());
+    if (u.leaders) h += `<h3 class="sec-h">Barça in Europe</h3>` + leadersH(u.leaders, st.bLeadU || "goals", "bleadu", u.leadersNote);
+    if (u.compLeaders) h += `<h3 class="sec-h">Across the competition</h3>` + leadersH(u.compLeaders, st.bLeadC || "goals", "bleadc", u.compLeadersNote);
+    h += tableH("League phase", u.tableNote, u.table, p => p <= 8 ? "ucl" : p <= 24 ? "po" : "rel", `<i class="z ucl"></i>Round of 16 <i class="z po"></i>Knockout play-off <i class="z rel"></i>Out`);
+    if (!u.table) h += `<div class="empty sm">The league-phase table arrives with the next refresh.</div>`;
+  }
+  return h;
+}
+function spainStats(b) {
+  const s = b.seasonStats || {}, nl = s.nl || {}, me = (b.table || []).find(r => isMe(r.team));
+  let h = `<div class="tiles">${tile("World Cup 2026", `<svg class="star" width="40" height="34" viewBox="-12 -12 24 22" aria-hidden="true"><path d="M0-11 3.2-3.6 11-3.4 4.9 1.6 7 9.2 0 4.8-7 9.2-4.9 1.6-11-3.4-3.2-3.6Z" fill="#ffd84a" stroke="#fff3b0" stroke-width=".8" stroke-linejoin="round"/></svg>`, "Champions", " gold")}${tile("Nations League", me ? `${me.pos}<sup>${ord(me.pos).slice(-2)}</sup>` : "–", me ? `Group A3 · ${me.pts} pts` : "")}${tile("2026/27 record", `${nl.w ?? "–"}-${nl.d ?? "–"}-${nl.l ?? "–"}`, "W-D-L")}${tile("Goals", `${nl.gf ?? "–"}<i>:</i>${nl.ga ?? "–"}`, nl.p ? r1(nl.gf / nl.p) + " per game" : "")}</div>`;
+  h += formH(results().filter(COMPETITIVE).slice(0, 5).reverse());
+  if (s.unbeaten) h += `<p class="hint-row">${esc(s.unbeaten)}</p>`;
+  h += factsH(b.facts);
+  h += `<h3 class="sec-h">Top scorers</h3>` + leadersH(b.leaders, st.sLead || "goals", "slead", b.leadersNote);
+  h += tableH(b.tableTitle || "Nations League group", b.tableNote, b.table, p => p <= 2 ? "ucl" : p === 4 ? "rel" : "", `<i class="z ucl"></i>Quarter-finals <i class="z rel"></i>Relegation play-off`);
+  return h;
+}
+function fbBody(key) {
+  FB = key; const b = fbData(), T = TEAMS[key], tab = st.bTab || "matches";
   let h = `<div class="btabs" role="tablist">${[["matches", "Matches"], ["live", "Live"], ["stats", "Stats"]].map(([k, v]) => `<button role="tab" data-act="btab" data-t="${k}" aria-selected="${tab === k}">${v}${k === "live" && liveNow() ? `<i class="ldot"></i>` : ""}</button>`).join("")}</div>`;
   if (!b) return h + `<div class="empty"><b>No match data yet</b>Fixtures, results and stats arrive with the first refresh.</div>`;
   const upd = b.updatedAt ? new Date(b.updatedAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
   if (tab === "matches") {
-    const sub = st.bSub || "upcoming";
-    h += `<div class="filters" role="radiogroup">${[["upcoming", "Upcoming"], ["results", "Results"]].map(([k, v]) => `<button class="chip" role="radio" data-act="bsub" data-s="${k}" aria-checked="${sub === k}" style="--c:${k === "upcoming" ? "#edbb00" : "#2f7dff"}">${v}</button>`).join("")}</div>`;
-    const list = sub === "upcoming" ? upcoming() : results();
+    const sub = st.bSub || "upcoming", base = sub === "upcoming" ? upcoming() : results();
+    const comps = [...new Set(base.map(m => m.comp))], comp = comps.includes(st.bComp) ? st.bComp : "all";
+    h += `<div class="filters" role="radiogroup">${[["upcoming", "Upcoming"], ["results", "Results"]].map(([k, v]) => `<button class="chip" role="radio" data-act="bsub" data-s="${k}" aria-checked="${sub === k}" style="--c:${k === "upcoming" ? T.acc : T.alt}">${v}</button>`).join("")}</div>`;
+    if (comps.length > 1) h += `<div class="filters comps" role="radiogroup" aria-label="Competition">${[["all", "All"], ...comps.map(c => [c, compShort(c)])].map(([k, v]) => `<button class="chip sm" role="radio" data-act="bcomp" data-k="${esc(k)}" aria-checked="${comp === k}" style="--c:${T.acc}">${esc(v)}</button>`).join("")}</div>`;
+    const list = comp === "all" ? base : base.filter(m => m.comp === comp);
     h += list.length ? groupByMonth(list) : `<div class="empty sm">Nothing here yet.</div>`;
   } else if (tab === "live") {
     const L = liveNow();
     if (L) { h += scoreboard(L.m, L.lv, "live"); h += `<h3 class="sec-h">Match stats</h3>` + statBars(L.lv.stats); }
     else {
       const nx = upcoming()[0], ls = results()[0];
-      h += `<p class="hint-row">No Barça match in play right now.</p>`;
+      h += `<p class="hint-row">No ${esc(T.short)} match in play right now.</p>`;
       if (nx) h += `<h3 class="sec-h">Next match</h3>` + scoreboard(nx, null, "ns");
       if (ls) h += `<h3 class="sec-h">Last result</h3>` + scoreboard(ls, null, "ft") + (ls.stats ? statBars(ls.stats) : "");
     }
-  } else {
-    const s = b.seasonStats || {}, ll = s.laliga || {}, ucl = s.ucl || {}, me = (b.table || []).find(r => isBar(r.team));
-    const form = results().filter(COMPETITIVE).slice(0, 5).reverse();
-    h += `<div class="tiles">
-      <div class="tile"><small>LaLiga position</small><b>${me ? me.pos : "–"}<sup>${me ? ({ 1: "st", 2: "nd", 3: "rd" }[me.pos] || "th") : ""}</sup></b><span>${me ? me.pts + " pts" : ""}</span></div>
-      <div class="tile"><small>LaLiga record</small><b>${ll.w ?? "–"}-${ll.d ?? "–"}-${ll.l ?? "–"}</b><span>W-D-L</span></div>
-      <div class="tile"><small>Goals</small><b>${ll.gf ?? "–"}<i>:</i>${ll.ga ?? "–"}</b><span>${ll.p ? r1(ll.gf / ll.p) + " per game" : ""}</span></div>
-      <div class="tile"><small>Clean sheets</small><b>${ll.cs ?? "–"}</b><span>LaLiga</span></div></div>`;
-    if (form.length) h += `<h3 class="sec-h">Form <span class="sub">last ${form.length}, oldest first</span></h3><div class="form">${form.map(m => `<span class="res r${resOf(m)}" title="${esc(m.home)} ${m.hs}-${m.as} ${esc(m.away)}">${resOf(m)}</span>`).join("")}</div>`;
-    if (ucl.p) h += `<p class="hint-row">Champions League: ${ucl.w}W ${ucl.d}D ${ucl.l}L · goals ${ucl.gf}:${ucl.ga}${s.all ? ` · all comps ${s.all.w}W from ${s.all.p}, ${s.all.gf} scored` : ""}</p>`;
-    if (Array.isArray(b.facts) && b.facts.length) h += `<ul class="facts">${b.facts.map(f => `<li>${esc(f)}</li>`).join("")}</ul>`;
-    const key = st.bLead || "rating", rows = (b.leaders || {})[key] || [];
-    h += `<h3 class="sec-h">Top players</h3><div class="filters lead" role="radiogroup">${LEADERS.filter(([k]) => (b.leaders || {})[k]).map(([k, v]) => `<button class="chip" role="radio" data-act="blead" data-k="${k}" aria-checked="${key === k}" style="--c:#edbb00">${v}</button>`).join("")}</div>`;
-    h += `<ol class="leaders">${rows.map(([n, v], i) => `<li><span class="rk">${i + 1}</span><i class="av">${esc(initials(n))}</i><span class="pn">${esc(n)}</span>${key === "rating" ? `<b class="rate" style="background:${RATING_COL(+v)}">${(+v).toFixed(2)}</b>` : `<b class="val">${esc(v)}</b>`}</li>`).join("")}</ol>`;
-    if (b.leadersNote) h += `<p class="src">${esc(b.leadersNote)}</p>`;
-    if (Array.isArray(b.table) && b.table.length) {
-      h += `<h3 class="sec-h">LaLiga table${b.tableNote ? ` <span class="sub">${esc(b.tableNote)}</span>` : ""}</h3><div class="tbl"><div class="tr th"><span>#</span><span>Team</span><span>P</span><span>W</span><span>D</span><span>L</span><span>GD</span><span>Pts</span></div>` +
-        b.table.map(r => `<div class="tr${isBar(r.team) ? " me" : ""}${r.pos <= 4 ? " ucl" : r.pos >= 18 ? " rel" : ""}"><span>${r.pos}</span><span class="tn">${crest(r.team)}${esc(r.team)}</span><span>${r.p}</span><span>${r.w}</span><span>${r.d}</span><span>${r.l}</span><span>${r.gf - r.ga > 0 ? "+" : ""}${r.gf - r.ga}</span><b>${r.pts}</b></div>`).join("") + `</div>`;
-    }
-  }
+  } else h += key === "spain" ? spainStats(b) : barcaStats(b);
   h += `<p class="src">Updated ${esc(upd)}${Array.isArray(b.sources) ? " · " + esc(b.sources.join(" · ")) : ""}</p>`;
   return h;
 }
 function updateStadium() {
-  if (!SB.l1) return;
-  const L = liveNow(), nx = upcoming().find(m => m.status === "ns");
-  if (L) { const { m, lv } = L; SB.l1.textContent = `${abbr(m.home)} ${lv.hs ?? "-"}:${lv.as ?? "-"} ${abbr(m.away)}`; SB.l2.textContent = `LIVE${lv.minute ? " " + lv.minute + "'" : ""}`; }
-  else if (nx) { const w = whenOf(nx); SB.l1.textContent = `${abbr(nx.home)} v ${abbr(nx.away)}`; SB.l2.textContent = `${w.wd} ${w.time || "TBA"}`.toUpperCase(); }
-  else { SB.l1.textContent = "FORÇA"; SB.l2.textContent = "BARÇA"; }
-  const p = pipEls.barca; if (p) { p.textContent = "LIVE"; p.hidden = !L; }
-  const l = labelEls.barca; if (l) { const nm = L ? "Live now" : nx ? `Next: ${abbr(nx.home)} v ${abbr(nx.away)}` : "Stadium"; l.querySelector("small").textContent = nm; }
+  const keep = FB;
+  Object.keys(TEAMS).forEach(k => {
+    FB = k; const T = TEAMS[k], S = SB[k]; if (!S) return;
+    const L = liveNow(), nx = upcoming().find(m => m.status === "ns");
+    if (L) { const { m, lv } = L; S.l1.textContent = `${abbr(m.home)} ${lv.hs ?? "-"}:${lv.as ?? "-"} ${abbr(m.away)}`; S.l2.textContent = `LIVE${lv.minute ? " " + lv.minute + "'" : ""}`; }
+    else if (nx) { const w = whenOf(nx); S.l1.textContent = `${abbr(nx.home)} v ${abbr(nx.away)}`; S.l2.textContent = `${w.wd} ${w.day}`.toUpperCase(); }
+    else { S.l1.textContent = T.idle[0]; S.l2.textContent = T.idle[1]; }
+    const p = pipEls[k]; if (p) { p.textContent = "LIVE"; p.hidden = !L; }
+    const l = labelEls[k]; if (l) l.querySelector("small").textContent = L ? "Live now" : nx ? `Next: ${abbr(nx.home)} v ${abbr(nx.away)}` : T.home;
+  });
+  FB = keep;
 }
-window.islandDebug = { setBarca: d => { st.barca = d; render(); } };
+window.islandDebug = { setBarca: d => { st.barca = d; render(); }, setSpain: d => { st.spain = d; render(); } };
 
 function sheetSub(b) {
-  if (b === "barca") { const me = st.barca && (st.barca.table || []).find(r => isBar(r.team)); return `Blaugrana Stadium${me ? ` · LaLiga ${me.pos}${({ 1: "st", 2: "nd", 3: "rd" })[me.pos] || "th"}, ${me.pts} pts` : ""}`; }
+  if (b === "barca") { const me = st.barca && (st.barca.table || []).find(r => TEAMS.barca.me(r.team)); return `Blaugrana Stadium${me ? ` · LaLiga ${ord(me.pos)}, ${me.pts} pts` : ""}`; }
+  if (b === "spain") { const me = st.spain && (st.spain.table || []).find(r => TEAMS.spain.me(r.team)); return `World champions${me ? ` · Nations League ${ord(me.pos)}, ${me.pts} pts` : ""}`; }
   if (b === "todo") { const n = dueNowCount(), o = todos().filter(([, it]) => !it.done).length; return `${BINFO.todo.s} · ${o} open${n ? ` · ${n} due now` : ""}`; }
   if (b === "ideas") { const n = ideas().length; return `${BINFO.ideas.s} · ${n} idea${n === 1 ? "" : "s"}`; }
   return BINFO[b].s;
 }
 function openPanel(b, wide = false) {
   st.panel = b; st.wide = wide; st.edit = null;
-  sheet.hidden = false; sheet.classList.toggle("wide", wide); sheet.classList.toggle("barca", b === "barca");
+  sheet.hidden = false; sheet.classList.toggle("wide", wide); sheet.classList.toggle("barca", b === "barca"); sheet.classList.toggle("spain", b === "spain"); if (b !== st.lastFb && TEAMS[b]) { st.lastFb = b; st.bTab = "matches"; st.bSub = "upcoming"; st.bComp = "all"; }
   sheet.style.setProperty("--c", BINFO[b].c);
   sheet.innerHTML = `<div class="frame cham"><div class="inner cham"><div class="sh-head"><div class="sh-icon">${ICON[b]}</div><div><div class="sh-title" id="shTitle">${BINFO[b].t}</div><div class="sh-sub" id="shSub"></div></div><button class="icon-btn" data-act="close" aria-label="Close">${ICON.x}</button></div><div class="sh-body" id="shBody"></div></div></div>`;
   $("#app").classList.add("sheet-open"); $("#app").classList.toggle("wide-open", wide);
@@ -1553,7 +1692,7 @@ function renderPanel() {
   $("#shSub").textContent = st.mode === "loading" ? BINFO[st.panel].s : sheetSub(st.panel);
   if (st.mode === "loading" && (st.panel === "todo" || st.panel === "ideas")) { body.innerHTML = `<div class="loading">Opening your island…</div>`; return; }
   const top = body.scrollTop;
-  body.innerHTML = st.panel === "todo" ? todoBody() : st.panel === "cal" ? calBody() : st.panel === "mail" ? mailBody() : st.panel === "barca" ? barcaBody() : ideasBody();
+  body.innerHTML = st.panel === "todo" ? todoBody() : st.panel === "cal" ? calBody() : st.panel === "mail" ? mailBody() : TEAMS[st.panel] ? fbBody(st.panel) : ideasBody();
   body.scrollTop = top;
 }
 function setBubble(b, n) { const p = pipEls[b]; if (p && b === "todo") { p.textContent = n > 99 ? "99+" : String(n); p.hidden = !(n > 0); } const l = labelEls[b]; if (l) l.querySelector("small").textContent = BINFO[b].s + (n > 0 ? (b === "todo" ? ` · ${n} due now` : ` · ${n} idea${n === 1 ? "" : "s"}`) : ""); }
@@ -1615,8 +1754,13 @@ sheet.addEventListener("click", e => {
   if (act === "filter") { st.filter = a.dataset.f; return renderPanel(); }
   if (act === "showdone") { st.showDone = !st.showDone; return renderPanel(); }
   if (act === "btab") { st.bTab = a.dataset.t; $("#shBody").scrollTop = 0; return renderPanel(); }
-  if (act === "bsub") { st.bSub = a.dataset.s; return renderPanel(); }
+  if (act === "bsub") { st.bSub = a.dataset.s; st.bComp = "all"; return renderPanel(); }
   if (act === "blead") { st.bLead = a.dataset.k; return renderPanel(); }
+  if (act === "bleadu") { st.bLeadU = a.dataset.k; return renderPanel(); }
+  if (act === "bleadc") { st.bLeadC = a.dataset.k; return renderPanel(); }
+  if (act === "slead") { st.sLead = a.dataset.k; return renderPanel(); }
+  if (act === "bstat") { st.bStat = a.dataset.k; return renderPanel(); }
+  if (act === "bcomp") { st.bComp = a.dataset.k; return renderPanel(); }
   if (!it) return;
   if (act === "toggle") { const done = !it.done; store.update(id, { done, doneAt: done ? Date.now() : null }); if (done) { pulse("todo"); toast("Done: " + it.title, "Undo", () => store.update(id, { done: false, doneAt: null })); } }
   else if (act === "edit") { st.edit = st.edit === id ? null : id; renderPanel(); const t = $("#ed-title"); if (t) t.focus(); }

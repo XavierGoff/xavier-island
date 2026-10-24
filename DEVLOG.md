@@ -1,5 +1,114 @@
 # Devlog
 
+## #011 · 17 Oct 2026 · Six new buildings
+
+**Ask:** a Morning Dispatch, a Studio workshop, a Habit Garden, a world-news place, a Sunday review, a coursework tracker, and a Focus Lighthouse that sums up my focus every week.
+
+**Morning Dispatch** (newsstand with a rising-sun sign, front of the HQ)
+- **Brief:** at 07:22 UK time every day, a scheduled Claude run writes a 3–4 sentence brief. It covers what's due, deadlines this week, habits, any Barça or Spain match, a headline worth knowing, and one suggestion for the day. It shows on the island only, with no notifications.
+- **Live summary:** the Today tab also builds a live summary from the island itself: due to-dos (tick them off right there), this week's deadlines, habit chips, this week's focus, upcoming matches and the top 3 headlines.
+- **Week review tab:** the Sunday review lives here. It runs every Sunday at 18:46 and covers:
+  - what got done and what slipped
+  - focus time with a written summary
+  - habits against their targets
+  - the top 3 priorities for next week
+
+  A button writes it on demand too.
+
+**News Tower** (lattice broadcast mast on its own islet off the east edge, joined by a NEWS / ON AIR skyway)
+- Sections: World (6), UK politics (up to 4), US politics (up to 4), Tech (5), Design (4).
+- Each story gets a plain-English headline, one neutral sentence of context and a link to the source. It refreshes with the 07:22 run.
+- **Sources:** this took some digging, because a lot of news sites block automated reading. The ones that work are Al Jazeera (world, UK, US), TechCrunch, Hacker News and Dezeen.
+
+**Studio** (sawtooth-roof workshop with a jib crane, south-west park)
+- **Projects:** next step, milestones with a progress bar, and links.
+- **Post queue:** Instagram/GitHub posts move Ideas → Drafting → Ready → Posted. "Draft caption" asks Claude to write one in my voice: plain, no hype, hashtags for Instagram.
+- **Seeded with** this project and the devlog #010/#011 posts.
+
+**Habit Garden** (raised beds in the front park)
+- **One bed per habit.** It starts with Gym (4× a week) and Sleep before midnight (daily).
+- **Very slow growth:** every 8 check-ins bring one plant to full bloom, so a whole bed takes about 2 months. That fits the rule that progression has to be slow.
+- **The panel has:**
+  - a big "done today" button
+  - a tappable week strip for backfilling
+  - the streak and total
+  - a 12-week heatmap
+
+**Coursework observatory** (drum tower with a telescope and an orbit ring, front-right plot)
+- **Deadlines:** each piece has a module, due date and weight. The tiles show the next deadline, the next 14 days and how much of the year's marks are still in play.
+- **Urgency colours:** amber inside a week, red inside 3 days.
+- **Quick actions:** start / submitted, "+ to-do", and "Focus" (opens the lighthouse with the piece already filled in).
+
+**Focus Lighthouse** (striped lighthouse next to the Mail building)
+- **Sessions:** 25, 50 or 90 minutes, tagged with an area or a module.
+- **While it runs:** the lighthouse beam switches on across the island, a timer pill sits at the top of the screen, and the session survives a page reload.
+- **Week view:** a Mon–Sun bar chart and a breakdown by area.
+- **Weekly summary:** the Sunday review writes it, and "Summarise my week" writes one on demand.
+
+**Fixes along the way**
+- **Click areas:** a building's invisible click area could sit on top of the building next to it, so clicking the HQ opened the lighthouse. All click areas now live in one layer underneath every building, so the shape you see always wins.
+- **Glow halos** no longer block clicks.
+
+**Tests:** all 12 buildings open with a real click at desktop and narrow widths. 36 out of 36 clicks worked straight after scroll-pans, pinches and drags. No page errors.
+
+**Media:** `media/v0.8-island.png`, `media/v0.8-panels.png`, `media/v0.8-lighthouse-on.png`
+
+## #010 · 17 Oct 2026 · La Roja islet, Champions League, smarter refresh
+
+**Ask:** a building for the Spain national team on the left islet, Champions League data for Barça, and less frequent refreshing, unless a game is live.
+
+**La Roja islet (Spain)**
+- The empty expansion islet on the left is now a square floating deck. It's joined to the island by its own skyway, which carries the west road over the gap and has red and gold rails and gantries reading ESP and LA ROJA.
+- On the deck is a red and gold arena. I turned the Barça stadium into a reusable `arena()` function, so both grounds share one design with different colours.
+- A pylon next to the arena carries a gold neon star. In the UEFA data, Spain won the 2026 World Cup, beating Argentina 1-0 after extra time.
+- The arena's LED scoreboard shows the next match, e.g. `CZE v ESP · THU 12 NOV`.
+
+**The Spain panel** (red and gold frame) uses the same Matches / Live / Stats layout as Barça. Under the hood it's one football module that serves both teams.
+- **Matches:** upcoming and results, with competition filters (Nations League, World Cup, Friendly).
+- **Live:** the scoreboard, plus a centred goal timeline in Sofascore style: home events on the left, away on the right.
+- **Stats:**
+  - World Cup badge
+  - Nations League position, record, goals and form
+  - Unbeaten run and facts
+  - Top scorers this season and at the World Cup
+  - Nations League group table with qualification zones
+
+**Champions League in the Barça panel**
+- **Match filter:** the match lists now have competition chips (All, LaLiga, UCL…).
+- **Stats toggle:** Stats switches between LaLiga and Champions League. The UCL view shows:
+  - League-phase position, record and goals, and the next opponent
+  - Barça's UCL scorers and assists
+  - Competition-wide top scorers and assisters
+  - The full 36-team table, coloured by zone: round of 16, play-off, out
+- **Source:** UEFA's own data feeds, which turned out to be the most reliable source so far.
+
+**Refreshing: daily, plus live only during games**
+- I replaced the hourly task with a daily refresh at 08:53 (UK time) that covers Barça, the Champions League and Spain.
+- A second task, "Football live updates", only wakes up for a match: 25 minutes after kick-off, then every 25 minutes until full time. After that it books itself for the next Barça or Spain kick-off. The daily run double-checks that booking.
+- On a quiet day that's 1 run instead of 12. On a match day it's about 6.
+
+**Tests:** all 6 buildings open with a real click at desktop and narrow widths. 18 out of 18 clicks worked straight after scroll-pans, pinches and drags.
+
+**Media:** `media/v0.7-la-roja-islet.png`, `media/v0.7-spain-stats.png`, `media/v0.7-barca-ucl.png`
+
+## #009 · 17 Oct 2026 · Gesture polish: no flashing, no stuck clicks
+
+Feedback on v0.6.2: zooming flashed, panning lit things up instead of moving cleanly, and clicks worked only some of the time.
+
+**"Highlights things instead of panning."** During a trackpad scroll the cursor stays still while the map slides underneath it. The browser keeps sending hover events, so every building passing under the cursor lit up and popped its name tag.
+- **Fix:** hover effects are off while the map is moving and for about half a second after. Dragging also clears any open tag, and text selection is disabled on the map, so a drag can't highlight the title or labels.
+
+**"Clicks randomly stop working."** Two causes:
+- **Lost releases.** If you pressed on the map and released somewhere else, the app never heard the release. It then thought a button was still held, so the next click counted as a drag. Now every press captures its release, and a mouse moving with no button pressed resets the state.
+- **Tags covering buildings.** Hover tags were clickable, so a tag left over from the last building could sit on top of the next one and take the click. Tags are now labels only, and whatever building is under the cursor always wins. Clicking the tag itself still opens its building if there's nothing behind it.
+
+**Flashing while zooming**
+- The sky was a 9,000-unit SVG rectangle, which made one enormous layer, and zooming out exposed parts of it that weren't drawn yet. The sky is now a CSS gradient behind the island.
+- The sharp redraw now waits 260 ms after the motion stops instead of 170 ms, so it happens less often mid-gesture.
+- The time-of-day colours now reach all three layers. The front clouds were missing the day colours.
+
+**Tests:** clicked all 5 buildings 3 times each, straight after a scroll-pan, a pinch and a drag, with 3 px of click wobble: 15/15 opened. Pressing, losing the release and then clicking Mail opens it. A scroll-pan over Task HQ shows no tags.
+
 ## #008 · 17 Oct 2026 · Input overhaul: click, pan, pinch, hover
 
 **Bug: half the island ignored the mouse.** The real cause was one CSS rule. The building panel is a fixed-position `<aside>` that sits `hidden` when closed. My stylesheet gave it `display:flex`, which beats the browser's default `[hidden]{display:none}`. My test page added `[hidden]{display:none!important}`, so everything worked in testing. The live host page doesn't add that rule, so on the real site an invisible, empty 440 px panel sat over the right side of the map and swallowed every click, hover and scroll there. That's why the Stadium and Mail never opened. On a narrow window it covered the whole bottom half of the island.

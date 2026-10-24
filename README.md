@@ -42,9 +42,12 @@ A personal organiser built as a floating neon sky-island. Each building looks af
 - [x] **v0.5:** Floating neon sky-island, light waterfalls, in-world neon UI
 - [x] **v0.6:** Blaugrana Stadium: FC Barcelona matches, live scoreboard and stats
 - [x] **v0.6.2:** Input overhaul: trackpad pan/pinch, reliable clicks, 2× smoother
-- [ ] **v0.7:** Chrono Spire connected to Outlook (Imperial + personal)
-- [ ] **v0.8:** Data Post with Gmail + Outlook, plus a scheduled morning digest
-- [ ] **v0.9:** New buildings on the empty plots
+- [x] **v0.6.3:** Gesture polish: no hover flicker while panning, no stuck clicks
+- [x] **v0.7:** La Roja islet (Spain), Champions League stats, daily + match-time refresh
+- [x] **v0.8:** Morning Dispatch, News Tower, Studio, Habit Garden, Coursework, Focus Lighthouse + Sunday review
+- [ ] **v0.9:** Chrono Spire connected to Outlook (Imperial + personal)
+- [ ] **v1.0:** Data Post with Gmail + Outlook, folded into the Morning Dispatch
+- [ ] **Later:** iPhone shortcut for quick add
 - [ ] **Later:** slow, ambient growth (months, not days)
 
 See [DEVLOG.md](DEVLOG.md) for the build diary.
